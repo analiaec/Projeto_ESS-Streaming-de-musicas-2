@@ -4,11 +4,12 @@ I want to saber quais os podcasts, artistas e músicas que eu mais escutei no m�
 So that eu possa conhecer melhor sobre meus gostos musicais
 
 Scenario Outline: Acessar os itens mais escutados no mês de cada categoria
-Given o sistema calculou o ranking mensal
-And eu estou logado na minha conta
-And eu estou na página inicial
-When eu acesso o ranking mensal de itens do tipo "<categoria>"
-Then o sistema deve mostrar os itens do tipo "<categoria>" ordenados por quantidade de reproduções decrescente
+Given eu estou logado como "Ouvinte" com nome "Carlos" e senha "Senhasupersecreta1!" e login "Carlos1"
+And o sistema calculou o ranking mensal
+And eu estou na página de "Página inicial"
+When eu seleciono "Ranking mensal"
+And eu acesso o ranking mensal de itens do tipo "<categoria>"
+Then eu vejo os itens do tipo "<categoria>" ordenados por quantidade de reproduções decrescente
 
 Examples:
 | categoria |
