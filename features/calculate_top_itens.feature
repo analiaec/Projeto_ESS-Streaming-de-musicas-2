@@ -3,6 +3,14 @@ As a usuario
 I want to saber quais os podcasts, artistas e músicas que eu mais escutei no mês
 So that eu possa conhecer melhor sobre meus gostos musicais
 
+Scenario: Cálculo do ranking de uma categoria com base nas reproduções acumuladas no mês anterior
+Given a data registrada no sistema é o primeiro dia do mês atual
+And o ranking mensal da categoria "Música" não foi calculado
+And existem reproduções de itens da categoria "Música" registradas no mês anterior
+When o sistema calcula o ranking mensal da categoria "Música"
+Then o sistema deve considerar todas as reproduções de itens da categoria "Música" até o último dia do mês anterior
+And o sistema deve armazenar o ranking que deve listar os itens do tipo "Música" ordenados por quantidade de reproduções decrescente
+
 Scenario Outline: Acessar os itens mais escutados no mês de cada categoria
 Given eu estou logado como "Ouvinte" com nome "Carlos" e senha "Senhasupersecreta1!" e login "Carlos1"
 And o sistema calculou o ranking mensal
@@ -46,12 +54,6 @@ Given o item "Música A" possui 2 reproduções no mês atual
 And eu estou logado na minha conta
 When eu reproduzo o item "Música A"
 Then o item "Música A" deve passar a ter 3 reproduções no mês atual
-
-Scenario: Cálculo do ranking de uma categoria com base nas reproduções acumuladas no mês atual
-Given existem reproduções de itens da categoria "Música" registradas no mês atual
-And o ranking mensal não foi calculado
-When o sistema calcula o ranking mensal no primeiro dia do mês seguinte
-Then o sistema deve considerar todas as reproduções de itens da categoria "Música" até o último dia do mês atual
 
 Scenario: Manter ranking de um mês disponível durante o próximo mês
 Given o ranking do mês de março foi calculado
