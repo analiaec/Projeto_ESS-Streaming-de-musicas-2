@@ -3,6 +3,13 @@ As a usuario
 I want to saber quais os podcasts, artistas e músicas que eu mais escutei no mês
 So that eu possa conhecer melhor sobre meus gostos musicais
 
+Scenario: Desempate por data da última reprodução para o ranking de uma categoria
+Given mais de um item do tipo "Música" possui a mesma quantidade de reproduções no mês anterior
+And o ranking mensal da categoria "Música" não foi calculado
+When o sistema calcula o ranking mensal da categoria "Música"
+Then o sistema deve usar um critério de desempate por data da última reprodução
+And o item do tipo "Música" com a reprodução mais recente deve ser colocado à frente no ranking
+
 Scenario: Cálculo do ranking de uma categoria com base nas reproduções acumuladas no mês anterior
 Given a data registrada no sistema é o primeiro dia do mês atual
 And o ranking mensal da categoria "Música" não foi calculado
@@ -34,12 +41,6 @@ When o sistema calcula o ranking mensal
 And eu clico em "Visualizar top 10"
 Then o sistema deve retornar apenas os 10 itens do tipo "Música" mais escutados 
 And os itens devem estar ordenados por quantidade de reproduções decrescente
-
-Scenario: Desempate por data da última reprodução
-Given dois ou mais itens possuem a mesma quantidade de reproduções no mês atual
-When o sistema calcula o ranking mensal
-Then o sistema deve usar um critério de desempate por data da última reprodução
-And o item com a reprodução mais recente deve aparecer primeiro.
 
 Scenario: Nenhum item de uma categoria reproduzido no mês
 Given não existem reproduções de um item do tipo "Podcast" no mês atual
