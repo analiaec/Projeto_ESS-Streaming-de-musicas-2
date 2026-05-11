@@ -3,6 +3,12 @@ As a usuario
 I want to saber quais os podcasts, artistas e músicas que eu mais escutei no mês
 So that eu possa conhecer melhor sobre meus gostos musicais
 
+Scenario: Contabilizar reprodução de item
+Given o item "Música A" possui "2" reproduções no mês atual
+And eu estou logado como "Ouvinte" com nome "Carlos" e senha "Senhasupersecreta1!" e login "Carlos1"
+When eu reproduzo o item "Música A"
+Then o item "Música A" deve passar a ter "3" reproduções no mês atual
+
 Scenario: Desempate por data da última reprodução para o ranking de uma categoria
 Given mais de um item do tipo "Música" possui a mesma quantidade de reproduções no mês anterior
 And o ranking mensal da categoria "Música" não foi calculado
@@ -49,12 +55,6 @@ And eu estou na página de "Página inicial"
 When o sistema calcula o ranking mensal
 And eu clico em "Visualizar ranking mensal"
 Then o sistema deve retornar uma lista vazia para itens do tipo "Podcast"
-
-Scenario: Contabilizar reprodução de item
-Given o item "Música A" possui 2 reproduções no mês atual
-And eu estou logado na minha conta
-When eu reproduzo o item "Música A"
-Then o item "Música A" deve passar a ter 3 reproduções no mês atual
 
 Scenario: Manter ranking de um mês disponível durante o próximo mês
 Given o ranking do mês de março foi calculado
