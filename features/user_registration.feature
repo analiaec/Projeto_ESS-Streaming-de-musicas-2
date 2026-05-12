@@ -85,13 +85,13 @@ And eu sou redirecionado para a “Página inicial”
 And eu devo ver a mensagem “Seja bem-vindo ao serviço de streaming de música. Estamos ansiosos para ouvir seus podcasts”
 And eu devo ser capaz de criar podcasts ao clicar na opção de "Adicionar podcast"
 
-Scenario: Usuário insere um e-mail não plausível
+Scenario: Usuário insere um e-mail inválido
 Given eu estou na página de "Cadastro de usuário"
-And não há nenhum dado preenchido
-When eu preencho os campos com
-    |  login  |  nome  |        senha        |      email       |  tipo de conta  |
-    |  abcabc | abc123 | Senhasupersecreta1! | abc123@ggggg.com |     Ouvinte     |
-And eu clico na opção "Finalizar cadastro"
-Then eu vejo uma mensagem na tela dizendo "Voce deve inserir um e-mail válido para realizar o cadastro"
-And eu continuo na página de “Cadastro de usuário”
+When eu preencho o campo "Login" com "Carlos1"
+And eu preencho o campo "Nome" com "Carlos"
+And eu preencho o campo "Senha" com "Senhasupersecreta1!"
+And eu preencho o campo "Email" com "Carlinhos@gmail.com"
+And eu preencho o campo "Tipo de conta" com "Ouvinte"
+And eu seleciono “Finalizar cadastro”
+Then eu vejo uma mensagem na tela de "Voce deve inserir um e-mail válido para realizar o cadastro. Coloque outro e-mail."
 And o campo "Email" deve estar destacado como inválido
