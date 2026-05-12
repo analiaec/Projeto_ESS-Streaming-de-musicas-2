@@ -4,15 +4,17 @@ I want to gerenciar usuários
 So that eu possa manter as informações atualizadas no sistema
 
 Scenario: Inserir um novo usuário a partir da área de manutenção
-Given eu estou logado como administrador
+Given eu estou logado como "Administrador" com login "Roberto" e senha "Senhaforte1!"
 And eu estou na página de "Gerenciamento de usuários"
-When eu clico na opção "Adicionar usuário"
-And eu preencho os dados do usuário com
-    |  login  |  nome  |        senha        |      email       |  tipo de conta  |
-    |  abcabc | abc123 | Senhasupersecreta1! | abc123@gmail.com |     Ouvinte     |
-And eu clico em "Salvar"
-Then o usuário deve ser cadastrado com sucesso
-And ele deve aparecer na lista de usuários
+When eu seleciono "Adicionar usuário"
+And eu preencho o campo "Login" com "Carlos1"
+And eu preencho o campo "Nome" com "Carlos"
+And eu preencho o campo "Senha" com "Senhasupersecreta1!"
+And eu preencho o campo "Email" com "Carlinhos@gmail.com"
+And eu preencho o campo "Tipo de conta" com "Ouvinte"
+And eu seleciono "Salvar"
+Then eu vejo uma mensagem na tela de "O usuário foi inserido com sucesso."
+And eu devo ver o usuário de login "Carlos1" na lista de usuários
 
 Scenario: Inserir um novo usuário artista a partir da área de manutenção
 Given eu estou logado como administrador
