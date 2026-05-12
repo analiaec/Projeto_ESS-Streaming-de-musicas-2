@@ -44,15 +44,18 @@ And o usuário de login "Carlos1" existe
 And o campo "Login" deve estar destacado como inválido
 
 Scenario: Erro ao não escrever informações válidas para o inserimento de um novo usuário
-Given eu estou logado como administrador
+Given eu estou logado como "Administrador" com login "Roberto" e senha "Senhaforte1!"
 And eu estou na página de "Gerenciamento de usuários"
-When eu clico na opção "Adicionar usuário"
-And eu preencho os dados do usuário com
-    |  login  |  nome  | senha |      email       |  tipo de conta  |   Descricao   |
-    |         | abc123 | senha | abc123@ggggg.com |     Podcast     |     xxxxx     |
-And eu clico em "Salvar"
-Then eu vejo uma mensagem na tela dizendo "Preencha os campos com dados válidos para inserir um novo usuário."
-And a lista de usuários permanece a mesma
+When eu seleciono "Adicionar usuário"
+And eu preencho o campo "Login" com "Carlos1"
+And eu preencho o campo "Nome" com "Carlos"
+And eu preencho o campo "Senha" com "ab"
+And eu preencho o campo "Email" com "Carlinhos@gmail.com"
+And eu preencho o campo "Tipo de conta" com "Ouvinte"
+And eu seleciono "Salvar"
+Then eu vejo uma mensagem na tela de "A senha deve ter pelo menos 3 caracteres. Construa outra senha."
+And o usuário de login "Carlos1" não existe
+And o campo "Senha" deve estar destacado como inválido
 
 Scenario: Atualizar informações de um usuário existente
 Given existe um usuário cadastrado no sistema
