@@ -1,10 +1,9 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Length, ValidateIf,} from "class-validator";
 import { UserRole } from "../entities/user.entity";
-//dto e data transfer objects
-//nao precisa fazer nada com UpdateUserDto porque ele extende do CreateUserDto
-export class CreateUserDto { //nao tem id porque so cria um id depois
+
+export class CreateUserDto {
    @IsString()
-   @Length(3,20)
+   @Length(3,20) //depois implementar os message.
    "login": string;
    @IsString()
    @Length(1, 50)
@@ -21,9 +20,4 @@ export class CreateUserDto { //nao tem id porque so cria um id depois
     @IsString()
     @IsNotEmpty()
     "description"?: string; */
-   /*
-   @IsEnum(["INTERN", "ENGINEER" , "ADMIN"], {
-    message: 'Valid role required' //mensagem se nao for papel valido, tem que usar , no array
-   })
-   "role": "INTERN" | "ENGINEER" | "ADMIN";*/
 }
