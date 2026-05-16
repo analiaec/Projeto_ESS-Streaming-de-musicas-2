@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User, UserRole } from './entities/user.entity';
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+  @InjectRepository(User)
+  private usersRepository: Repository<User>,) {}
+
+  async create(createUserDto: CreateUserDto) {
+    const newUser = this.usersRepository.create(createUserDto) //assim usa o dto com a entidade
+    return await this.usersRepository.save(newUser) //save faz insert no banco de dados
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.usersRepository.find()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(login: string) {
+    const user = await this.usersRepository.findOneBy({login})
+        if(!user){throw new NotFoundException('User not found')}
+        return user
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(login: string, updateUserDto: UpdateUserDto) {
+    const user = await this.findOne(login) //garante que o usuario existe ou lanca notfoundexception
+    Object.assign(user,updateUserDto) //sobreescreve os campos enviados
+    return this.usersRepository.save(user) //faz update em vez de insert pois o typeorm percebe que o objeto ja tem id
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(login: string) {
+   const removedUser = await this.findOne(login) //acha o login do usuario pra remover
+   await this.usersRepository.remove(removedUser)
+   return removedUser //retorna o id do usuario removido
   }
 }
