@@ -1,0 +1,32 @@
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne,
+  ManyToMany,
+  JoinTable } from 'typeorm';
+import { Artista } from '../artistas/artista.entity';
+import { Album } from '../albums/album.entity';
+@Entity('musicas')
+export class Musica {
+
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  titulo: string;
+
+  @Column()
+  genero: string;
+
+  @Column()
+  ano: number;
+
+  @Column({ default: 0 })
+  reproducoes: number;
+
+  @ManyToOne(() => Album, album => album.musicas)
+  album: Album;
+
+  // uma música pode ter vários artistas
+  // e um artista pode ter várias músicas
+  @ManyToMany(() => Artista, artista => artista.musicas)
+  @JoinTable({ name: 'musica_artistas' }) // nome da tabela intermediária
+  artistas: Artista[];
+}
