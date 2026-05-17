@@ -1,34 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param} from '@nestjs/common';
 import { PlaybackService } from './playback.service';
 import { CreatePlaybackDto } from './dto/create-playback.dto';
-import { UpdatePlaybackDto } from './dto/update-playback.dto';
 
-@Controller('playback')
+@Controller('users/:login/playback')
 export class PlaybackController {
   constructor(private readonly playbackService: PlaybackService) {}
 
-  @Post()
+  @Post() //cria playbacks
   create(@Body() createPlaybackDto: CreatePlaybackDto) {
     return this.playbackService.create(createPlaybackDto);
   }
 
   @Get()
-  findAll() {
-    return this.playbackService.findAll();
+  findByUser(@Param('login') login:string,){
+    return this.playbackService.findByUser(login);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.playbackService.findOne(+id);
+  findOne(@Param('login') login: string, @Param('id') id: number) {
+    return this.playbackService.findOne(login, id,);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePlaybackDto: UpdatePlaybackDto) {
-    return this.playbackService.update(+id, updatePlaybackDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.playbackService.remove(+id);
-  }
 }
