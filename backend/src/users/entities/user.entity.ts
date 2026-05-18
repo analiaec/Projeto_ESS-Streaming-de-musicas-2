@@ -4,7 +4,7 @@ import { Playback } from '../../playback/entities/playback.entity';
 export enum UserRole{
   OUVINTE = 'OUVINTE',
   ARTISTA = 'ARTISTA',
-  PODCAST = 'PODCAST'
+  PODCASTER = 'PODCASTER'
 }
 @Entity('users')
 export class User {
