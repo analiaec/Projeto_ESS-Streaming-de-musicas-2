@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Query, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Query, Param, ParseIntPipe} from '@nestjs/common';
 import { MusicasService } from './musicas.service';
 
-@Controller('musicas')
+@Controller('users/:login/musicas')
 export class MusicasController {
 
   constructor(private readonly musicasService: MusicasService) {}
@@ -18,8 +18,8 @@ export class MusicasController {
         return this.musicasService.buscar(termo, artista, genero, ano);
     }
   @Post(':id/reproducao') 
-    registrarReproducoes(@Param('id', ParseIntPipe) id: number) {
-        return this.musicasService.registrarReproducoes(id);
+    registrarReproducoes(@Param('id', ParseIntPipe) id: number, @Param('login') login: string) {
+        return this.musicasService.registrarReproducoes(id, login);
     }
 
   }

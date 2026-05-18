@@ -1,4 +1,5 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import { Playback } from '../../playback/entities/playback.entity';
 
 export enum UserRole{
   OUVINTE = 'OUVINTE',
@@ -21,4 +22,5 @@ export class User {
 
   @Column({type: 'enum', enum: UserRole})
   "role": UserRole;
+
 }

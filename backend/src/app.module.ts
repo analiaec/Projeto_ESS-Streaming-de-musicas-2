@@ -2,6 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import {MusicasModule} from './musicas/musicas.module'
+import { PodcastModule } from './podcast/podcast.module';
+import { ProgramasModule } from './programas/programas.module';
+import { EpisodesModule } from './episodes/episodes.module';
+import { PlaybackModule } from './playback/playback.module';
+import { UsersModule } from './users/users.module';
 
 
 @Module({
@@ -19,6 +24,11 @@ import {MusicasModule} from './musicas/musicas.module'
       synchronize: true,
     }),
     MusicasModule,
+    PodcastModule,
+    ProgramasModule,
+    EpisodesModule,
+    PlaybackModule,
+    UsersModule
   ],
 })
 export class AppModule {}
