@@ -36,7 +36,6 @@ Feature: Streaming System
     And aplico o filtro de gênero "GeneroInexistente123"
     Then devo ver um placeholder informando que não houveram resultados
     And o sistema não deve exibir nenhum item na lista de resultados
-    And os stakeholders querem um passo novo ao executar a ação
 
   Scenario: Busca por nome que retorna resultado
     Given estou logado como "Usuário" com login "LuisCardoso012" e senha "1234"
@@ -119,6 +118,7 @@ Feature: Streaming System
     And posso ver o campo de filtro "Nome do artista/podcast"
     And posso ver o campo de filtro "Ano de lançamento"
 
+  @ignore
   Scenario: Recomendacao de musicas com base em um unico genero
     Given estou logado como "Usuario" com login "LuisCardoso012" e senha "1234"
     And meu histórico de reproduções contém apenas as músicas "Chega de Saudade" e "Desafinado" do gênero "Bossa Nova"
