@@ -1,15 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne,
-  ManyToMany,
-  JoinTable } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Programa } from '../../programas/entities/programa.entity';
 import { Episode } from '../../episodes/entities/episode.entity';
 
 @Entity('podcast')
 export class Podcast extends User {
-    @Column() 
-    descricao: string;
+  // descricao publica do canal de podcast
+  @Column()
+  descricao: string;
 
-    @ManyToMany(() => Programa, programa => programa.podcast)
-    programa: Programa[];
+  // um podcast pode ter varios episodios
+  @OneToMany(() => Episode, episode => episode.podcast)
+  episodes: Episode[];
 }

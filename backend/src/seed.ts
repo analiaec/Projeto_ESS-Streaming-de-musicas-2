@@ -28,9 +28,7 @@ async function seed() {
   const albumRepository = AppDataSource.getRepository(Album);
 
 
-  // -----------------------------------------------------------------------
-  // Limpa as tabelas antes de popular
-  // -----------------------------------------------------------------------
+
   await AppDataSource.query('DELETE FROM musica_artistas WHERE 1=1').catch(() => {});
     await AppDataSource.query('DELETE FROM musicas WHERE 1=1').catch(() => {});
     await AppDataSource.query('DELETE FROM albuns WHERE 1=1').catch(() => {});
@@ -38,9 +36,7 @@ async function seed() {
     await AppDataSource.query('DELETE FROM users WHERE 1=1').catch(() => {});
     console.log('Tabelas limpas...');
 
-  // -----------------------------------------------------------------------
-  // Usuários dos cenários
-  // -----------------------------------------------------------------------
+ 
   const usuarios = await usuarioRepository.save([
   {
     login: 'LuisCardoso012',
@@ -133,9 +129,7 @@ async function seed() {
   ]);
   const [albumPop, albumBossaNova, albumMPB, albumSamba, albumAxe] = albums;
   console.log(`${albums.length} álbuns criados...`);
-  // -----------------------------------------------------------------------
-  // Músicas dos cenários
-  // -----------------------------------------------------------------------
+ 
   const musicas = await musicaRepository.save([
   { titulo: 'MusicaBonita123',   genero: 'Pop',        ano: 2020, reproducoes: 500,  album: albumPop, artistas: [layneStaley] },
   { titulo: 'Chega de Saudade',  genero: 'Bossa Nova', ano: 1958, reproducoes: 800,  album: albumBossaNova , artistas: [joaoGilberto] },

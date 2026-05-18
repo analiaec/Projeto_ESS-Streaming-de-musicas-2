@@ -31,9 +31,6 @@ export class MusicasService {
     if(genero) {
         query.andWhere('LOWER(musica.genero) = LOWER(:genero)', {genero : genero});
     }
-    if(genero) {
-        query.andWhere('LOWER(musica.genero) = LOWER(:genero)', {genero : genero});
-    }
     if(artista) {
         query.andWhere('LOWER(artista.nomeArtistico) LIKE LOWER(:artista)', {artista : '%' + artista + '%'});
     }
