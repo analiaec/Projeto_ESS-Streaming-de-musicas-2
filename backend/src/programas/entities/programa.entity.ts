@@ -17,7 +17,7 @@ export class Programa {
   generos: string[];
 
   @ManyToOne(() => Podcast, podcast => podcast.programa)
-  podcasts: Podcast;
+  podcast: Podcast;
 
   @OneToMany(() => Episode, episode => episode.programa, {cascade: true})
   episodes: Episode[];

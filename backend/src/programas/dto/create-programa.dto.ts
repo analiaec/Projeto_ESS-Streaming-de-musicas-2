@@ -1,6 +1,6 @@
 import {IsString, IsNotEmpty, IsArray, ArrayNotEmpty,} from 'class-validator';
 
-export class CreateProgramDto {
+export class CreateProgramaDto {
 
   @IsString()
   @IsNotEmpty()
