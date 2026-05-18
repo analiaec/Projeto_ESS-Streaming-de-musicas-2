@@ -21,6 +21,6 @@ export class User {
   "email": string;
 
   @Column({type: 'enum', enum: UserRole})
-  "role": UserRole;
+  "tipodeconta": UserRole;
 
 }
