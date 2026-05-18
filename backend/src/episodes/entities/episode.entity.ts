@@ -1,6 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne,
-  ManyToMany,
-  JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, CreateDateColumn} from 'typeorm';
 import { Podcast } from '../../podcast/entities/podcast.entity';
 import { Programa } from '../../programas/entities/programa.entity';
 @Entity('episodes')
@@ -12,21 +10,13 @@ export class Episode {
   @Column()
   titulo: string;
 
-  @Column()
-  genero: string;
-
-  @Column()
-  ano: number;
+  @CreateDateColumn()
+  ano: Date;
 
   @Column({ default: 0 })
   reproducoes: number;
 
-  @ManyToOne(() => Programa, programa => programa.episodes, {nullable:false} )
+  @ManyToOne(() => Programa, programa => programa.episodes, {nullable:false, onDelete: 'CASCADE'} )
   programa: Programa;
 
-  // uma música pode ter vários artistas
-  // e um artista pode ter várias músicas
-  @ManyToMany(() => Podcast, podcast => podcast.episode)
-  @JoinTable({ name: 'episode_podcasts' }) // nome da tabela intermediária
-  podcasts: Podcast[];
 }
