@@ -3,6 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { MusicasModule } from './musicas/musicas.module';
 import { PlaylistsModule } from './playlists/playlists.module';
+import { PodcastModule } from './podcast/podcast.module';
+import { ProgramasModule } from './programas/programas.module';
+import { EpisodesModule } from './episodes/episodes.module';
+import { PlaybackModule } from './playback/playback.module';
 import { UsersModule } from './users/users.module';
 
 
@@ -22,6 +26,10 @@ import { UsersModule } from './users/users.module';
     }),
     MusicasModule,
     PlaylistsModule,
+    PodcastModule,
+    ProgramasModule,
+    EpisodesModule,
+    PlaybackModule,
     UsersModule,
   ],
 })

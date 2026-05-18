@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Musica } from './musica.entity';
+import { NotFoundError } from 'rxjs';
+import { Playback } from '../playback/entities/playback.entity';
+import { PlaybackService } from '../playback/playback.service';
 
 @Injectable()
 export class MusicasService {
@@ -9,6 +12,7 @@ export class MusicasService {
   constructor(
     @InjectRepository(Musica)
     private readonly musicaRepository: Repository<Musica>,
+    private readonly playbackService: PlaybackService,
   ) {}
 
   async emAlta(): Promise<Musica[]> {
@@ -40,11 +44,11 @@ export class MusicasService {
     return query.getMany();
 
   }
-  async registrarReproducoes(id: number): Promise<Musica> {
+  async registrarReproducoes(id: number, login: string): Promise<Musica> {
     const musica = await this.musicaRepository.findOneByOrFail({id});
-
+    if(!musica){throw new NotFoundException('Musica nao encontrada');}
     await this.musicaRepository.increment({id}, 'reproducoes', 1);
-
-    return this.musicaRepository.findOneByOrFail({id});
+    await this.playbackService.create({login, musicaid: id}) //cria o playback de acordo com o usuario que escutou a musica e o id da musica
+    return musica;
   }
 }
