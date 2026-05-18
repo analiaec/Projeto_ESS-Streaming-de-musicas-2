@@ -35,7 +35,7 @@ let userRepository;
         When('eu seleciono {string}', async function (acao) {
             if (acao === 'Finalizar cadastro') {
             response = await request(app.getHttpServer())
-            .post('/users')
+            .post('/auth/register')
             .send(requestBody);
         }});
        
