@@ -3,10 +3,6 @@ import assert from "assert";
 
 const BASE_URL = "http://localhost:3000/api";
 
-// =========================================================================
-// Tipos
-// =========================================================================
-
 interface Musica {
   id:          number;
   titulo:      string;
@@ -17,9 +13,6 @@ interface Musica {
   reproducoes: number;
 }
 
-// =========================================================================
-// Estado do cenário
-// =========================================================================
 
 let token:                     string | null = null;
 let usuarioLogado:             boolean       = false;
@@ -46,12 +39,10 @@ let historicoMusicas: string[]      = [];
 let generoHistorico:  string | null = null;
 let recomendacoes:    Musica[]      = [];
 
-// Ranking Em Alta — mantido em memória para cenários de empate/ultrapassagem
+// Ranking Em Alta 
 let rankingEmAlta: Musica[] = [];
 
-// =========================================================================
 // Helpers HTTP
-// =========================================================================
 
 async function get(path: string, autenticado = false): Promise<any> {
   const headers: Record<string, string> = {
@@ -79,9 +70,7 @@ async function post(path: string, body: any, autenticado = false): Promise<any> 
   return response.json();
 }
 
-// =========================================================================
 // Hook — reseta estado antes de cada cenário
-// =========================================================================
 
 Before(function () {
   token                  = null;
@@ -105,9 +94,7 @@ Before(function () {
   rankingEmAlta          = [];
 });
 
-// =========================================================================
 // 1. Autenticação / Navegação
-// =========================================================================
 
 Given(
   "estou logado como {string} com login {string} e senha {string}",
@@ -140,9 +127,7 @@ Given("estou na página {string}", function (pagina: string) {
   paginaAtual = pagina.toLowerCase();
 });
 
-// =========================================================================
 // 2. Página Inicial
-// =========================================================================
 
 When("acesso a página inicial", async function () {
   paginaAtual                = "home";
@@ -194,9 +179,7 @@ Then("vejo uma mensagem na parte de cima da tela: {string}", function (esperada:
   assert.strictEqual(mensagemTopo, esperada, "Mensagem no topo incorreta");
 });
 
-// =========================================================================
 // 3. Busca — Givens
-// =========================================================================
 
 Given(
   "não existe nenhum item no sistema que tenha título {string} ou semelhante",
@@ -251,9 +234,7 @@ Given(
   }
 );
 
-// =========================================================================
 // 3. Busca — Whens
-// =========================================================================
 
 When("seleciono a seção de busca", function () {
   paginaAtual        = "busca";
@@ -300,9 +281,7 @@ When("acesso a tela de busca sem realizar mais nenhuma ação", function () {
   paginaAtual = "busca";
 });
 
-// =========================================================================
 // 3. Busca — Thens
-// =========================================================================
 
 Then("posso ver o campo de busca por nome da música", function () {
   assert.strictEqual(paginaAtual, "busca", "Não está na página de busca");
@@ -337,9 +316,6 @@ Then("o sistema não deve exibir nenhum item na lista de resultados", function (
   assert.strictEqual(resultadosBusca.length, 0, "Lista deveria estar vazia");
 });
 
-Then("os stakeholders querem um passo novo ao executar a ação", function () {
-  // passo pendente de especificação
-});
 
 Then(
   "o sistema deve exibir a música {string} nos resultados",
@@ -476,9 +452,7 @@ Then("nenhuma música associada à um outro nome de artista deve ser listada", f
   // coberto pelo step anterior
 });
 
-// =========================================================================
 // 4. Ranking Em Alta
-// =========================================================================
 
 Given(
   "que a música {string} está cadastrada no sistema, está no ranking Em Alta e possui {int} reproduções",
@@ -572,9 +546,7 @@ Then(
   }
 );
 
-// =========================================================================
 // 5. Recomendações
-// =========================================================================
 
 Given(
   "meu histórico de reproduções contém apenas as músicas {string} e {string} do gênero {string}",
@@ -628,9 +600,7 @@ Then(
   }
 );
 
-// =========================================================================
 // Helper
-// =========================================================================
 
 function reordenarRanking(): void {
   rankingEmAlta.sort((a, b) =>
