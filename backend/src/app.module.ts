@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import {MusicasModule} from './musicas/musicas.module'
+import { MusicasModule } from './musicas/musicas.module';
+import { PlaylistsModule } from './playlists/playlists.module';
 import { PodcastModule } from './podcast/podcast.module';
 import { ProgramasModule } from './programas/programas.module';
 import { EpisodesModule } from './episodes/episodes.module';
@@ -24,11 +25,12 @@ import { UsersModule } from './users/users.module';
       synchronize: true,
     }),
     MusicasModule,
+    PlaylistsModule,
     PodcastModule,
     ProgramasModule,
     EpisodesModule,
     PlaybackModule,
-    UsersModule
+    UsersModule,
   ],
 })
 export class AppModule {}
