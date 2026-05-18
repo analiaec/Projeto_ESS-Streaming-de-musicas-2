@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, CreateDateColumn} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Podcast } from '../../podcast/entities/podcast.entity';
-import { Programa } from '../../programas/entities/programa.entity';
 @Entity('episodes')
 export class Episode {
 
@@ -16,7 +15,24 @@ export class Episode {
   @Column({ default: 0 })
   reproducoes: number;
 
-  @ManyToOne(() => Programa, programa => programa.episodes, {nullable:false, onDelete: 'CASCADE'} )
-  programa: Programa;
+  // caminho/url do audio bruto pra download
+  @Column({ nullable: true })
+  arquivoUrl: string;
+
+  // data opcional pra postar episodio no futuro
+  @Column({ type: 'timestamp', nullable: true })
+  dataPublicacaoAgendada: Date | null;
+
+  // flag pra esconder episodio ate publicar
+  @Column({ default: true })
+  publicado: boolean;
+
+  // quando ele virou publico de fato
+  @Column({ type: 'timestamp', nullable: true })
+  publicadoEm: Date | null;
+
+  // episodio pertence a um podcast
+  @ManyToOne(() => Podcast, podcast => podcast.episodes, { nullable: false, onDelete: 'CASCADE' })
+  podcast: Podcast;
 
 }
