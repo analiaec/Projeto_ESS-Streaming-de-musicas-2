@@ -7,10 +7,10 @@ import { UpdateProgramaDto } from './dto/update-programa.dto';
 export class ProgramasController {
   constructor(private readonly programasService: ProgramasService) {}
 
-  @Post()
+ /* @Post()
   create(@Param('login') login: string,@Body() createProgramaDto: CreateProgramaDto) {
     return this.programasService.create(login, createProgramaDto);
-  }
+  } */
 
   /*@Get('all')
   findAll() {
@@ -22,10 +22,10 @@ export class ProgramasController {
     return this.programasService.findOne(id);
   }
 
-  @Get()
+ /* @Get()
   findpod(@Param('login') login:string){
     return this.programasService.findpod(login);
-  }
+  } */
 
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateProgramaDto: UpdateProgramaDto) {
