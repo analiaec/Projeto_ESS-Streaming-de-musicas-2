@@ -19,6 +19,11 @@ export class UsersService {
     return this.usersRepository.find()
   }
 
+  async findByLogin(login: string) {
+    // findOneBy retorna o usuário OU null se não encontrar, sem jogar erros!
+    return await this.usersRepository.findOneBy({ login });
+}
+
   async findOne(login: string) {
     const user = await this.usersRepository.findOneBy({login})
         if(!user){throw new NotFoundException('User not found')}
