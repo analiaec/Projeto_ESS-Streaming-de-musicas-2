@@ -18,48 +18,40 @@ And eu vejo uma mensagem na tela de "Seja bem-vindo ao .WAVe."
 Scenario: Tentativa de cadastro com um Login já existente
 Given existe uma conta já cadastrada com o Login "Carlos1"
 And eu estou na página de "Cadastro de usuário"
-When eu preencho o campo "Login" com "Carlos1"
-And eu preencho o campo "Nome" com "Carlos"
-And eu preencho o campo "Senha" com "Senhasupersecreta1!"
-And eu preencho o campo "Email" com "Carlinhos@gmail.com"
-And eu preencho o campo "Tipo de conta" com "Ouvinte"
+When eu preencho os campos com:
+    |  login   |  name  |     password        |      email       |  tipodeconta  |
+    |  Carlos1 | Carlos | Senhasupersecreta1! | carlos@gmail.com |   OUVINTE     |
 And eu seleciono "Finalizar cadastro"
 Then eu vejo uma mensagem na tela de "Já existe uma conta com esse Login. Use outro Login."
-And o campo "Login" deve estar destacado como inválido
+And o campo "login" deve estar destacado como inválido
 And o usuário de login "Carlos1" existe
 
 Scenario: Erro exibido quando a senha inserida é muito curta
 Given eu estou na página de "Cadastro de usuário"
-When eu preencho o campo "Login" com "Carlos1"
-And eu preencho o campo "Nome" com "Carlos"
-And eu preencho o campo "Senha" com "ab"
-And eu preencho o campo "Email" com "Carlinhos@gmail.com"
-And eu preencho o campo "Tipo de conta" com "Ouvinte"
+When eu preencho os campos com:
+    |  login   |  name  |     password        |      email       |  tipodeconta  |
+    |  Carlos1 | Carlos |        ab           | carlos@gmail.com |   OUVINTE     |
 And eu seleciono "Finalizar cadastro"
 Then eu vejo uma mensagem na tela de "A senha deve ter pelo menos 3 caracteres. Construa outra senha."
-And o campo "Senha" deve estar destacado como inválido
+And o campo "password" deve estar destacado como inválido
 
 Scenario: Erro ao não preencher todos os campos obrigatórios para o cadastro
 Given eu estou na página de "Cadastro de usuário"
-And eu deixo todos os campos de cadastro vazios
+When eu preencho os campos com:
+    |  login   |  name  |     password        |      email       |  tipodeconta  |
+    |  Carlos1 | Carlos |                     | carlos@gmail.com |   OUVINTE     |
 And eu seleciono "Finalizar cadastro"
-Then eu vejo uma mensagem na tela de "Todos os campos obrigatórios devem ser preenchidos para o cadastro ser finalizado."
-And o campo "Login" deve estar destacado como inválido
-And o campo "Nome" deve estar destacado como inválido
-And o campo "Senha" deve estar destacado como inválido
-And o campo "Email" deve estar destacado como inválido
-And o campo "Tipo de conta" deve estar destacado como inválido
+Then eu vejo uma mensagem na tela de "O campo senha não pode estar vazio."
+And o campo "password" deve estar destacado como inválido
 
 Scenario: Erro ao preencher um campo acima do limite de caracteres
 Given eu estou na página de "Cadastro de usuário"
-When eu preencho o campo "Login" com "Carlos1"
-And eu preencho o campo "Nome" com "Carlos"
-And eu preencho o campo "Senha" com "Senhasupersecreta1!!!!!!!!!!!"
-And eu preencho o campo "Email" com "Carlinhos@gmail.com"
-And eu preencho o campo "Tipo de conta" com "Ouvinte"
+When eu preencho os campos com:
+    |  login   |  name  |             password                    |      email       |  tipodeconta  |
+    |  Carlos1 | Carlos |      Senhasupersecreta1!!!!!!!!!!!!!    | carlos@gmail.com |   OUVINTE     |
 And eu seleciono "Finalizar cadastro"
-Then eu vejo uma mensagem na tela de "Voce ultrapassou o limite de 20 caracteres no campo senha. Construa uma senha mais curta."
-And o campo "Senha" deve estar destacado como inválido
+Then eu vejo uma mensagem na tela de "A senha não pode ter mais de 20 caracteres."
+And o campo "password" deve estar destacado como inválido
 
 #Scenario: Cadastro de um usuário artista com sucesso
 #Given eu estou na página de “Cadastro de usuário”
@@ -87,11 +79,9 @@ And o campo "Senha" deve estar destacado como inválido
 
 Scenario: Usuário insere um e-mail inválido
 Given eu estou na página de "Cadastro de usuário"
-When eu preencho o campo "Login" com "Carlos1"
-And eu preencho o campo "Nome" com "Carlos"
-And eu preencho o campo "Senha" com "Senhasupersecreta1!"
-And eu preencho o campo "Email" com "Carlinhos@gmail.com"
-And eu preencho o campo "Tipo de conta" com "Ouvinte"
+When eu preencho os campos com:
+    |  login   |  name  |             password        |      email           |  tipodeconta  |
+    |  Carlos1 | Carlos |      Senhasupersecreta1!    | carlos@gmail |   OUVINTE     |
 And eu seleciono "Finalizar cadastro"
 Then eu vejo uma mensagem na tela de "Voce deve inserir um e-mail válido para realizar o cadastro. Coloque outro e-mail."
-And o campo "Email" deve estar destacado como inválido
+And o campo "email" deve estar destacado como inválido
