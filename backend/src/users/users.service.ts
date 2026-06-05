@@ -20,7 +20,7 @@ export class UsersService {
   }
 
   async findByLogin(login: string) {
-    // findOneBy retorna o usuário OU null se não encontrar, sem jogar erros!
+    //findByLogin retorna o usuário OU null se não encontrar, sem jogar erros
     return await this.usersRepository.findOneBy({ login });
 }
 
@@ -40,5 +40,10 @@ export class UsersService {
    const removedUser = await this.findOne(login) //acha o login do usuario pra remover
    await this.usersRepository.remove(removedUser)
    return removedUser //retorna o id do usuario removido
+  }
+  async promote(login: string) {
+    const user = await this.findOne(login);
+    user.tipodeconta = UserRole.ADMIN;
+    return this.usersRepository.save(user);
   }
 }
