@@ -35,7 +35,7 @@ let dataSource;
                 await dataSource.query('TRUNCATE TABLE "users" CASCADE;'); 
         }}});
 
-        Given('existe uma conta já cadastrada com o Login {string}', async function (login) {
+        Given('o sistema possui uma conta cadastrada com o login {string}', async function (login) {
             await userRepository.save({login,
             name: 'Carlos',
             password: 'Senha123!',
@@ -44,25 +44,19 @@ let dataSource;
         });
         });
 
-         Given('eu estou na página de {string}', function (string) {
-            // Implementar mais tarde no frontend
-            requestbody = {}; //apenas para inicializar contexto
-            //return 'pending';
-         });
+        Given('não existe uma conta cadastrada com o login {string}', async function (login) {
+            await userRepository.delete({ login });
+        });
           
-         When('eu preencho os campos com:', function (dataTable) {
+         When('eu envio uma solicitação de cadastro com os dados:', async function (dataTable) {
             // Pega a primeira linha do datatable e transforma em objeto
             requestbody = dataTable.hashes()[0];
-        });
-  
-        When('eu seleciono {string}', async function (acao) {
-            if (acao === 'Finalizar cadastro') {
             response = await request(app.getHttpServer()) //manda o request pro server de acordo com o .post e o .send
             .post('/api/auth/register')
             .send(requestbody);
-        }});
+        });
        
-         Then('o usuário de login {string} existe com os campos:', async function (login, dataTable) {
+         Then('o usuário de login {string} é armazenado corretamente pelo sistema com os campos:', async function (login, dataTable) {
             const esperado = dataTable.hashes()[0];
             //busca usuário no banco
             const usuario = await userRepository.findOne({where: { login },});
@@ -73,24 +67,19 @@ let dataSource;
             }
         });
        
-         Then('eu vou para a {string}', function (pagina) {
-            if (pagina === 'Página inicial') {
-            if (response.status !== 201) {throw new Error('Não foi para a página inicial',);}
-        }});
-       
-         Then('eu vejo uma mensagem na tela de {string}', function (mensagemEsperada) {
+         Then('o sistema retorna a mensagem {string}', function (mensagemEsperada) {
             //process.stdout.write(`\n\nCORPO DA RESPOSTA DA API: ${JSON.stringify(response.body, null, 2)}\n\n`); //mensagem pra analisar o corpo da resposta
             //process.stdout.write(`\n\nMSG ESPERADA (CUCUMBER): "${mensagemEsperada}"\n\n`); //mensagem para ver a variavel mensagemEsperada
             let mensagemRecebida = Array.isArray(response.body.message) ? response.body.message : [response.body.message];
             if (!mensagemRecebida.includes(mensagemEsperada)) {throw new Error( `Mensagem não encontrada.\nEsperada: "${mensagemEsperada}"\nRecebidas: ${JSON.stringify(mensagens)}`);}
         });
 
-        Then('o campo {string} deve estar destacado como inválido', function (string) {
-           // Implementar no frontend
-            console.log('Frontend step ainda não implementado');
-         });
-
-         Then('o usuário de login {string} existe', async function (login) {
+         Then('o usuário de login {string} permanece armazenado no sistema', async function (login) {
             const user = await userRepository.findOne({ where: { login } });
             if (!user) {throw new Error('Usuário não existe no banco');}
+        });
+
+        Then('nenhuma conta com o login {string} é armazenada pelo sistema', async function (login) {
+            const user = await userRepository.findOne({where: { login },});
+            if (user) {throw new Error(`Uma conta com o login ${login} foi armazenada indevidamente`);}
         });
