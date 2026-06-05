@@ -8,7 +8,7 @@ Given não existe uma conta cadastrada com o login "Carlos1"
 When eu envio uma solicitação de cadastro com os dados:
     |  login   |  name  |     password        |      email       |  tipodeconta  |
     |  Carlos1 | Carlos | Senhasupersecreta1! | carlos@gmail.com |   OUVINTE     |
-Then o usuário "Carlos1" é armazenado corretamente pelo sistema com os campos:
+Then o usuário de login "Carlos1" é armazenado corretamente pelo sistema com os campos:
   |  name  |        password     |      email       |    tipodeconta  |
   | Carlos | Senhasupersecreta1! | carlos@gmail.com |     OUVINTE     |
 And o sistema retorna a mensagem "Seja bem-vindo ao .WAVe."
