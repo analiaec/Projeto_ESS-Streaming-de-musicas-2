@@ -2,7 +2,7 @@ import { Link }    from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import './Home.css';
 export function Home() {
-  const { login, logado, sair } = useAuth();
+  const { login, logado, role, sair } = useAuth();
 
   return (
     <div className="home-container">
@@ -13,7 +13,7 @@ export function Home() {
         }
         {logado
           ? <button onClick={sair}>Sair</button>
-          : <Link to="/login" className="home-btn">Login</Link>
+          : <Link to="/auth/login" className="home-btn">Login</Link>
         }
       </div>
 
@@ -24,6 +24,11 @@ export function Home() {
         <Link to="/busca" className="home-btn">
           Buscar Musicas
         </Link>
+        {role === 'ADMIN' && (
+        <Link to="/admin/users" className="home-btn">
+          Gerenciar Usuarios
+        </Link>
+        )}
       </div>
     </div>
   );
