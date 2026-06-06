@@ -9,3 +9,10 @@
   padding: 10px 25px;
   text-align: center;
 }
+
+.erro {
+  color: red;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
