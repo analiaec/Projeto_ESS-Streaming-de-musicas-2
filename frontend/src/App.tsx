@@ -1,17 +1,22 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home }   from './pages/Home';
-import { Busca }  from './pages/Busca';
-import { EmAlta } from './pages/EmAlta';
+import { AuthProvider } from './contexts/AuthContext';
+import { Home }         from './pages/Home';
+import { EmAlta }       from './pages/EmAlta';
+import { Busca }        from './pages/Busca';
+import { Login }        from './pages/Login';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/"        element={<Home />}   />
-        <Route path="/em-alta" element={<EmAlta />} />
-        <Route path="/busca"   element={<Busca />}  />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/"        element={<Home />}   />
+          <Route path="/em-alta" element={<EmAlta />} />
+          <Route path="/busca"   element={<Busca />}  />
+          <Route path="/login"   element={<Login />}  />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
