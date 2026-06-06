@@ -8,8 +8,32 @@ export const api = axios.create({
 
 export const musicasUrl = (path: string) =>
   `/users/${LOGIN_PADRAO}/musicas${path}`;
-
+export async function registerApi(
+  login: string,
+  name: string,
+  password: string,
+  email: string,
+  tipodeconta: string,
+) {
+  const res = await api.post('/auth/register', {
+    login,
+    name,
+    password,
+    email,
+    tipodeconta,
+  });
+  return res.data;
+}
 export async function loginApi(login: string, password: string) {
   const res = await api.post('/auth/login', { login, password });
   return res.data; // { access_token: '...' }
+}
+export async function getUsersApi(token: string) {
+  const res = await api.get('/users', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
 }
