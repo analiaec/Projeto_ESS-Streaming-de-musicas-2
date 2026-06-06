@@ -32,7 +32,7 @@ Feature: Streaming System
 
   Scenario: Busca com filtro de genero inexistente
     Given estou na página de busca
-    When pesquiso por uma música sem preencher o campo de busca
+    When pesquiso pelo termo ""
     And aplico o filtro de gênero "GeneroInexistente123"
     Then devo ver um placeholder informando que não houveram resultados
     And o sistema não deve exibir nenhum item na lista de resultados
@@ -51,11 +51,11 @@ Feature: Streaming System
     Given estou logado como "Usuário" com login "LuisCardoso012" e senha "1234"
     And existe no sistema músicas do ano "1994"
     And estou na página de busca
-    When não preencho o campo de nome
+    When realizo uma busca pelo termo ""
     And aplico o filtro de ano de lançamento "1994"
     Then o sistema deve exibir as 10 músicas com maior número de reproduções do ano "1994"
     And os resultados devem estar ordenados de forma decrescente pelo total de reproduções
-    And nenhuma música com ano de lançamento diferente de "1994" deve ser exibida
+    And nenhuma música com ano de lançamento diferente de "1994" deve ser exibidaZ
 
   Scenario: Exibicao do historico de filtros ao abrir a busca
     Given estou logado como "Usuário" com login "LuisCardoso012" e senha "1234"
@@ -67,7 +67,7 @@ Feature: Streaming System
     Given estou logado como "Usuário" com login "LuisCardoso012" e senha "1234"
     And existe no sistema músicas do gênero "MPB"
     And estou na página "Busca"
-    When preencho o campo nome com ""
+    When pesquiso pelo termo ""
     And aplico o filtro de gênero "MPB"
     Then o sistema deve exibir as 10 músicas com maior número de reproduções do gênero "MPB" nos resultados
     And os resultados devem estar ordenados de forma decrescente pelo total de reproduções
@@ -77,7 +77,7 @@ Feature: Streaming System
     Given estou logado como "Usuário" com login "LuisCardoso012" e senha "1234"
     And existe no sistema músicas do artista "Noel Rosa"
     And estou na página "Busca"
-    When não preencho o campo de nome
+    When pesquiso pelo termo ""
     And aplico o filtro de nome de artista "Noel Rosa"
     Then o sistema deve exibir as 10 músicas com maior número de reproduções associadas ao artista "Noel Rosa" nos resultados
     And os resultados devem estar ordenados de forma decrescente pelo total de reproduções
@@ -95,13 +95,13 @@ Feature: Streaming System
 
   Scenario: Empate em numero de reproducoes no ranking Em Alta
     Given que a música "Eu te devoro" está cadastrada no sistema, está no ranking Em Alta e possui 980 reproduções
-    And a música "Se.." está cadastrada no sistema, está no em alta e possui 980 reproduções
+    And que a música "Se.." está cadastrada no sistema, está no ranking Em Alta e possui 980 reproduções
     When o sistema ordena o ranking músicas Em Alta
     Then as músicas devem ser ordenadas de maneira alfabética por critério de desempate
 
   Scenario: Ultrapassagem de numero de reproducoes no ranking Em Alta
     Given que a música "Oceano" está cadastrada no sistema, está no ranking Em Alta e possui 1000 reproduções
-    And a música "Sina" está cadastrada no sistema, está no em alta e possui 999 reproduções
+    And que a música "Sina" está cadastrada no sistema, está no ranking Em Alta e possui 999 reproduções
     And o ranking de músicas em alta exibe "Oceano" na posição 1
     And o ranking de músicas em alta exibe "Sina" na posição 2
     When a música "Sina" recebe 2 novas reproduções
@@ -118,13 +118,18 @@ Feature: Streaming System
     And posso ver o campo de filtro "Nome do artista/podcast"
     And posso ver o campo de filtro "Ano de lançamento"
 
-  @ignore
-  Scenario: Recomendacao de musicas com base em um unico genero
-    Given estou logado como "Usuario" com login "LuisCardoso012" e senha "1234"
-    And meu histórico de reproduções contém apenas as músicas "Chega de Saudade" e "Desafinado" do gênero "Bossa Nova"
-    And existem músicas do gênero "Bossa Nova" armazenadas no sistema que não estão presentes no meu histórico
-    And eu estou na página inicial
-    When eu acesso a seção de músicas recomendadas
-    Then o sistema deve exibir músicas do gênero "Bossa Nova" nas recomendações
-    And músicas de outros gêneros não devem ser recomendadas
-    And músicas "Chega de Saudade" e "Desafinado" não devem ser recomendadas
+
+  #Scenario: Busca sem diferenciar Caixa alta e baixa
+  #  Given que a música "Oceano" está cadastrada no sistema
+  #  When uma busca com filtros é realizada com o termo "oceano"
+  #  Then a música "Oceano" deve ser retornada pelo sistema
+
+  #Scenario: Recomendacao de musicas com base em um unico genero
+  #  Given estou logado como "Usuario" com login "LuisCardoso012" e senha "1234"
+  #  And meu histórico de reproduções contém apenas as músicas "Chega de Saudade" e "Desafinado" do gênero "Bossa Nova"
+  #  And existem músicas do gênero "Bossa Nova" armazenadas no sistema que não estão presentes no meu histórico
+  #  And eu estou na página inicial
+  #  When eu acesso a seção de músicas recomendadas
+  #  Then o sistema deve exibir músicas do gênero "Bossa Nova" nas recomendações
+  #  And músicas de outros gêneros não devem ser recomendadas
+  #  And músicas "Chega de Saudade" e "Desafinado" não devem ser recomendadas
