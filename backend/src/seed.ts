@@ -31,7 +31,7 @@ async function seed() {
 
   await AppDataSource.query('DELETE FROM musica_artistas WHERE 1=1').catch(() => {});
     await AppDataSource.query('DELETE FROM musicas WHERE 1=1').catch(() => {});
-    await AppDataSource.query('DELETE FROM albuns WHERE 1=1').catch(() => {});
+    await AppDataSource.query('TRUNCATE musica_artistas, musicas, albuns, artistas, users RESTART IDENTITY CASCADE');
     await AppDataSource.query('DELETE FROM artistas WHERE 1=1').catch(() => {});
     await AppDataSource.query('DELETE FROM users WHERE 1=1').catch(() => {});
     console.log('Tabelas limpas...');

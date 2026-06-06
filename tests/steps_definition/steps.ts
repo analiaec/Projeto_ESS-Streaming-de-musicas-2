@@ -136,10 +136,7 @@ When("seleciono a seção de busca", function () {
 When("realizo uma busca pelo termo {string}", async function (termo: string) {
   resultadosBusca = await getMusicas(loginAtual, `?termo=${encodeURIComponent(termo)}`);
 });
-When("pesquiso por uma música sem preencher o campo de busca", function () { termoBusca = ""; });
 When("pesquiso pelo termo {string}", function (termo: string) { termoBusca = termo; });
-When("não preencho o campo de nome", function () { termoBusca = ""; });
-When("preencho o campo nome com {string}", function (valor: string) { termoBusca = valor; });
 When("aplico o filtro de gênero {string}", async function (genero: string) {
   const params = new URLSearchParams();
   if (termoBusca) params.append("termo", termoBusca);
@@ -172,10 +169,6 @@ Then("o sistema não deve exibir nenhum item na lista de resultados", function (
 });
 Then("o sistema deve exibir a música {string} nos resultados", function (titulo: string) {
   assert.ok(resultadosBusca.some((m) => m.titulo === titulo), `'${titulo}' não encontrada nos resultados`);
-});
-Then("os resultados devem estar ordenados priorizando correlações exatas e depois parciais", function () {
-  assert.ok(resultadosBusca.length > 0);
-  assert.ok(resultadosBusca[0].titulo.includes("MusicaBonita123"));
 });
 Then("os resultados devem estar ordenados de forma decrescente priorizando correlações exatas e depois parciais", function () {
   assert.ok(resultadosBusca.length > 0);
@@ -232,14 +225,6 @@ Given("que a música {string} está cadastrada no sistema, está no ranking Em A
     rankingEmAlta.push({ ...musica, reproducoes });
   }
 );
-Given("a música {string} está cadastrada no sistema, está no em alta e possui {int} reproduções",
-  async function (titulo: string, reproducoes: number) {
-    const resultado = await getMusicas(loginAtual, `?termo=${encodeURIComponent(titulo)}`);
-    const musica = resultado.find((m: Musica) => m.titulo === titulo);
-    assert.ok(musica, `Música '${titulo}' não encontrada no sistema`);
-    rankingEmAlta.push({ ...musica, reproducoes });
-  }
-);
 Given("o ranking de músicas em alta exibe {string} na posição {int}",
   async function (titulo: string, posicao: number) {
     if (rankingEmAlta.length > 0) {
@@ -251,7 +236,6 @@ Given("o ranking de músicas em alta exibe {string} na posição {int}",
   }
 );
 When("o sistema ordena o ranking músicas Em Alta", function () { reordenarRanking(); });
-When("o sistema ordena o ranking de músicas Em Alta", function () { reordenarRanking(); });
 When("a música {string} recebe {int} novas reproduções", async function (titulo: string, novas: number) {
   const resultado = await getMusicas(loginAtual, `?termo=${encodeURIComponent(titulo)}`);
   const musica = resultado.find((m: Musica) => m.titulo === titulo);

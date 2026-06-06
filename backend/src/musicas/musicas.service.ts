@@ -39,7 +39,6 @@ export class MusicasService {
     }
     query.limit(10);
     return query.getMany();
-
   }
   async registrarReproducoes(id: number, login: string): Promise<Musica> {
     const musica = await this.musicaRepository.findOneByOrFail({id});
