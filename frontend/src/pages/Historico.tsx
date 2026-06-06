@@ -45,7 +45,7 @@ export function Historico() {
       </div>
 
       {historico.length === 0 ? (
-        <p>Nenhuma musica ouvida ainda.</p>
+        <p>Nenhuma música ouvida ainda.</p>
       ) : (
         <ul className="historico-lista">
           {historico.map((musica, index) => (

@@ -1,0 +1,27 @@
+.botoes-login {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.campo-login {
+  width: 300px;
+  height: 40px;
+  font-size: 18px;
+}
+
+.campo-senha {
+  width: 300px;
+  height: 40px;
+  font-size: 18px;
+}
+
+.botao-entrar {
+  width: 150px;
+  height: 50px;
+}
+
+.botao-criar {
+  width: 150px;
+  height: 50px;
+}

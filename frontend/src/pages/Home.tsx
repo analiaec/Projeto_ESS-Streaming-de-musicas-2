@@ -1,8 +1,9 @@
 import { Link }    from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import './Home.css';
+
 export function Home() {
-  const { login, logado, sair } = useAuth();
+  const { login, logado, role, sair } = useAuth();
 
   return (
     <div className="home-container">
@@ -21,16 +22,27 @@ export function Home() {
         <Link to="/em-alta" className="home-btn">
           Músicas em Alta
         </Link>
+
         <Link to="/busca" className="home-btn">
           Buscar Músicas
         </Link>
-        <Link to="/recomendacoes" className="home-btn">
-          Para Você
-        </Link>
+
         {logado && (
-        <Link to="/historico" className="home-btn">
+          <Link to="/recomendacoes" className="home-btn">
+            Para Você
+          </Link>
+        )}
+
+        {logado && (
+          <Link to="/historico" className="home-btn">
             Histórico
-        </Link>
+          </Link>
+        )}
+
+        {role === 'ADMIN' && (
+          <Link to="/admin/users" className="home-btn">
+            Gerenciar Usuários
+          </Link>
         )}
       </div>
     </div>
