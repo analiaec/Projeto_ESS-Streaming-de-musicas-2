@@ -19,7 +19,7 @@ export function AdminUsers() {
     setUsuarioEditando(usuario);
     setNovoNome(usuario.name);
     setNovaSenha('');
-    setNovoTipo(usuario.tipodeconta);
+    setNovoTipo(usuario.role);
   }
 
   async function salvarAlteracoes() {
