@@ -4,9 +4,10 @@ import { api }                 from '../api';
 import { Musica }              from '../types';
 import { useAuth }             from '../contexts/AuthContext';
 import './Historico.css';
+import './Home.css';
 
 export function Historico() {
-  const { login }                 = useAuth();
+  const { login, sair }                 = useAuth();
   const [historico, setHistorico] = useState<Musica[]>([]);
   const [carregando, setCarr]     = useState(true);
   const [erro, setErro]           = useState<string | null>(null);
@@ -39,9 +40,13 @@ export function Historico() {
 
   return (
     <div className="historico-container">
+      <div className="home-header">
+        <h1>Olá, {login}!</h1>
+        <button className="home-btn-outline" onClick={sair}>Sair</button>
+      </div>
       <div className="historico-header">
         <Link to="/" className="historico-voltar">Voltar</Link>
-        <h1 className="historico-titulo">Histórico de {login}</h1>
+        <h1 className="historico-titulo">Histórico</h1>
       </div>
 
       {historico.length === 0 ? (

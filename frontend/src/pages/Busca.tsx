@@ -3,6 +3,7 @@ import { Link }            from 'react-router-dom';
 import { api, musicasUrl } from '../api';
 import { Musica }          from '../types';
 import { MusicaCard }      from '../components/MusicaCard';
+import { useAuth } from '../contexts/AuthContext';
 import './Busca.css';
 
 export function Busca() {
@@ -13,6 +14,7 @@ export function Busca() {
   const [resultados, setResultados] = useState<Musica[]>([]);
   const [buscou,     setBuscou]     = useState(false);
   const [carregando, setCarregando] = useState(false);
+  const { login, logado, role, sair } = useAuth();
 
   async function buscar() {
     const params = new URLSearchParams();
@@ -41,7 +43,16 @@ export function Busca() {
 
   return (
     <div className="busca-container">
-
+      <div className="home-header">
+        {logado
+          ? <h1>Olá, {login}!</h1>
+          : <h1>Faça login</h1>
+        }
+        {logado
+          ? <button className="home-btn-outline" onClick={sair}>Sair</button>
+          : <Link to="/login" className="home-btn-outline">Login</Link>
+        }
+      </div>
       <div className="busca-header">
         <Link to="/" className="busca-voltar">Voltar</Link>
         <h1 className="busca-titulo">Busca</h1>
