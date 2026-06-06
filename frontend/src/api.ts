@@ -37,3 +37,21 @@ export async function getUsersApi(token: string) {
 
   return res.data;
 }
+
+export async function updateUserApi(
+  login: string,
+  dados: any,
+  token: string,
+) {
+  const res = await api.patch(
+    `/users/${login}`,
+    dados,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return res.data;
+}
