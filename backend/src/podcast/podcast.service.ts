@@ -36,7 +36,7 @@ export class PodcastService {
 
     const podcast = this.podcastRepository.create({
       ...createPodcastDto,
-      role: UserRole.PODCASTER,
+      tipodeconta: UserRole.PODCASTER,
     });
 
     return this.podcastRepository.save(podcast);
@@ -65,7 +65,7 @@ export class PodcastService {
     const podcast = await this.findOne(login);
 
     Object.assign(podcast, updatePodcastDto);
-    podcast.role = UserRole.PODCASTER;
+    podcast.tipodeconta = UserRole.PODCASTER;
     return this.podcastRepository.save(podcast);
   }
 

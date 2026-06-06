@@ -16,12 +16,12 @@ export class ProgramasService {
     private podcastRepository: Repository<Podcast>,
   ){}
 
-  async create(login:string, createProgramaDto: CreateProgramaDto) {
+  /*async create(login:string, createProgramaDto: CreateProgramaDto) {
   const podcast = await this.podcastRepository.findOne({where: { login },});
   if (!podcast) {throw new NotFoundException('Podcast nao encontrado');}
   const program = this.programRepository.create({nome: createProgramaDto.nome, generos: createProgramaDto.generos, podcast, });
   return this.programRepository.save(program);
-  }
+  } */
 
   async findAll() {
     return this.programRepository.find({relations: ['podcast'],});
@@ -46,10 +46,10 @@ export class ProgramasService {
     return this.programRepository.remove(program);
   }
 
-  async findpod(login: string){
+  /*async findpod(login: string){
     const podcast = await this.podcastRepository.findOne({where:{login},});
     if(!podcast){throw new NotFoundException('Podcast nao encontrado');}
     return this.programRepository.find({where:{podcast:{login}}, relations:['podcast'],});
-  }
+  }*/
 
 }

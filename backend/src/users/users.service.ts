@@ -19,6 +19,11 @@ export class UsersService {
     return this.usersRepository.find()
   }
 
+  async findByLogin(login: string) {
+    //findByLogin retorna o usuário OU null se não encontrar, sem jogar erros
+    return await this.usersRepository.findOneBy({ login });
+}
+
   async findOne(login: string) {
     const user = await this.usersRepository.findOneBy({login})
         if(!user){throw new NotFoundException('User not found')}
@@ -35,5 +40,10 @@ export class UsersService {
    const removedUser = await this.findOne(login) //acha o login do usuario pra remover
    await this.usersRepository.remove(removedUser)
    return removedUser //retorna o id do usuario removido
+  }
+  async promote(login: string) {
+    const user = await this.findOne(login);
+    user.tipodeconta = UserRole.ADMIN;
+    return this.usersRepository.save(user);
   }
 }
