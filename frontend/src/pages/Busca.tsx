@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState }        from 'react';
+import { Link }            from 'react-router-dom';
 import { api, musicasUrl } from '../api';
 import { Musica }          from '../types';
+import { MusicaCard }      from '../components/MusicaCard';
+import './Busca.css';
 
 export function Busca() {
   const [termo,      setTermo]      = useState('');
@@ -32,70 +35,76 @@ export function Busca() {
     }
   }
 
-  return (
-    <div>
-      <h1>Busca</h1>
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Enter') buscar();
+  }
 
-      {/* Campo de busca por nome */}
-      <div>
+  return (
+    <div className="busca-container">
+
+      <div className="busca-header">
+        <Link to="/" className="busca-voltar">Voltar</Link>
+        <h1 className="busca-titulo">Busca</h1>
+      </div>
+
+      <div className="busca-filtros">
         <input
+          className="busca-input"
           type="text"
           placeholder="Buscar por nome..."
           value={termo}
           onChange={e => setTermo(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
+
+        <div className="busca-filtros-linha">
+          <select
+            className="busca-select"
+            value={genero}
+            onChange={e => setGenero(e.target.value)}
+          >
+            <option value="">Gênero</option>
+            <option value="MPB">MPB</option>
+            <option value="Bossa Nova">Bossa Nova</option>
+            <option value="Samba">Samba</option>
+            <option value="Pop">Pop</option>
+            <option value="Axé">Axé</option>
+          </select>
+
+          <input
+            className="busca-input"
+            type="text"
+            placeholder="Filtrar por artista..."
+            value={artista}
+            onChange={e => setArtista(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+
+          <input
+            className="busca-input"
+            type="number"
+            placeholder="Ano de lancamento..."
+            value={ano}
+            onChange={e => setAno(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+        </div>
+
+        <button className="busca-btn" onClick={buscar}>
+          Buscar
+        </button>
       </div>
 
-      {/* Filtros */}
-      <div>
-        <select value={genero} onChange={e => setGenero(e.target.value)}>
-          <option value="">Todos os generos</option>
-          <option value="MPB">MPB</option>
-          <option value="Bossa Nova">Bossa Nova</option>
-          <option value="Samba">Samba</option>
-          <option value="Pop">Pop</option>
-          <option value="Axe">Axe</option>
-        </select>
-
-        <input
-          type="text"
-          placeholder="Filtrar por artista..."
-          value={artista}
-          onChange={e => setArtista(e.target.value)}
-        />
-
-        <input
-          type="number"
-          placeholder="Ano de lancamento..."
-          value={ano}
-          onChange={e => setAno(e.target.value)}
-        />
-      </div>
-
-      {/* Botão de busca */}
-      <button onClick={buscar}>Buscar</button>
-
-      {/* Resultados */}
       {carregando && <p>Carregando...</p>}
 
       {buscou && resultados.length === 0 && (
-        <p>Nenhum resultado encontrado.</p>
+        <p className="busca-vazio">Nenhum resultado encontrado.</p>
       )}
 
       {resultados.length > 0 && (
-        <ul>
+        <ul className="busca-lista">
           {resultados.map(musica => (
-            <li key={musica.id}>
-              <strong>{musica.titulo}</strong>
-              {' - '}
-              {musica.artistas.map(a => a.nomeArtistico).join(', ')}
-              {' - '}
-              {musica.genero}
-              {' - '}
-              {musica.ano}
-              {' - '}
-              {musica.reproducoes} reproducoes
-            </li>
+            <MusicaCard key={musica.id} musica={musica} />
           ))}
         </ul>
       )}

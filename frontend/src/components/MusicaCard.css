@@ -1,0 +1,72 @@
+.musica-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+}
+
+.musica-info {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.musica-posicao {
+  font-weight: 600;
+  margin-right: 0.5rem;
+  color: #1a1a1a;
+  min-width: 2rem;
+}
+
+.musica-reproducoes {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* botão de play */
+.musica-btn-play {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  border: 1.5px solid #1a1a1a;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.musica-btn-play:hover {
+  background-color: #1a1a1a;
+  color: #f5f5f0;
+}
+
+.musica-btn-play.reproduzido {
+  border-color: #2d7a2d;
+  color: #2d7a2d;
+}
+
+.play-icon {
+  font-size: 0.7rem;
+  margin-left: 0.1rem; /* centraliza o triângulo visualmente */
+}
+
+/* spinner animado */
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #d0d0c8;
+  border-top-color: #1a1a1a;
+  border-radius: 50%;
+  animation: girar 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes girar {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}

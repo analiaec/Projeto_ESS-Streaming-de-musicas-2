@@ -41,7 +41,7 @@ export class PlaybackService {
     }
 
     const userPlaybacks = await this.playbackRepository.find({where: {user: {login: login}}, order: {horario: 'ASC'},});
-    if(userPlaybacks.length >= 5){await this.playbackRepository.remove(userPlaybacks[0]);}
+    if(userPlaybacks.length >= 20){await this.playbackRepository.remove(userPlaybacks[0]);}
 
     return this.playbackRepository.save(playback);
   }
@@ -56,24 +56,32 @@ export class PlaybackService {
     return playback;
   }
 
-  async findByUser(login: string){
-    const user = await this.userRepository.findOne({where: {login}}); //verifica se o usuario existe
-    if(!user) {throw new NotFoundException('Usuario nao encontrado');}
-    const playback = await this.playbackRepository.find({where: {user}, relations: ['musica', 'episode'], order: { horario: 'DESC' },});
-    if(playback.length === 0){throw new NotFoundException('Playback nao encontrado',);}
+  async findByUser(login: string) {
+    const user = await this.userRepository.findOne({ where: { login } });
+    if (!user) { throw new NotFoundException('Usuario nao encontrado'); }
+    const playback = await this.playbackRepository.find({
+      where: { user },
+      relations: ['musica', 'musica.artistas', 'episode'],
+      order: { horario: 'DESC' },
+    });
+    if (playback.length === 0) { throw new NotFoundException('Playback nao encontrado'); }
     return playback;
   }
 
-  async findbytype(login: string, type: 'music' | 'episode',id?: number,){
-    const user = await this.userRepository.findOne({where: { login },});
-    if(!user) {throw new NotFoundException('Usuario nao encontrado');}
-    const wherecondition: any = {user, }; //condicao de where generica se nao tiver id
-    if(type !== 'music' && type !== 'episode'){throw new BadRequestException('O tipo deve ser obrigatoriamente musica ou episodio.',);}
-    if(type === 'music'){wherecondition.musica = Not(IsNull());} // verifica se o tipo de filtro foi musica
-    else{wherecondition.episode = Not(IsNull());}
-    if(id){wherecondition.id = id;} //se um id for necessario
-    const playback = await this.playbackRepository.find({where: wherecondition, relations: ['musica','episode'], order:{horario: 'DESC'},});
-    if(playback.length === 0){throw new NotFoundException('Playback nao encontrado',);}
+  async findbytype(login: string, type: 'music' | 'episode', id?: number) {
+    const user = await this.userRepository.findOne({ where: { login } });
+    if (!user) { throw new NotFoundException('Usuario nao encontrado'); }
+    const wherecondition: any = { user };
+    if (type !== 'music' && type !== 'episode') { throw new BadRequestException('O tipo deve ser obrigatoriamente musica ou episodio.'); }
+    if (type === 'music') { wherecondition.musica = Not(IsNull()); }
+    else { wherecondition.episode = Not(IsNull()); }
+    if (id) { wherecondition.id = id; }
+    const playback = await this.playbackRepository.find({
+      where: wherecondition,
+      relations: ['musica', 'musica.artistas', 'episode'],
+      order: { horario: 'DESC' },
+    });
+    if (playback.length === 0) { throw new NotFoundException('Playback nao encontrado'); }
     return playback;
   }
 

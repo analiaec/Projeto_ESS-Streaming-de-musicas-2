@@ -9,6 +9,7 @@ import { EpisodesModule } from './episodes/episodes.module';
 import { PlaybackModule } from './playback/playback.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ScoresModule } from './scores/score.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AuthModule } from './auth/auth.module';
     PlaybackModule,
     UsersModule,
     AuthModule,
+    ScoresModule,
   ],
 })
 export class AppModule {}

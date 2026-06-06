@@ -1,21 +1,24 @@
 .home-container {
-  max-width: 800px;
+  width: 100vw;
+  height: 100vh;
+  aspect-ratio: 16 / 9;
   margin: 0 auto;
   padding: 2rem;
-  font-family: Arial, sans-serif;
+  font-family: 'Barlow', sans-serif;
   background-color: #f5f5f0;
-  min-height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden;
 }
-
 .home-header {
-  background-color: #1a1a1a;
-  color: #f5f5f0;
+  background-color: #F5F5F0;
+  color: #1a1a1a;
   padding: 1.5rem 2rem;
   border-radius: 8px;
   margin-bottom: 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border: 3px solid #1a1a1a;
 }
 
 .home-header h1 {
@@ -26,26 +29,35 @@
 }
 
 .home-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: fit-content;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8rem 3rem;        /* ← mais espaço vertical e horizontal */
+  width: 100%;
+  padding: 1rem 2rem;    /* ← afasta os botões das bordas */
+  box-sizing: border-box;
 }
-
 .home-btn {
-  background-color: #1a1a1a;
-  color: #f5f5f0;
-  border: 1px solid #1a1a1a;
+  background-color: #f5f5f0;
+  color: #1a1a1a;
+  border: 2px solid #1a1a1a;
   border-radius: 4px;
-  padding: 0.9rem 2rem;
-  font-size: 0.95rem;
+  padding: 1.2rem 1.5rem; /* ← proporção mais quadrada */
+  font-size: 1.5rem;
   cursor: pointer;
   text-decoration: none;
   display: block;
   text-align: center;
   letter-spacing: 0.5px;
   transition: background-color 0.2s, color 0.2s;
+  width: 50%;             /* ← menos largo dentro da célula */
+  margin: 0 auto;         /* ← centraliza dentro da célula */
+  box-sizing: border-box;
+  aspect-ratio: 18 / 9;  /* ← proporção 18:9 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 
 .home-btn:hover {
   background-color: #f5f5f0;
@@ -53,9 +65,9 @@
 }
 
 .home-btn-outline {
-  background-color: transparent;
+  background-color: #1a1a1a;
   color: #f5f5f0;
-  border: 1px solid #f5f5f0;
+  border: 1px solid #1a1a1a;
   border-radius: 4px;
   padding: 0.5rem 1.2rem;
   font-size: 0.9rem;
@@ -66,6 +78,24 @@
 }
 
 .home-btn-outline:hover {
-  background-color: #f5f5f0;
-  color: #1a1a1a;
+  background-color: #1a1a1a;  /* ← fundo preto no hover */
+  color: #f5f5f0;              /* ← texto off-white no hover */
+}
+
+button.home-btn-outline {
+  background-color: #1a1a1a;
+  color: #f5f5f0;
+  border: 1px solid #1a1a1a;
+  border-radius: 4px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+button.home-btn-outline:hover {
+  background-color: #1a1a1a;  /* ← fundo preto no hover */
+  color: #f5f5f0;              /* ← texto off-white no hover */
 }

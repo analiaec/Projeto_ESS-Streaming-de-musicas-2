@@ -4,11 +4,13 @@ import { Musica } from './musica.entity';
 import { MusicasService } from './musicas.service';
 import { MusicasController } from './musicas.controller';
 import { PlaybackModule } from '../playback/playback.module';
+import { ScoresModule } from '../scores/score.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Musica]),
-    PlaybackModule
+    PlaybackModule,
+    ScoresModule
   ],
   providers: [MusicasService],
   controllers: [MusicasController],

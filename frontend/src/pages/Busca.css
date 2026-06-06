@@ -1,0 +1,126 @@
+.busca-container {
+  width: 100vw;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #f5f5f0;
+  font-family: 'Barlow', sans-serif;
+  box-sizing: border-box;
+}
+
+.busca-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.busca-voltar {
+  color: #1a1a1a;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border: 1px solid #1a1a1a;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.busca-voltar:hover {
+  background-color: #1a1a1a;
+  color: #f5f5f0;
+}
+
+.busca-titulo {
+  font-size: 1.8rem;
+  font-weight: 400;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.busca-filtros {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+}
+
+.busca-filtros-linha {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.busca-input {
+  padding: 0.6rem 1rem;
+  border: 1px solid #1a1a1a;
+  border-radius: 4px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.9rem;
+  background-color: #f5f5f0;
+  color: #1a1a1a;
+  flex: 1;
+  min-width: 150px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.busca-input:focus {
+  border-color: #555;
+}
+
+.busca-select {
+  padding: 0.6rem 1rem;
+  border: 1px solid #1a1a1a;
+  border-radius: 4px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.9rem;
+  background-color: #f5f5f0;
+  color: #1a1a1a;
+  cursor: pointer;
+  outline: none;
+}
+
+.busca-btn {
+  padding: 0.7rem 2rem;
+  background-color: #1a1a1a;
+  color: #f5f5f0;
+  border: 1px solid #1a1a1a;
+  border-radius: 4px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+  width: fit-content;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.busca-btn:hover {
+  background-color: #f5f5f0;
+  color: #1a1a1a;
+}
+
+.busca-vazio {
+  color: #666;
+  font-style: italic;
+}
+
+.busca-lista {
+  padding: 1.5rem;
+  list-style: none;
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.busca-lista li {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #d0d0c8;
+}
+
+.busca-lista li:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}

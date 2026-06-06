@@ -5,6 +5,7 @@ import { Musica } from './musica.entity';
 import { NotFoundError } from 'rxjs';
 import { Playback } from '../playback/entities/playback.entity';
 import { PlaybackService } from '../playback/playback.service';
+import { ScoresService } from '../scores/score.service';
 
 @Injectable()
 export class MusicasService {
@@ -13,6 +14,7 @@ export class MusicasService {
     @InjectRepository(Musica)
     private readonly musicaRepository: Repository<Musica>,
     private readonly playbackService: PlaybackService,
+    private readonly scoresService: ScoresService,
   ) {}
 
   async emAlta(): Promise<Musica[]> {
@@ -45,6 +47,16 @@ export class MusicasService {
     if(!musica){throw new NotFoundException('Musica nao encontrada');}
     await this.musicaRepository.increment({id}, 'reproducoes', 1);
     await this.playbackService.create({login, musicaid: id}) //cria o playback de acordo com o usuario que escutou a musica e o id da musica
+    await this.scoresService.removerMusicaRecomendada(login, id);
+
+    const historico = await this.playbackService.findByUser(login)
+      .catch(() => []);
+    if (historico.length % 10 === 0) {
+      await this.scoresService.calcularScores(login);
+    }
     return musica;
+  }
+  async recomendar(login: string): Promise<any[]> {
+    return this.scoresService.getRecomendacoes(login);
   }
 }

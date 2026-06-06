@@ -20,6 +20,10 @@ export class MusicasController {
       dto.ano
     );
   }
+  @Get('recomendadas')
+  async recomendadas(@Param('login') login: string) {
+    return this.musicasService.recomendar(login);
+  }
   @Post(':id/reproducao') 
     registrarReproducoes(@Param('id', ParseIntPipe) id: number, @Param('login') login: string) {
         return this.musicasService.registrarReproducoes(id, login);

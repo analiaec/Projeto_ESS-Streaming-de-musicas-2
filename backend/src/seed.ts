@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { Musica } from './musicas/musica.entity';
-import { User, UserRole} from './users/entities/user.entity';
+import { User, UserRole } from './users/entities/user.entity';
 import {Artista} from './artistas/artista.entity';
 import { Album } from './albuns/album.entity';
 
@@ -38,20 +38,20 @@ async function seed() {
 
  
   const usuarios = await usuarioRepository.save([
-  {
-    login: 'LuisCardoso012',
-    name: 'Luis Cardoso',
-    password: '1234',
-    email: 'luis@streaming.com',
-    role: UserRole.OUVINTE,
-  },
-  {
-    login: 'Usuario',
-    name: 'Usuario Teste',
-    password: '1234',
-    email: 'usuario@streaming.com',
-    role: UserRole.OUVINTE,
-  },
+    {
+      login:       'LuisCardoso012',
+      name:        'Luis Cardoso',
+      password:    '1234',
+      email:       'luis@streaming.com',
+      tipodeconta: UserRole.OUVINTE,
+    },
+    {
+      login:       'Usuario',
+      name:        'Usuario Teste',
+      password:    '1234',
+      email:       'usuario@streaming.com',
+      tipodeconta: UserRole.OUVINTE,
+    },
   ]);
   console.log(`${usuarios.length} usuários criados...`);
 
@@ -60,7 +60,7 @@ async function seed() {
     name:          'Noel Rosa',
     password:      '1234',
     email:         'noel@streaming.com',
-    role:          UserRole.ARTISTA,
+    tipodeconta:   UserRole.ARTISTA,
     nomeArtistico: 'Noel Rosa',
     });
 
@@ -69,7 +69,7 @@ async function seed() {
     name:          'Djavan',
     password:      '1234',
     email:         'djavan@streaming.com',
-    role:          UserRole.ARTISTA,
+    tipodeconta:   UserRole.ARTISTA,
     nomeArtistico: 'Djavan',
     });
 
@@ -78,7 +78,7 @@ async function seed() {
     name:          'João Gilberto',
     password:      '1234',
     email:         'joao@streaming.com',
-    role:          UserRole.ARTISTA,
+    tipodeconta:   UserRole.ARTISTA,
     nomeArtistico: 'João Gilberto',
     });
 
@@ -87,7 +87,7 @@ async function seed() {
     name:          'Tom Jobim',
     password:      '1234',
     email:         'tom@streaming.com',
-    role:          UserRole.ARTISTA,
+    tipodeconta:   UserRole.ARTISTA,
     nomeArtistico: 'Tom Jobim',
     });
     const chrisCornell = await artistaRepository.save({
@@ -95,7 +95,7 @@ async function seed() {
     name:          'Chris Cornell',
     password:      '1234',
     email:         'chris@streaming.com',
-    role:          UserRole.ARTISTA,
+    tipodeconta:   UserRole.ARTISTA,
     nomeArtistico: 'Chris Cornell',
     });
 
@@ -104,7 +104,7 @@ async function seed() {
     name:          'Layne Staley',
     password:      '1234',
     email:         'layne@streaming.com',
-    role:          UserRole.ARTISTA,
+    tipodeconta:   UserRole.ARTISTA,
     nomeArtistico: 'Layne Staley',
     });
 
@@ -113,7 +113,7 @@ async function seed() {
     name:          'PJ Harvey',
     password:      '1234',
     email:         'pj@streaming.com',
-    role:          UserRole.ARTISTA,
+    tipodeconta:   UserRole.ARTISTA,
     nomeArtistico: 'PJ Harvey',
     });
 
