@@ -17,7 +17,6 @@ export function EmAlta() {
       .finally(() => setCarregando(false));
   }, []);
 
-  // incrementa reproduções da música específica no estado local
   function handleReproduzir(id: number) {
     setEmAlta(prev =>
       prev.map(m =>
