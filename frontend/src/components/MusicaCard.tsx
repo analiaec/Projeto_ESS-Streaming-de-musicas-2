@@ -46,19 +46,34 @@ export function MusicaCard({ musica, exibirReproducoes = false, onReproduzir, po
 
   return (
     <li className="musica-item">
+      <div className="musica-capa">
+        {musica.album?.capaUrl ? (
+          <img
+            src={`http://localhost:3000${musica.album.capaUrl}`}
+            alt={musica.album.nome}
+            className="musica-capa-img"
+          />
+        ) : (
+          <div className="musica-capa-placeholder">♪</div>
+        )}
+      </div>
+
       <div className="musica-info">
         {posicao && (
           <span className="musica-posicao">#{posicao}</span>
         )}
-        <strong>{musica.titulo}</strong>
-        {' - '}
+        <strong className="musica-titulo-card">{musica.titulo}</strong>
+        <span className="musica-separador">◦</span>
         {musica.artistas?.map(a => a.nomeArtistico).join(', ')}
-        {' - '}
-        {musica.genero}
+        <span className="musica-separador">◦</span>
+        {musica.album?.nome}
         {exibirReproducoes && (
-          <span className="musica-reproducoes">
-            {' - '}{formatarReproducoes(musica.reproducoes)} rep.
-          </span>
+          <>
+            <span className="musica-separador">◦</span>
+            <span className="musica-reproducoes">
+              {formatarReproducoes(musica.reproducoes)} rep.
+            </span>
+          </>
         )}
       </div>
 

@@ -6,6 +6,24 @@
   font-family: 'Barlow', sans-serif;
   box-sizing: border-box;
 }
+.home-header {
+  background-color: #F5F5F0;
+  color: #1a1a1a;
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 3px solid #1a1a1a;
+}
+
+.home-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
 
 .emalta-header {
   display: flex;

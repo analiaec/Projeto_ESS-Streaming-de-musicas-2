@@ -4,9 +4,10 @@ import { api, musicasUrl }     from '../api';
 import { useAuth }             from '../contexts/AuthContext';
 import { MusicaCard }          from '../components/MusicaCard';
 import './Recomendacoes.css';
+import './Home.css';
 
 export function Recomendacoes() {
-  const { login }               = useAuth();
+  const { login, sair}               = useAuth();
   const [recomendacoes, setRec] = useState<any[]>([]);
   const [carregando, setCarr]   = useState(true);
   const [erro, setErro]         = useState<string | null>(null);
@@ -25,9 +26,13 @@ export function Recomendacoes() {
 
   return (
     <div className="rec-container">
+      <div className="home-header">
+        <h1>Olá, {login}!</h1>
+        <button className="home-btn-outline" onClick={sair}>Sair</button>
+      </div>
       <div className="rec-header">
         <Link to="/" className="rec-voltar">Voltar</Link>
-        <h1 className="rec-titulo">Recomendações para {login}</h1>
+        <h1 className="rec-titulo">Para você</h1>
       </div>
 
       {recomendacoes.length === 0 ? (

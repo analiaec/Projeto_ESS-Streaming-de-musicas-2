@@ -30,6 +30,7 @@ export class AlbunsService {
     return this.albumRepository.save(novoAlbum);
   }
 
+
   //  editar metadados (possiveis) do Álbum existente
   async atualizarMetadados(id: number, dadosAtualizados: Partial<Album>) {
     

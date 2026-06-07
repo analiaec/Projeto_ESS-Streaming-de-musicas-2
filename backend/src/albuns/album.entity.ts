@@ -11,7 +11,10 @@ export class Album {
 
   @Column()
   nome: string;
-
+ 
+  @Column({ nullable: true })
+  capaUrl: string;
+  
   @Column()
   data: string;
 
