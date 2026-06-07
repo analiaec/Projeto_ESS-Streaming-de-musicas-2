@@ -12,12 +12,6 @@ export class Musica {
   @Column()
   titulo: string;
 
-  @Column()
-  genero: string;
-
-  @Column()
-  ano: number;
-
   @Column({ default: 0 })
   reproducoes: number;
 

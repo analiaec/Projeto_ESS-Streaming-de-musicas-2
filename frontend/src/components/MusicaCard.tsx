@@ -66,7 +66,7 @@ export function MusicaCard({ musica, exibirReproducoes = false, onReproduzir, po
         {' - '}
         {musica.artistas?.map(a => a.nomeArtistico).join(', ')}
         {' - '}
-        {musica.genero}
+        {musica.album?.nome}
         {exibirReproducoes && (
           <span className="musica-reproducoes">
             {' - '}{formatarReproducoes(musica.reproducoes)} rep.

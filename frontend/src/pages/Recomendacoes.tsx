@@ -32,7 +32,7 @@ export function Recomendacoes() {
       </div>
       <div className="rec-header">
         <Link to="/" className="rec-voltar">Voltar</Link>
-        <h1 className="rec-titulo">Recomendações para {login}</h1>
+        <h1 className="rec-titulo">Para você</h1>
       </div>
 
       {recomendacoes.length === 0 ? (

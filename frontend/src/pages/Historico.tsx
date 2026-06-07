@@ -3,11 +3,12 @@ import { Link }                from 'react-router-dom';
 import { api }                 from '../api';
 import { Musica }              from '../types';
 import { useAuth }             from '../contexts/AuthContext';
+import { MusicaCard }          from '../components/MusicaCard';
 import './Historico.css';
 import './Home.css';
 
 export function Historico() {
-  const { login, sair }                 = useAuth();
+  const { login, sair }           = useAuth();
   const [historico, setHistorico] = useState<Musica[]>([]);
   const [carregando, setCarr]     = useState(true);
   const [erro, setErro]           = useState<string | null>(null);
@@ -31,8 +32,15 @@ export function Historico() {
 
         setHistorico(musicasUnicas);
       })
-      .catch(() => setErro('Erro ao carregar historico'))
-      .finally(() => setCarr(false));
+      .catch(err => {
+            // 404 significa sem histórico — não é um erro real
+            if (err.response?.status === 404) {
+            setHistorico([]);
+            } else {
+            setErro('Erro ao carregar historico');
+            }
+        })
+        .finally(() => setCarr(false));
   }, [login]);
 
   if (carregando) return <p>Carregando...</p>;
@@ -54,14 +62,10 @@ export function Historico() {
       ) : (
         <ul className="historico-lista">
           {historico.map((musica, index) => (
-            <li key={musica.id} className="historico-item">
-              <span className="historico-posicao">#{index + 1}</span>
-              <strong>{musica.titulo}</strong>
-              {' - '}
-              {musica.artistas?.map(a => a.nomeArtistico).join(', ')}
-              {' - '}
-              {musica.genero}
-            </li>
+            <MusicaCard
+              key={musica.id}
+              musica={musica}
+            />
           ))}
         </ul>
       )}

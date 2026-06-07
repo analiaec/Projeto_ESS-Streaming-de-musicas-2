@@ -65,3 +65,15 @@
   margin-right: 0.8rem;
   color: #1a1a1a;
 }
+
+.historico-lista li {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #d0d0c8;
+}
+
+.historico-lista li:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}

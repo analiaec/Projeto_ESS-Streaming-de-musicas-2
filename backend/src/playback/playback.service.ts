@@ -61,7 +61,7 @@ export class PlaybackService {
     if (!user) { throw new NotFoundException('Usuario nao encontrado'); }
     const playback = await this.playbackRepository.find({
       where: { user },
-      relations: ['musica', 'musica.artistas', 'episode'],
+      relations: ['musica', 'musica.artistas', 'musica.album', 'episode'],
       order: { horario: 'DESC' },
     });
     if (playback.length === 0) { throw new NotFoundException('Playback nao encontrado'); }
@@ -78,7 +78,7 @@ export class PlaybackService {
     if (id) { wherecondition.id = id; }
     const playback = await this.playbackRepository.find({
       where: wherecondition,
-      relations: ['musica', 'musica.artistas', 'episode'],
+      relations: ['musica', 'musica.artistas', 'musica.album', 'episode'],
       order: { horario: 'DESC' },
     });
     if (playback.length === 0) { throw new NotFoundException('Playback nao encontrado'); }

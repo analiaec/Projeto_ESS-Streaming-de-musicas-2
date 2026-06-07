@@ -34,6 +34,7 @@ async function seed() {
     await AppDataSource.query('TRUNCATE musica_artistas, musicas, albuns, artistas, users RESTART IDENTITY CASCADE');
     await AppDataSource.query('DELETE FROM artistas WHERE 1=1').catch(() => {});
     await AppDataSource.query('DELETE FROM users WHERE 1=1').catch(() => {});
+    await AppDataSource.query('TRUNCATE musica_artistas, musicas, albuns, artistas, users, scores, "Playback" RESTART IDENTITY CASCADE');
     console.log('Tabelas limpas...');
 
  
@@ -127,7 +128,7 @@ async function seed() {
     });
 
 
-  console.log('4 artistas criados...');
+  console.log('8 artistas criados...');
 
   const albums = await albumRepository.save([
   { nome: 'Is This Desire?',       data: '1998-01-01', generos: ['AltRock'], capaUrl:  '/uploads/capas/is_this_desire.jpg'    },
@@ -146,22 +147,22 @@ async function seed() {
   console.log(`${albums.length} álbuns criados...`);
  
   const musicas = await musicaRepository.save([
-  { titulo: 'Catherine',   genero: 'AltRock',        ano: 1998, reproducoes: 500,  album: isThisDesire, artistas: [pjHarvey] },
-  { titulo: 'Chega de Saudade',  genero: 'Bossa Nova', ano: 1958, reproducoes: 800,  album: chegaDeSaudade , artistas: [joaoGilberto] },
-  { titulo: 'Desafinado',        genero: 'Bossa Nova', ano: 1959, reproducoes: 750,  album: chegaDeSaudade , artistas: [joaoGilberto] },
-  { titulo: 'Garota de Ipanema', genero: 'Bossa Nova', ano: 1962, reproducoes: 950,  album: getzGilberto , artistas: [tomJobim] },
-  { titulo: 'Se..',              genero: 'MPB',        ano: 1990, reproducoes: 980,  album: djavan1992       , artistas: [djavan] },
-  { titulo: 'Oceano',            genero: 'MPB',        ano: 1989, reproducoes: 1000, album: djavan1989       , artistas: [djavan] },
-  { titulo: 'Sina',              genero: 'MPB',        ano: 1990, reproducoes: 999,  album: luz       , artistas: [djavan]},
-  { titulo: 'Eu te devoro',      genero: 'MPB',        ano: 1985, reproducoes: 980, album: milagreiro      , artistas: [djavan]},
-  { titulo: 'Conversa de Botequim',     genero: 'Samba',      ano: 1935, reproducoes: 300,  album: noelClassicos    , artistas: [noelRosa]},
-  { titulo: 'Com Que Roupa',     genero: 'Samba',      ano: 1931, reproducoes: 400,  album: noelClassicos    , artistas: [noelRosa]},
-  { titulo: 'Hunger Strike',    genero: 'Rock',      ano: 1994, reproducoes: 200,  album: templeOfDog    , artistas: [templeOfTheDog]},
-  { titulo: 'Say Hello to Heaven',    genero: 'Rock',      ano: 1994, reproducoes: 400,  album: templeOfDog    , artistas: [templeOfTheDog]},
-  { titulo: 'Love, Hate, Love',    genero: 'Rock',      ano: 1990, reproducoes: 200,  album: facelift   , artistas: [aliceInChains]},
-  { titulo: 'Bleed the Freak',    genero: 'Rock',      ano: 1990, reproducoes: 550,  album: facelift   , artistas: [aliceInChains]},
-  { titulo: 'Man in the Box',    genero: 'Rock',      ano: 1990, reproducoes: 650,  album: facelift   , artistas: [aliceInChains]},
-  { titulo: 'Swing da Cor',      genero: 'Axé',        ano: 1994, reproducoes: 450,  album: musicaderua      , artistas:[danielaMercury]},
+  { titulo: 'Catherine',   reproducoes: 500,  album: isThisDesire, artistas: [pjHarvey] },
+  { titulo: 'Chega de Saudade',  reproducoes: 800,  album: chegaDeSaudade , artistas: [joaoGilberto] },
+  { titulo: 'Desafinado',   reproducoes: 750,  album: chegaDeSaudade , artistas: [joaoGilberto] },
+  { titulo: 'Garota de Ipanema',  reproducoes: 950,  album: getzGilberto , artistas: [tomJobim] },
+  { titulo: 'Se..',           reproducoes: 980,  album: djavan1992       , artistas: [djavan] },
+  { titulo: 'Oceano',        reproducoes: 1000, album: djavan1989       , artistas: [djavan] },
+  { titulo: 'Sina',           reproducoes: 999,  album: luz       , artistas: [djavan]},
+  { titulo: 'Eu te devoro',        reproducoes: 980, album: milagreiro      , artistas: [djavan]},
+  { titulo: 'Conversa de Botequim',    reproducoes: 300,  album: noelClassicos    , artistas: [noelRosa]},
+  { titulo: 'Com Que Roupa',       reproducoes: 400,  album: noelClassicos    , artistas: [noelRosa]},
+  { titulo: 'Hunger Strike',      reproducoes: 200,  album: templeOfDog    , artistas: [templeOfTheDog]},
+  { titulo: 'Say Hello to Heaven',     reproducoes: 400,  album: templeOfDog    , artistas: [templeOfTheDog]},
+  { titulo: 'Love, Hate, Love',     reproducoes: 200,  album: facelift   , artistas: [aliceInChains]},
+  { titulo: 'Bleed the Freak',      reproducoes: 550,  album: facelift   , artistas: [aliceInChains]},
+  { titulo: 'Man in the Box',  reproducoes: 650,  album: facelift   , artistas: [aliceInChains]},
+  { titulo: 'Swing da Cor',     reproducoes: 450,  album: musicaderua      , artistas:[danielaMercury]},
 ]);
 
   console.log(`${musicas.length} músicas criadas...`);
