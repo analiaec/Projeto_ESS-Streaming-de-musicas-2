@@ -78,7 +78,8 @@ export function Busca() {
             <option value="MPB">MPB</option>
             <option value="Bossa Nova">Bossa Nova</option>
             <option value="Samba">Samba</option>
-            <option value="Pop">Pop</option>
+            <option value="Rock">Rock</option>
+            <option value="AltRock">AltRock</option>
             <option value="Axé">Axé</option>
           </select>
 
