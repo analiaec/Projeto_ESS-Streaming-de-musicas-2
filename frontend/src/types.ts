@@ -5,5 +5,5 @@ export interface Musica {
   ano:         number;
   reproducoes: number;
   artistas:    { login: string; nomeArtistico: string }[];
-  album:       { id: number; nome: string };
+  album:       { id: number; nome: string; capaUrl: string };
 }

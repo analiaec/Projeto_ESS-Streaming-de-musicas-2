@@ -90,22 +90,31 @@ async function seed() {
     tipodeconta:   UserRole.ARTISTA,
     nomeArtistico: 'Tom Jobim',
     });
-    const chrisCornell = await artistaRepository.save({
-    login:         'chris.cornell',
-    name:          'Chris Cornell',
+    const templeOfTheDog = await artistaRepository.save({
+    login:         'temple.ofthedog',
+    name:          'Temple of the Dog',
     password:      '1234',
     email:         'chris@streaming.com',
     tipodeconta:   UserRole.ARTISTA,
-    nomeArtistico: 'Chris Cornell',
+    nomeArtistico: 'Temple of the Dog',
     });
 
-    const layneStaley = await artistaRepository.save({
-    login:         'layne.staley',
-    name:          'Layne Staley',
+    const aliceInChains = await artistaRepository.save({
+    login:         'alice.InChains',
+    name:          'Alice in Chains',
     password:      '1234',
     email:         'layne@streaming.com',
     tipodeconta:   UserRole.ARTISTA,
-    nomeArtistico: 'Layne Staley',
+    nomeArtistico: 'Alice in Chains',
+    });
+
+    const danielaMercury = await artistaRepository.save({
+    login:         'daniela.mercury',
+    name:          'Daniela Mercury',
+    password:      '1234',
+    email:         'danimercury@streaming.com',
+    tipodeconta:   UserRole.ARTISTA,
+    nomeArtistico: 'Daniela Mercury',
     });
 
     const pjHarvey = await artistaRepository.save({
@@ -121,28 +130,35 @@ async function seed() {
   console.log('4 artistas criados...');
 
   const albums = await albumRepository.save([
-  { nome: 'Album Pop',       data: '2020-01-01', generos: ['Pop']       },
-  { nome: 'Album Bossa Nova', data: '1958-01-01', generos: ['Bossa Nova'] },
-  { nome: 'Album MPB',       data: '1989-01-01', generos: ['MPB']       },
-  { nome: 'Album Samba',     data: '1931-01-01', generos: ['Samba']     },
-  { nome: 'Album Axe',       data: '1994-01-01', generos: ['Axé']       },
+  { nome: 'Is This Desire?',       data: '1998-01-01', generos: ['AltRock'], capaUrl:  '/uploads/capas/is_this_desire.jpg'    },
+  { nome: 'Getz/Gilberto', data: '1964-01-01', generos: ['Bossa Nova'], capaUrl: '/uploads/capas/getz_gilberto.jpg'},
+  { nome: 'Chega de Saudade', data: '1959-01-01', generos: ['Bossa Nova'], capaUrl: '/uploads/capas/chega_de_saudade.jpg'},
+  { nome: 'Coisa de acender',       data: '1992-01-01', generos: ['MPB'], capaUrl:  '/uploads/capas/djavan1992.jpg'     },
+  { nome: 'Djavan(1989)',       data: '1989-01-01', generos: ['MPB'], capaUrl: '/uploads/capas/djavan1989.jpg'      },
+  { nome: 'Luz',       data: '1982-01-01', generos: ['MPB'] , capaUrl: '/uploads/capas/luz.jpg'     },
+  { nome: 'Milagreiro',       data: '2001-01-01', generos: ['MPB'], capaUrl: '/uploads/capas/milagreiro.jpg'     },
+  { nome: 'Noel Classicos',     data: '1931-01-01', generos: ['Samba'], capaUrl: '/uploads/capas/noel_rosa.jpg'    },
+  { nome: 'Temple of the Dog(1991)',     data: '1991-01-01', generos: ['Rock'], capaUrl: '/uploads/capas/TempleOfTheDog.jpg'    },
+  { nome: 'Facelift',     data: '1990-01-01', generos: ['Rock'], capaUrl: '/uploads/capas/facelift.jpg'    },
+  { nome: 'Música de rua',       data: '1994-01-01', generos: ['Axé'], capaUrl: '/uploads/capas/musica_de_rua.jpg'      },
   ]);
-  const [albumPop, albumBossaNova, albumMPB, albumSamba, albumAxe] = albums;
+  const [isThisDesire, getzGilberto, chegaDeSaudade, djavan1992, djavan1989, luz, milagreiro, noelClassicos, templeOfDog, facelift, musicaderua] = albums;
   console.log(`${albums.length} álbuns criados...`);
  
   const musicas = await musicaRepository.save([
-  { titulo: 'MusicaBonita123',   genero: 'Pop',        ano: 2020, reproducoes: 500,  album: albumPop, artistas: [layneStaley] },
-  { titulo: 'Chega de Saudade',  genero: 'Bossa Nova', ano: 1958, reproducoes: 800,  album: albumBossaNova , artistas: [joaoGilberto] },
-  { titulo: 'Desafinado',        genero: 'Bossa Nova', ano: 1959, reproducoes: 750,  album: albumBossaNova , artistas: [joaoGilberto] },
-  { titulo: 'Garota de Ipanema', genero: 'Bossa Nova', ano: 1962, reproducoes: 950,  album: albumBossaNova , artistas: [tomJobim] },
-  { titulo: 'Se..',              genero: 'MPB',        ano: 1990, reproducoes: 980,  album: albumMPB       , artistas: [djavan] },
-  { titulo: 'Oceano',            genero: 'MPB',        ano: 1989, reproducoes: 1000, album: albumMPB       , artistas: [djavan] },
-  { titulo: 'Sina',              genero: 'MPB',        ano: 1990, reproducoes: 999,  album: albumMPB       , artistas: [djavan]},
-  { titulo: 'Eu te devoro',      genero: 'MPB',        ano: 1985, reproducoes: 980, album: albumMPB       , artistas: [djavan]},
-  { titulo: 'Noel Clássico',     genero: 'Samba',      ano: 1935, reproducoes: 300,  album: albumSamba     , artistas: [noelRosa]},
-  { titulo: 'Com Que Roupa',     genero: 'Samba',      ano: 1931, reproducoes: 400,  album: albumSamba     , artistas: [noelRosa]},
-  { titulo: 'Mamãe Eu Quero',    genero: 'Samba',      ano: 1994, reproducoes: 200,  album: albumSamba     , artistas: [chrisCornell]},
-  { titulo: 'Swing da Cor',      genero: 'Axé',        ano: 1994, reproducoes: 450,  album: albumAxe       , artistas:[pjHarvey]},
+  { titulo: 'Catherine',   genero: 'Pop',        ano: 2020, reproducoes: 500,  album: isThisDesire, artistas: [aliceInChains] },
+  { titulo: 'Chega de Saudade',  genero: 'Bossa Nova', ano: 1958, reproducoes: 800,  album: chegaDeSaudade , artistas: [joaoGilberto] },
+  { titulo: 'Desafinado',        genero: 'Bossa Nova', ano: 1959, reproducoes: 750,  album: chegaDeSaudade , artistas: [joaoGilberto] },
+  { titulo: 'Garota de Ipanema', genero: 'Bossa Nova', ano: 1962, reproducoes: 950,  album: getzGilberto , artistas: [tomJobim] },
+  { titulo: 'Se..',              genero: 'MPB',        ano: 1990, reproducoes: 980,  album: djavan1992       , artistas: [djavan] },
+  { titulo: 'Oceano',            genero: 'MPB',        ano: 1989, reproducoes: 1000, album: djavan1989       , artistas: [djavan] },
+  { titulo: 'Sina',              genero: 'MPB',        ano: 1990, reproducoes: 999,  album: luz       , artistas: [djavan]},
+  { titulo: 'Eu te devoro',      genero: 'MPB',        ano: 1985, reproducoes: 980, album: milagreiro      , artistas: [djavan]},
+  { titulo: 'Conversa de Botequim',     genero: 'Samba',      ano: 1935, reproducoes: 300,  album: noelClassicos    , artistas: [noelRosa]},
+  { titulo: 'Com Que Roupa',     genero: 'Samba',      ano: 1931, reproducoes: 400,  album: noelClassicos    , artistas: [noelRosa]},
+  { titulo: 'Hunger Strike',    genero: 'Rock',      ano: 1994, reproducoes: 200,  album: templeOfDog    , artistas: [templeOfTheDog]},
+  { titulo: 'Love, Hate, Love',    genero: 'Rock',      ano: 1994, reproducoes: 200,  album: facelift   , artistas: [templeOfTheDog]},
+  { titulo: 'Swing da Cor',      genero: 'Axé',        ano: 1994, reproducoes: 450,  album: musicaderua      , artistas:[danielaMercury]},
 ]);
 
   console.log(`${musicas.length} músicas criadas...`);

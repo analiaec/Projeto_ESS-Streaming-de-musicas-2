@@ -46,6 +46,18 @@ export function MusicaCard({ musica, exibirReproducoes = false, onReproduzir, po
 
   return (
     <li className="musica-item">
+      <div className="musica-capa">
+        {musica.album?.capaUrl ? (
+          <img
+            src={`http://localhost:3000${musica.album.capaUrl}`}
+            alt={musica.album.nome}
+            className="musica-capa-img"
+          />
+        ) : (
+          <div className="musica-capa-placeholder">♪</div>
+        )}
+      </div>
+
       <div className="musica-info">
         {posicao && (
           <span className="musica-posicao">#{posicao}</span>
