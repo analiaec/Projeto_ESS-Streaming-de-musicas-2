@@ -24,4 +24,7 @@ export class Album {
   @OneToMany(() => Musica, musica => musica.album, {cascade: true})
   musicas: Musica[];
 
+  @Column({ nullable: true })
+  imageUrl?: string;
+
 }
