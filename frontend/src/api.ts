@@ -2,8 +2,9 @@ import axios from 'axios';
 
 const LOGIN_PADRAO = 'LuisCardoso012';
 
+// Allow overriding with REACT_APP_API_URL env var, default to backend on port 3001
 export const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
 });
 
 export const musicasUrl = (path: string) =>
@@ -53,5 +54,29 @@ export async function updateUserApi(
     },
   );
 
+  return res.data;
+}
+
+export async function getAlbunsApi() {
+  const res = await api.get('/albuns');
+  return res.data;
+}
+
+export async function uploadAlbumImage(albumId: number, file: File) {
+  const form = new FormData();
+  form.append('file', file);
+  const res = await api.post(`/albuns/${albumId}/image`, form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data;
+}
+
+export async function createPlaylist(data: { nome: string; descricao?: string; publica?: boolean; ownerLogin: string }) {
+  const res = await api.post('/playlists', data);
+  return res.data;
+}
+
+export async function deletePlaylist(id: number) {
+  const res = await api.delete(`/playlists/${id}`);
   return res.data;
 }

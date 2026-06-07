@@ -8,6 +8,8 @@ import { Recomendacoes } from './pages/Recomendacoes';
 import { Historico }     from './pages/Historico';
 import { Register }      from './pages/Register';
 import { AdminUsers }    from './pages/AdminUsers';
+import { Playlists }     from './pages/Playlists';
+import { Albuns }        from './pages/Albuns';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
           <Route path="/login"         element={<Login />}         />
           <Route path="/recomendacoes" element={<Recomendacoes />} />
           <Route path="/historico"     element={<Historico />}     />
+          <Route path="/playlists"     element={<Playlists />}     />
+          <Route path="/albuns"        element={<Albuns />}        />
           <Route path="/auth/login"    element={<Login />}         />
           <Route path="/auth/register" element={<Register />}      />
           <Route path="/admin/users"   element={<AdminUsers />}    />

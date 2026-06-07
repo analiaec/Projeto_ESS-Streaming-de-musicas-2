@@ -34,6 +34,12 @@ export function Home() {
         )}
 
         {logado && (
+          <Link to="/playlists" className="home-btn">
+            Playlists
+          </Link>
+        )}
+
+        {logado && (
           <Link to="/historico" className="home-btn">
             Histórico
           </Link>
