@@ -1,110 +1,137 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState }         from 'react';
 import { api, createPlaylist, deletePlaylist } from '../api';
+import { useAuth }                             from '../contexts/AuthContext';
+import { useToast }                            from '../contexts/ToastContext';
+import { Navbar }                              from '../components/Navbar';
 import './Playlists.css';
 
 export function Playlists() {
-  const [playlists, setPlaylists] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [creating, setCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [name, setName] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [publica, setPublica] = useState(true);
+  const { login }                                = useAuth();
+  const { toast }                                = useToast();
+  const [playlists, setPlaylists]               = useState<any[]>([]);
+  const [loading,   setLoading]                 = useState(true);
+  const [creating,  setCreating]                = useState(false);
+  const [deletingId, setDeletingId]             = useState<number | null>(null);
+  const [name,      setName]                    = useState('');
+  const [descricao, setDescricao]               = useState('');
+  const [publica,   setPublica]                 = useState(true);
+  const [erroForm,  setErroForm]                = useState('');
 
   useEffect(() => {
-    let mounted = true;
     api.get('/playlists')
       .then(res => {
-        if (!mounted) return;
-        // API may return { value: [...], Count } or an array directly
         const body = res.data;
-        setPlaylists((body && body.value) ? body.value : (Array.isArray(body) ? body : []));
+        setPlaylists(body?.value ? body.value : Array.isArray(body) ? body : []);
       })
       .catch(() => setPlaylists([]))
-      .finally(() => mounted && setLoading(false));
-
-    return () => { mounted = false };
+      .finally(() => setLoading(false));
   }, []);
-
-  if (loading) return <div className="playlists-root">Carregando playlists...</div>;
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    if (!name.trim()) {
-      setError('Nome é obrigatório');
-      return;
-    }
+    setErroForm('');
+    if (!name.trim()) { setErroForm('Nome é obrigatório.'); return; }
+
     setCreating(true);
     try {
-      const created = await createPlaylist({ nome: name, descricao: descricao, publica, ownerLogin: 'LuisCardoso012' });
+      const created = await createPlaylist({
+        nome: name, descricao, publica,
+        ownerLogin: login ?? 'unknown',
+      });
       setPlaylists(prev => [...prev, created]);
       setName('');
       setDescricao('');
       setPublica(true);
+      toast('Playlist criada com sucesso!', 'success');
     } catch (err: any) {
-      console.error(err);
-      setError(err?.response?.data?.message || 'Erro ao criar playlist');
+      const msg = err?.response?.data?.message || 'Erro ao criar playlist.';
+      setErroForm(Array.isArray(msg) ? msg[0] : msg);
     } finally {
       setCreating(false);
     }
   }
 
   async function handleDelete(id: number) {
-    const confirmed = window.confirm('Tem certeza que deseja excluir esta playlist?');
-    if (!confirmed) return;
-
-    setError(null);
+    if (!window.confirm('Tem certeza que deseja excluir esta playlist?')) return;
     setDeletingId(id);
     try {
       await deletePlaylist(id);
       setPlaylists(prev => prev.filter(pl => pl.id !== id));
+      toast('Playlist excluída.', 'info');
     } catch (err: any) {
-      console.error(err);
-      setError(err?.response?.data?.message || 'Erro ao excluir playlist');
+      toast(err?.response?.data?.message || 'Erro ao excluir playlist.', 'error');
     } finally {
       setDeletingId(null);
     }
   }
 
   return (
-    <div className="playlists-root">
-      <h2>Playlists</h2>
-      <form className="playlist-create" onSubmit={handleCreate}>
-        <input placeholder="Nome da playlist" value={name} onChange={e => setName(e.target.value)} />
-        <input placeholder="Descrição (opcional)" value={descricao} onChange={e => setDescricao(e.target.value)} />
-        <select value={publica ? 'publica' : 'privada'} onChange={e => setPublica(e.target.value === 'publica')}>
-          <option value="publica">Pública</option>
-          <option value="privada">Privada</option>
-        </select>
-        <button type="submit" disabled={creating}>{creating ? 'Criando...' : 'Criar playlist'}</button>
-        {error && <div className="error">{error}</div>}
-      </form>
-      {playlists.length === 0 && <div>Nenhuma playlist encontrada.</div>}
-      <ul className="playlists-list">
-        {playlists.map(pl => (
-          <li key={pl.id} className="playlist-card">
-            <div className="playlist-header">
-              <h3>{pl.nome}</h3>
-              <span className={`playlist-visibility ${pl.publica ? 'publica' : 'privada'}`}>
-                {pl.publica ? 'Pública' : 'Privada'}
-              </span>
-            </div>
-            {pl.descricao && <p className="desc">{pl.descricao}</p>}
-            <div className="meta">Responsável: {pl.ownerLogin}</div>
-            <button
-              type="button"
-              className="playlist-delete"
-              onClick={() => handleDelete(pl.id)}
-              disabled={deletingId === pl.id}
-            >
-              {deletingId === pl.id ? 'Excluindo...' : 'Excluir'}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Navbar />
+      <div className="page-wrapper">
+        <div className="page-inner">
+          <h1 className="section-title" style={{ marginBottom: '1.25rem' }}>📋 Playlists</h1>
+
+          <div className="pl-create-card card">
+            <h2 className="pl-form-title">Nova Playlist</h2>
+            <form className="pl-form" onSubmit={handleCreate}>
+              <div className="form-group">
+                <label className="form-label">Nome *</label>
+                <input placeholder="Nome da playlist" value={name}
+                  onChange={e => setName(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Descrição</label>
+                <input placeholder="Descrição (opcional)" value={descricao}
+                  onChange={e => setDescricao(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Visibilidade</label>
+                <select value={publica ? 'publica' : 'privada'}
+                  onChange={e => setPublica(e.target.value === 'publica')}>
+                  <option value="publica">Pública</option>
+                  <option value="privada">Privada</option>
+                </select>
+              </div>
+              {erroForm && <div className="alert alert-error">{erroForm}</div>}
+              <button type="submit" className="btn btn-primary btn-sm" disabled={creating}>
+                {creating ? 'Criando…' : 'Criar Playlist'}
+              </button>
+            </form>
+          </div>
+
+          {loading && <div className="loader-wrap"><span className="loader" /></div>}
+
+          {!loading && playlists.length === 0 && (
+            <div className="empty-state">Nenhuma playlist ainda. Crie a primeira!</div>
+          )}
+
+          {!loading && playlists.length > 0 && (
+            <ul className="pl-list">
+              {playlists.map(pl => (
+                <li key={pl.id} className="pl-card card">
+                  <div className="pl-card-header">
+                    <span className="pl-card-nome">{pl.nome}</span>
+                    <span className={`badge ${pl.publica ? 'badge-green' : 'badge-orange'}`}>
+                      {pl.publica ? 'Pública' : 'Privada'}
+                    </span>
+                  </div>
+                  {pl.descricao && <p className="pl-card-desc">{pl.descricao}</p>}
+                  <div className="pl-card-meta">por {pl.ownerLogin}</div>
+                  <button
+                    className="btn btn-danger btn-sm pl-delete"
+                    onClick={() => handleDelete(pl.id)}
+                    disabled={deletingId === pl.id}
+                  >
+                    {deletingId === pl.id ? 'Excluindo…' : 'Excluir'}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </>
   );
 }
 

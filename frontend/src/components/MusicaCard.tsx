@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { api }      from '../api';
-import { useAuth }  from '../contexts/AuthContext';
-import { Musica }   from '../types';
+import { useState }       from 'react';
+import { api }             from '../api';
+import { backendBaseUrl }  from '../api';
+import { useAuth }         from '../contexts/AuthContext';
+import { Musica }          from '../types';
 import './MusicaCard.css';
 
 interface Props {
@@ -20,36 +21,31 @@ export function MusicaCard({ musica, exibirReproducoes = false, onReproduzir, po
     if (!login || reproduzindo) return;
     setRep(true);
     try {
-      await api.post(
-        `/users/${login}/musicas/${musica.id}/reproducao`,
-        {}
-      );
+      await api.post(`/users/${login}/musicas/${musica.id}/reproducao`, {});
       setRepOk(true);
       onReproduzir?.(musica.id);
       setTimeout(() => setRepOk(false), 3000);
-    } catch (e) {
-      console.error('Erro ao reproduzir', e);
+    } catch {
+      // silent
     } finally {
       setRep(false);
     }
   }
+
   function formatarReproducoes(n: number): string {
-  if (n >= 1000) {
-    const valor = n / 1000;
-    // se tiver decimal relevante mostra uma casa (ex: 1.2k), senão mostra inteiro (ex: 10k)
-    return valor % 1 === 0
-      ? `${valor}k`
-      : `${valor.toFixed(1)}k`;
+    if (n >= 1000) {
+      const v = n / 1000;
+      return v % 1 === 0 ? `${v}k` : `${v.toFixed(1)}k`;
+    }
+    return n.toString();
   }
-  return n.toString();
-}
 
   return (
     <li className="musica-item">
       <div className="musica-capa">
         {musica.album?.capaUrl ? (
           <img
-            src={`http://localhost:3000${musica.album.capaUrl}`}
+            src={`${backendBaseUrl}${musica.album.capaUrl}`}
             alt={musica.album.nome}
             className="musica-capa-img"
           />
@@ -59,9 +55,7 @@ export function MusicaCard({ musica, exibirReproducoes = false, onReproduzir, po
       </div>
 
       <div className="musica-info">
-        {posicao && (
-          <span className="musica-posicao">#{posicao}</span>
-        )}
+        {posicao && <span className="musica-posicao">#{posicao}</span>}
         <strong className="musica-titulo-card">{musica.titulo}</strong>
         <span className="musica-separador">◦</span>
         {musica.artistas?.map(a => a.nomeArtistico).join(', ')}
@@ -70,9 +64,7 @@ export function MusicaCard({ musica, exibirReproducoes = false, onReproduzir, po
         {exibirReproducoes && (
           <>
             <span className="musica-separador">◦</span>
-            <span className="musica-reproducoes">
-              {formatarReproducoes(musica.reproducoes)} rep.
-            </span>
+            <span className="musica-reproducoes">{formatarReproducoes(musica.reproducoes)} rep.</span>
           </>
         )}
       </div>
@@ -82,13 +74,9 @@ export function MusicaCard({ musica, exibirReproducoes = false, onReproduzir, po
           className={`musica-btn-play ${reproduzindo ? 'carregando' : ''} ${reproduzido ? 'reproduzido' : ''}`}
           onClick={reproduzir}
           disabled={reproduzindo}
-          title={reproduzindo ? 'Reproduzindo...' : reproduzido ? 'Reproduzido!' : 'Reproduzir'}
+          title={reproduzindo ? 'Reproduzindo…' : reproduzido ? 'Reproduzido!' : 'Reproduzir'}
         >
-          {reproduzindo ? (
-            <span className="spinner" />
-          ) : (
-            <span className="play-icon">▶</span>
-          )}
+          {reproduzindo ? <span className="spinner" /> : <span className="play-icon">▶</span>}
         </button>
       )}
     </li>

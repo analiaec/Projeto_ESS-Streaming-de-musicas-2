@@ -59,6 +59,12 @@ export class PodcastController {
     return this.podcastService.removeEpisode(login, episodeId);
   }
 
+  // essa rota lista todos os episodios (inclusive agendados) para o criador
+  @Get(':login/episodes/all')
+  findAllEpisodes(@Param('login') login: string) {
+    return this.podcastService.findAllEpisodesForCreator(login);
+  }
+
   // essa rota lista episodios publicados
   @Get(':login/episodes')
   findPublishedEpisodes(@Param('login') login: string) {

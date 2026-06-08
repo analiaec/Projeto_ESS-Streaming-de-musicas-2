@@ -1,74 +1,63 @@
 import { useEffect, useState } from 'react';
-import { Link }                from 'react-router-dom';
 import { api }                 from '../api';
 import { Musica }              from '../types';
 import { useAuth }             from '../contexts/AuthContext';
 import { MusicaCard }          from '../components/MusicaCard';
+import { Navbar }              from '../components/Navbar';
 import './Historico.css';
-import './Home.css';
 
 export function Historico() {
-  const { login, sair }           = useAuth();
-  const [historico, setHistorico] = useState<Musica[]>([]);
-  const [carregando, setCarr]     = useState(true);
-  const [erro, setErro]           = useState<string | null>(null);
+  const { login }                   = useAuth();
+  const [historico, setHistorico]   = useState<Musica[]>([]);
+  const [carregando, setCarr]       = useState(true);
+  const [erro, setErro]             = useState<string | null>(null);
 
   useEffect(() => {
     if (!login) return;
 
     api.get(`/users/${login}/playback/music`)
       .then(res => {
-        const dados = res.data;
         const musicasUnicas: Musica[] = [];
         const idsVistos = new Set<number>();
-
-        for (const playback of dados) {
-          if (playback.musica && !idsVistos.has(playback.musica.id)) {
-            idsVistos.add(playback.musica.id);
-            musicasUnicas.push(playback.musica);
+        for (const pb of res.data) {
+          if (pb.musica && !idsVistos.has(pb.musica.id)) {
+            idsVistos.add(pb.musica.id);
+            musicasUnicas.push(pb.musica);
           }
           if (musicasUnicas.length === 10) break;
         }
-
         setHistorico(musicasUnicas);
       })
       .catch(err => {
-            // 404 significa sem histórico — não é um erro real
-            if (err.response?.status === 404) {
-            setHistorico([]);
-            } else {
-            setErro('Erro ao carregar historico');
-            }
-        })
-        .finally(() => setCarr(false));
+        if (err.response?.status === 404) setHistorico([]);
+        else setErro('Erro ao carregar histórico.');
+      })
+      .finally(() => setCarr(false));
   }, [login]);
 
-  if (carregando) return <p>Carregando...</p>;
-  if (erro)       return <p>{erro}</p>;
-
   return (
-    <div className="historico-container">
-      <div className="home-header">
-        <h1>Olá, {login}!</h1>
-        <button className="home-btn-outline" onClick={sair}>Sair</button>
-      </div>
-      <div className="historico-header">
-        <Link to="/" className="historico-voltar">Voltar</Link>
-        <h1 className="historico-titulo">Histórico</h1>
-      </div>
+    <>
+      <Navbar />
+      <div className="page-wrapper">
+        <div className="page-inner">
+          <h1 className="section-title" style={{ marginBottom: '1.25rem' }}>🕗 Histórico</h1>
 
-      {historico.length === 0 ? (
-        <p>Nenhuma música ouvida ainda.</p>
-      ) : (
-        <ul className="historico-lista">
-          {historico.map((musica, index) => (
-            <MusicaCard
-              key={musica.id}
-              musica={musica}
-            />
-          ))}
-        </ul>
-      )}
-    </div>
+          {carregando && <div className="loader-wrap"><span className="loader" /></div>}
+          {erro && <div className="alert alert-error">{erro}</div>}
+
+          {!carregando && !erro && historico.length === 0 && (
+            <div className="empty-state">Nenhuma música ouvida ainda. Comece a explorar!</div>
+          )}
+
+          {historico.length > 0 && (
+            <ul className="musica-list">
+              {historico.map(musica => (
+                <MusicaCard key={musica.id} musica={musica} />
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </>
   );
 }

@@ -2,8 +2,8 @@ import {IsEmail,IsEnum,MinLength, MaxLength, IsNotEmpty,IsString,} from 'class-v
 import { UserRole } from '../../users/entities/user.entity';
 export class RegisterDto {
    @IsString()
-   @MinLength(3, {message: 'O login deve ter pelo menos 3 caracteres. Construa outro login.',})
-   @MaxLength(20, {message: 'O login não pode ter mais de 20 caracteres.'})
+   @MinLength(3, {message: 'O login deve ter pelo menos 3 caracteres.',})
+   @MaxLength(30, {message: 'O login não pode ter mais de 30 caracteres.'})
    @IsNotEmpty({message: 'O campo login não pode estar vazio.'})
    "login": string;
    @IsString()
@@ -12,8 +12,8 @@ export class RegisterDto {
    @IsNotEmpty({message: 'O campo nome não pode estar vazio.'})
    "name": string;
    @IsString()
-   @MinLength(3, {message: 'A senha deve ter pelo menos 3 caracteres. Construa outra senha.',})
-   @MaxLength(20, {message: 'A senha não pode ter mais de 20 caracteres.'})
+   @MinLength(3, {message: 'A senha deve ter pelo menos 3 caracteres.',})
+   @MaxLength(60, {message: 'A senha não pode ter mais de 60 caracteres.'})
    @IsNotEmpty({message: 'O campo senha não pode estar vazio.'})
    "password": string;
    @IsEmail({require_tld: true}, {message: 'Voce deve inserir um e-mail válido para realizar o cadastro. Coloque outro e-mail.'})

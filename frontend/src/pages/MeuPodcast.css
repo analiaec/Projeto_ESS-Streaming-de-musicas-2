@@ -1,0 +1,118 @@
+.mp-stats {
+  display: flex;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.mp-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  min-width: 120px;
+}
+
+.mp-stat-num {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.mp-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-sub);
+  margin-top: 0.15rem;
+  text-align: center;
+}
+
+.mp-form-card {
+  margin-bottom: 1.5rem;
+}
+
+.mp-form-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.mp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-width: 500px;
+}
+
+.mp-ep-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mp-ep-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.mp-ep-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.mp-ep-titulo {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp-ep-meta {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mp-badge-live {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.mp-badge-sched {
+  background: rgba(249, 115, 22, 0.12);
+  color: var(--orange);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+}
+
+.mp-badge-draft {
+  background: var(--surface3);
+  color: var(--text-muted);
+}
+
+.mp-ep-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.mp-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mp-edit-actions {
+  display: flex;
+  gap: 0.4rem;
+}

@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { getAlbunsApi, uploadAlbumImage } from '../api';
+import React, { useEffect, useState }         from 'react';
+import { getAlbunsApi, uploadAlbumImage }      from '../api';
+import { backendBaseUrl }                      from '../api';
+import { Navbar }                              from '../components/Navbar';
+import { useToast }                            from '../contexts/ToastContext';
 import './Albuns.css';
 
 export function Albuns() {
-  const [albuns, setAlbuns] = useState<any[]>([]);
+  const [albuns,  setAlbuns]  = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast }             = useToast();
 
   useEffect(() => {
-    let mounted = true;
     getAlbunsApi()
-      .then((data) => { if (mounted) setAlbuns(data || []); })
-      .catch(() => { if (mounted) setAlbuns([]); })
-      .finally(() => { if (mounted) setLoading(false); });
-    return () => { mounted = false };
+      .then(data => setAlbuns(data || []))
+      .catch(() => setAlbuns([]))
+      .finally(() => setLoading(false));
   }, []);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>, albumId: number) {
@@ -20,43 +22,53 @@ export function Albuns() {
     if (!file) return;
     try {
       const updated = await uploadAlbumImage(albumId, file);
-      setAlbuns((prev) => prev.map(a => a.id === albumId ? updated : a));
-    } catch (err) {
-      // simple error handling
-      console.error('Upload error', err);
-      alert('Erro ao enviar imagem');
+      setAlbuns(prev => prev.map(a => a.id === albumId ? updated : a));
+      toast('Capa atualizada!', 'success');
+    } catch {
+      toast('Erro ao enviar imagem.', 'error');
     }
   }
 
-  if (loading) return <div className="albuns-root">Carregando álbuns...</div>;
-
   return (
-    <div className="albuns-root">
-      <h2>Álbuns</h2>
-      <div className="albuns-grid">
-        {albuns.map(album => (
-          <div key={album.id} className="album-card">
-            <div className="cover">
-              {album.imageUrl ? (
-                <img src={`http://localhost:3000${album.imageUrl}`} alt={album.nome} />
-              ) : (
-                <div className="placeholder">Sem capa</div>
-              )}
+    <>
+      <Navbar />
+      <div className="page-wrapper">
+        <div className="page-inner">
+          <h1 className="section-title" style={{ marginBottom: '1.25rem' }}>💿 Álbuns</h1>
+
+          {loading && <div className="loader-wrap"><span className="loader" /></div>}
+
+          {!loading && albuns.length === 0 && (
+            <div className="empty-state">Nenhum álbum cadastrado ainda.</div>
+          )}
+
+          {!loading && albuns.length > 0 && (
+            <div className="album-grid">
+              {albuns.map(album => (
+                <div key={album.id} className="album-card card">
+                  <div className="album-cover">
+                    {album.imageUrl ? (
+                      <img src={`${backendBaseUrl}${album.imageUrl}`} alt={album.nome} />
+                    ) : (
+                      <div className="album-cover-placeholder">💿</div>
+                    )}
+                  </div>
+                  <div className="album-info">
+                    <div className="album-nome">{album.nome}</div>
+                    {album.data && <div className="album-data">{album.data}</div>}
+                  </div>
+                  <label className="btn btn-ghost btn-sm album-upload-btn">
+                    Enviar capa
+                    <input type="file" accept="image/*"
+                      onChange={e => handleFileChange(e, album.id)} />
+                  </label>
+                </div>
+              ))}
             </div>
-            <div className="meta">
-              <div className="title">{album.nome}</div>
-              <div className="date">{album.data}</div>
-            </div>
-            <div className="actions">
-              <label className="upload-btn">
-                Enviar capa
-                <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, album.id)} />
-              </label>
-            </div>
-          </div>
-        ))}
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

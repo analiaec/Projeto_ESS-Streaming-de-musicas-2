@@ -1,0 +1,50 @@
+.reg-card { max-width: 520px; }
+
+.reg-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.tipo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.tipo-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.7rem 0.85rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: left;
+}
+
+.tipo-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.tipo-btn.selected {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.tipo-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.tipo-desc {
+  font-size: 0.72rem;
+  color: var(--text-sub);
+  line-height: 1.3;
+}

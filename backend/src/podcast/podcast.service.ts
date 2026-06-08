@@ -28,18 +28,43 @@ export class PodcastService {
   ) {}
 
   async create(createPodcastDto: CreatePodcastDto) {
-    // aqui cria um novo podcaster (artista que publica podcast)
-    const existingLogin = await this.userRepository.findOneBy({ login: createPodcastDto.login });
-    if (existingLogin) {
+    // verifica login em ambas as tabelas (users e podcast)
+    const existingInUsers   = await this.userRepository.findOneBy({ login: createPodcastDto.login });
+    const existingInPodcast = await this.podcastRepository.findOneBy({ login: createPodcastDto.login });
+    if (existingInUsers || existingInPodcast) {
       throw new BadRequestException('Login ja existe');
+    }
+
+    // verifica email em ambas as tabelas
+    const emailInUsers   = await this.userRepository.findOneBy({ email: createPodcastDto.email });
+    const emailInPodcast = await this.podcastRepository.findOneBy({ email: createPodcastDto.email });
+    if (emailInUsers || emailInPodcast) {
+      throw new BadRequestException('Email ja esta em uso');
     }
 
     const podcast = this.podcastRepository.create({
       ...createPodcastDto,
       tipodeconta: UserRole.PODCASTER,
     });
+    const saved = await this.podcastRepository.save(podcast);
 
-    return this.podcastRepository.save(podcast);
+    // salva tambem em users para que o login via auth/login funcione
+    try {
+      const userEntry = this.userRepository.create({
+        login: createPodcastDto.login,
+        name: createPodcastDto.name,
+        password: createPodcastDto.password,
+        email: createPodcastDto.email,
+        tipodeconta: UserRole.PODCASTER,
+      });
+      await this.userRepository.save(userEntry);
+    } catch {
+      // se users falhar, remove o podcast para manter consistencia
+      await this.podcastRepository.remove(saved);
+      throw new BadRequestException('Erro ao criar conta. Tente novamente.');
+    }
+
+    return saved;
   }
 
   findAll() {
@@ -70,9 +95,12 @@ export class PodcastService {
   }
 
   async remove(login: string) {
-    // esse remove o perfil de podcaster
+    // esse remove o perfil de podcaster e o registro em users
     const podcast = await this.findOne(login);
-    return this.podcastRepository.remove(podcast);
+    await this.podcastRepository.remove(podcast);
+    const userEntry = await this.userRepository.findOneBy({ login });
+    if (userEntry) await this.userRepository.remove(userEntry);
+    return { login, removed: true };
   }
 
   private parseScheduledDate(dateText?: string): Date | null {
@@ -195,6 +223,16 @@ export class PodcastService {
         publicadoEm: 'DESC',
         id: 'DESC',
       },
+    });
+  }
+
+  async findAllEpisodesForCreator(login: string) {
+    // retorna todos os episodios do podcaster, incluindo agendados ainda nao publicados
+    await this.findOne(login);
+    return this.episodeRepository.find({
+      where: { podcast: { login } },
+      relations: ['podcast'],
+      order: { id: 'DESC' },
     });
   }
 

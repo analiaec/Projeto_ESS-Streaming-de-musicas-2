@@ -1,20 +1,15 @@
-import { IsDateString, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreatePodcastEpisodeDto {
-  // titulo do episodio
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Título é obrigatório.' })
   titulo: string;
 
-  // precisa ser arquivo de audio
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  @Matches(/\.(mp3|wav|m4a)$/i, {
-    message: 'arquivoUrl deve apontar para um arquivo de audio valido',
-  })
-  arquivoUrl: string;
+  @IsUrl({}, { message: 'arquivoUrl deve ser uma URL válida.' })
+  arquivoUrl?: string;
 
-  // se mandar essa data, vira post agendado
   @IsOptional()
   @IsDateString()
   dataPublicacaoAgendada?: string;

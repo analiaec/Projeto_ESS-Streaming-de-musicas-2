@@ -1,27 +1,25 @@
-import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreatePodcastDto {
-	// login do podcaster
-	@IsString()
-	@Length(3, 20)
-	login: string;
+  @IsString()
+  @MinLength(3, { message: 'Login deve ter pelo menos 3 caracteres.' })
+  @MaxLength(30, { message: 'Login não pode ter mais de 30 caracteres.' })
+  login: string;
 
-	// nome visivel no perfil
-	@IsString()
-	@Length(1, 50)
-	name: string;
+  @IsString()
+  @MinLength(1, { message: 'Nome não pode estar vazio.' })
+  @MaxLength(60, { message: 'Nome não pode ter mais de 60 caracteres.' })
+  name: string;
 
-	// senha do podcaster
-	@IsString()
-	@Length(3, 20)
-	password: string;
+  @IsString()
+  @MinLength(3, { message: 'Senha deve ter pelo menos 3 caracteres.' })
+  @MaxLength(60, { message: 'Senha não pode ter mais de 60 caracteres.' })
+  password: string;
 
-	// email de acesso
-	@IsEmail()
-	email: string;
+  @IsEmail({}, { message: 'E-mail inválido.' })
+  email: string;
 
-	// descricao do canal
-	@IsString()
-	@IsNotEmpty()
-	descricao: string;
+  @IsString()
+  @IsNotEmpty({ message: 'Descrição é obrigatória.' })
+  descricao: string;
 }
