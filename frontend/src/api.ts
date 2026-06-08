@@ -76,6 +76,11 @@ export async function createPlaylist(data: { nome: string; descricao?: string; p
   return res.data;
 }
 
+export async function updatePlaylist(id: number, data: { nome?: string; descricao?: string; publica?: boolean }) {
+  const res = await api.patch(`/playlists/${id}`, data);
+  return res.data;
+}
+
 export async function deletePlaylist(id: number) {
   const res = await api.delete(`/playlists/${id}`);
   return res.data;
