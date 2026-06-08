@@ -74,10 +74,12 @@ export function Playlists() {
     if (!confirmed) return;
 
     setError(null);
+    setSuccessMessage(null);
     setDeletingId(id);
     try {
       await deletePlaylist(id);
       setPlaylists(prev => prev.filter(pl => pl.id !== id));
+      setSuccessMessage('playlist excluída com sucesso');
     } catch (err: any) {
       console.error(err);
       setError(err?.response?.data?.message || 'Erro ao excluir playlist');
@@ -136,23 +138,25 @@ export function Playlists() {
             </div>
             {pl.descricao && <p className="desc">{pl.descricao}</p>}
             <div className="meta">Responsável: {pl.ownerLogin}</div>
-            <div className="playlist-actions">
-              <button
-                type="button"
-                className="playlist-edit"
-                onClick={() => handleEdit(pl)}
-              >
-                Atualizar
-              </button>
-              <button
-                type="button"
-                className="playlist-delete"
-                onClick={() => handleDelete(pl.id)}
-                disabled={deletingId === pl.id}
-              >
-                {deletingId === pl.id ? 'Excluindo...' : 'Excluir'}
-              </button>
-            </div>
+            {login && pl.ownerLogin === login && (
+              <div className="playlist-actions">
+                <button
+                  type="button"
+                  className="playlist-edit"
+                  onClick={() => handleEdit(pl)}
+                >
+                  Atualizar
+                </button>
+                <button
+                  type="button"
+                  className="playlist-delete"
+                  onClick={() => handleDelete(pl.id)}
+                  disabled={deletingId === pl.id}
+                >
+                  {deletingId === pl.id ? 'Excluindo...' : 'Excluir'}
+                </button>
+              </div>
+            )}
           </li>
         ))}
       </ul>

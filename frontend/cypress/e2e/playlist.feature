@@ -25,8 +25,8 @@ Feature: Playlists
     And o usuário está na página "Playlists"
     And existe uma playlist de outro usuário chamada "Playlist de outro usuário"
     Then eu não vejo os botões "Atualizar" e "Excluir" na playlist "Playlist de outro usuário"
-    
-    Scenario: Falha ao tentar criar uma playlist pois o nome não foi dito
+
+  Scenario: Falha ao tentar criar uma playlist pois o nome não foi dito
     Given estou logado como "Usuário" com login "LuisCardoso012"
     And o usuário está na página "Playlists"
     When o usuário seleciona a opção "Criar Playlist"
