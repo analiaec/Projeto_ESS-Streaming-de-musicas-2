@@ -5,7 +5,10 @@
   "scripts": {
     "start:dev": "ts-node-dev --respawn --transpile-only src/main.ts",
     "build": "tsc",
-    "seed": "ts-node src/seed.ts"
+    "seed": "ts-node src/seed.ts",
+    "test": "jest --verbose",
+    "test:musicas": "jest src/musicas --verbose"
+
   },
   "dependencies": {
     "@nestjs/common": "^11.1.20",
