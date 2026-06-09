@@ -12,6 +12,6 @@ export class UpdateUserDto {
   "password"?: string;
 
   @IsOptional()
-  @IsEnum(UserRole)
-  "role" ?: UserRole;
+  @IsEnum(UserRole, { message: 'O tipo de conta informado deve ser válido.' })
+  "tipodeconta"?: UserRole;
 }

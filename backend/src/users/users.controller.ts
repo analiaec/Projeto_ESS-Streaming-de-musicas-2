@@ -39,7 +39,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   update(@Param('login') login: string, @Body() updateUserDto: UpdateUserDto, @Request() req) {
     if (req.user.login !== login && req.user.role !== UserRole.ADMIN) {throw new ForbiddenException('Você não possui permissão para realizar esta ação.',);}
-    if(req.user.role !== UserRole.ADMIN && updateUserDto.role === UserRole.ADMIN){throw new ForbiddenException('Você não pode promover a própria conta para admin.');}
+    if(req.user.role !== UserRole.ADMIN && updateUserDto.tipodeconta === UserRole.ADMIN){throw new ForbiddenException('Você não pode promover a própria conta para admin.');}
     return this.usersService.update(login, updateUserDto);
   }
 

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,8 +11,10 @@ export class UsersService {
   private usersRepository: Repository<User>,) {}
 
   async create(createUserDto: CreateUserDto) {
-    const newUser = this.usersRepository.create(createUserDto) //assim usa o dto com a entidade
-    return await this.usersRepository.save(newUser) //save faz insert no banco de dados
+    const emailExiste = await this.usersRepository.findOneBy({ email: createUserDto.email });
+    if (emailExiste) throw new ConflictException('Já existe uma conta com esse e-mail.');
+    const newUser = this.usersRepository.create(createUserDto);
+    return await this.usersRepository.save(newUser);
   }
 
   findAll() {
@@ -20,9 +22,12 @@ export class UsersService {
   }
 
   async findByLogin(login: string) {
-    //findByLogin retorna o usuário OU null se não encontrar, sem jogar erros
     return await this.usersRepository.findOneBy({ login });
-}
+  }
+
+  async findByEmail(email: string) {
+    return await this.usersRepository.findOneBy({ email });
+  }
 
   async findOne(login: string) {
     const user = await this.usersRepository.findOneBy({login})

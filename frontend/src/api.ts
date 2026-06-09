@@ -107,10 +107,10 @@ export async function getUserApi(login: string, token: string) {
   return res.data;
 }
 
-export async function removeUserApi(login: string, password: string, token: string) {
+export async function removeUserApi(login: string, password: string | undefined, token: string) {
   const res = await api.delete(`/users/${login}`, {
     headers: { Authorization: `Bearer ${token}` },
-    data: { password },
+    data: password ? { password } : {},
   });
   return res.data;
 }

@@ -12,20 +12,26 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [login, setLogin] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [role, setRole] = useState<string | null>(null);
+  const [login, setLogin] = useState<string | null>(() => localStorage.getItem('wv_login'));
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('wv_token'));
+  const [role,  setRole]  = useState<string | null>(() => localStorage.getItem('wv_role'));
 
-  function entrar(login: string, token: string, role:string) {
+  function entrar(login: string, token: string, role: string) {
+    localStorage.setItem('wv_login', login);
+    localStorage.setItem('wv_token', token);
+    localStorage.setItem('wv_role',  role);
     setLogin(login);
     setToken(token);
     setRole(role);
   }
 
   function sair() {
+    localStorage.removeItem('wv_login');
+    localStorage.removeItem('wv_token');
+    localStorage.removeItem('wv_role');
     setLogin(null);
     setToken(null);
-    setRole(null)
+    setRole(null);
   }
 
   return (
