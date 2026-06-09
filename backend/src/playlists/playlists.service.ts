@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Playlist } from './playlist.entity';
@@ -15,7 +15,19 @@ export class PlaylistsService {
     private readonly musicaRepository: Repository<Musica>,
   ) {}
 
+  private async ensureNomeDisponivel(nome: string, ownerLogin: string, excludeId?: number) {
+    const existente = await this.playlistRepository
+      .createQueryBuilder('pl')
+      .where('LOWER(pl.nome) = LOWER(:nome)', { nome })
+      .andWhere('pl.ownerLogin = :ownerLogin', { ownerLogin })
+      .getOne();
+    if (existente && existente.id !== excludeId) {
+      throw new ConflictException('Essa playlist já existe, escolha um novo nome.');
+    }
+  }
+
   async create(createPlaylistDto: CreatePlaylistDto) {
+    await this.ensureNomeDisponivel(createPlaylistDto.nome, createPlaylistDto.ownerLogin);
     const newPlaylist = this.playlistRepository.create(createPlaylistDto);
     return this.playlistRepository.save(newPlaylist);
   }
@@ -34,6 +46,9 @@ export class PlaylistsService {
 
   async update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
     const playlist = await this.findOne(id);
+    if (updatePlaylistDto.nome) {
+      await this.ensureNomeDisponivel(updatePlaylistDto.nome, playlist.ownerLogin, id);
+    }
     Object.assign(playlist, updatePlaylistDto);
     return this.playlistRepository.save(playlist);
   }

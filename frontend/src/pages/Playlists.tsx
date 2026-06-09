@@ -59,7 +59,7 @@ export function Playlists() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErroForm('');
-    if (!name.trim()) { setErroForm('Nome é obrigatório.'); return; }
+    if (!name.trim()) { setErroForm('Por favor preencha o campo do nome.'); return; }
     setSaving(true);
     try {
       if (editingId !== null) {
