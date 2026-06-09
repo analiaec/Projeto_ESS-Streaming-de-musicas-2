@@ -12,8 +12,8 @@ export class RegisterDto {
    @IsNotEmpty({message: 'O campo nome não pode estar vazio.'})
    "name": string;
    @IsString()
-   @MinLength(3, {message: 'A senha deve ter pelo menos 3 caracteres.',})
-   @MaxLength(60, {message: 'A senha não pode ter mais de 60 caracteres.'})
+   @MinLength(3, {message: 'A senha deve ter pelo menos 3 caracteres. Construa outra senha.',})
+   @MaxLength(20, {message: 'A senha não pode ter mais de 20 caracteres.'})
    @IsNotEmpty({message: 'O campo senha não pode estar vazio.'})
    "password": string;
    @IsEmail({require_tld: true}, {message: 'Voce deve inserir um e-mail válido para realizar o cadastro. Coloque outro e-mail.'})

@@ -1,14 +1,23 @@
-import { Injectable, NotFoundException, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RemoveUserDto } from './dto/remove-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, UserRole } from './entities/user.entity';
+import { User } from './entities/user.entity';
+
+const FIELD_NAMES: Record<string, string> = {
+  password: 'senha',
+  name: 'nome',
+  tipodeconta: 'tipo de conta',
+};
+
 @Injectable()
 export class UsersService {
   constructor(
-  @InjectRepository(User)
-  private usersRepository: Repository<User>,) {}
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const emailExiste = await this.usersRepository.findOneBy({ email: createUserDto.email });
@@ -18,7 +27,7 @@ export class UsersService {
   }
 
   findAll() {
-    return this.usersRepository.find()
+    return this.usersRepository.find();
   }
 
   async findByLogin(login: string) {
@@ -30,28 +39,41 @@ export class UsersService {
   }
 
   async findOne(login: string) {
-    const user = await this.usersRepository.findOneBy({login})
-        if(!user){throw new NotFoundException('User not found')}
-        return user
+    const user = await this.usersRepository.findOneBy({ login });
+    if (!user) { throw new NotFoundException('User not found'); }
+    return user;
   }
 
   async update(login: string, updateUserDto: UpdateUserDto) {
-    const user = await this.findOne(login) //garante que o usuario existe ou lanca notfoundexception
-    Object.assign(user,updateUserDto) //sobreescreve os campos enviados
-    return this.usersRepository.save(user) //faz update em vez de insert pois o typeorm percebe que o objeto ja tem id
+    const user = await this.findOne(login);
+
+    const filledFields = Object.entries(updateUserDto).filter(([, v]) => v !== undefined);
+    if (filledFields.length === 0) {
+      throw new BadRequestException('Não é possível realizar uma atualização sem preencher nenhum campo.');
+    }
+
+    const sameFields = filledFields
+      .filter(([k, v]) => user[k] === v)
+      .map(([k]) => FIELD_NAMES[k] ?? k);
+
+    if (sameFields.length === filledFields.length) {
+      throw new BadRequestException(
+        `Não é possível atualizar os seguintes campos com o mesmo valor atual: ${sameFields.join(', ')}.`,
+      );
+    }
+
+    Object.assign(user, updateUserDto);
+    const savedUser = await this.usersRepository.save(user);
+    return { message: 'Dados atualizados com sucesso.', user: savedUser };
   }
 
-  async remove(login: string, password?: string) {
+  async remove(login: string, removeUserDto?: RemoveUserDto) {
     const removedUser = await this.findOne(login);
-    if (password !== undefined && removedUser.password !== password) {
-      throw new UnauthorizedException('Senha incorreta.');
+    if (removeUserDto?.password !== undefined && removedUser.password !== removeUserDto.password) {
+      throw new UnauthorizedException('Senha incorreta. Insira a senha correta para realizar a remoção da conta.');
     }
     await this.usersRepository.remove(removedUser);
-    return removedUser;
+    return { message: 'A conta foi removida do sistema com sucesso.', user: removedUser };
   }
-  async promote(login: string) {
-    const user = await this.findOne(login);
-    user.tipodeconta = UserRole.ADMIN;
-    return this.usersRepository.save(user);
-  }
+
 }

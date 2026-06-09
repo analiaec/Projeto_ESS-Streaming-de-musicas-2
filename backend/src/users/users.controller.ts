@@ -28,14 +28,7 @@ export class UsersController {
     return this.usersService.findOne(login);
   }
 
-  @Patch(':login/promote')
-  @UseGuards(JwtAuthGuard)
-  promote(@Param('login') login: string, @Request() req,) {
-    if (req.user.role !== UserRole.ADMIN) {throw new ForbiddenException('Apenas administradores podem promover usuários.');}
-    return this.usersService.promote(login);
-  }
-
-  @Patch(':login')
+@Patch(':login')
   @UseGuards(JwtAuthGuard)
   update(@Param('login') login: string, @Body() updateUserDto: UpdateUserDto, @Request() req) {
     if (req.user.login !== login && req.user.role !== UserRole.ADMIN) {throw new ForbiddenException('Você não possui permissão para realizar esta ação.',);}
@@ -47,10 +40,6 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   remove(@Param('login') login: string, @Request() req, @Body() body: RemoveUserDto) {
     if (req.user.login !== login && req.user.role !== UserRole.ADMIN) {throw new ForbiddenException('Você não possui permissão para realizar esta ação.',);}
-    // admin deletando conta de outro: sem verificação de senha
-    const password = req.user.role === UserRole.ADMIN && req.user.login !== login
-      ? undefined
-      : body?.password;
-    return this.usersService.remove(login, password);
+    return this.usersService.remove(login, body);
   }
 }

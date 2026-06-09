@@ -1,14 +1,17 @@
-import { IsEnum, IsOptional, IsString, Length } from 'class-validator';
+import { IsEnum, IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
 import { UserRole } from '../entities/user.entity';
+
 export class UpdateUserDto {
-  @IsOptional() //se o campo vier, valide, senao ignore
+  @IsOptional()
   @IsString()
-  @Length(1, 50)
+  @MinLength(1)
+  @MaxLength(50)
   "name"?: string;
 
   @IsOptional()
   @IsString()
-  @Length(3, 20)
+  @MinLength(3, { message: 'A senha deve ter pelo menos 3 caracteres. Construa outra senha.' })
+  @MaxLength(20, { message: 'A senha não pode ter mais de 20 caracteres.' })
   "password"?: string;
 
   @IsOptional()
