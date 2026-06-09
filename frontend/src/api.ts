@@ -75,13 +75,23 @@ export async function uploadAlbumImage(albumId: number, file: File) {
   return res.data;
 }
 
-export async function createPlaylist(data: { nome: string; descricao?: string; publica?: boolean; ownerLogin: string }) {
+export async function createPlaylist(data: { nome: string; descricao?: string; publica?: boolean; ownerLogin: string; categoria?: string }) {
   const res = await api.post('/playlists', data);
   return res.data;
 }
 
-export async function updatePlaylist(id: number, data: { nome?: string; descricao?: string; publica?: boolean }) {
+export async function updatePlaylist(id: number, data: { nome?: string; descricao?: string; publica?: boolean; categoria?: string }) {
   const res = await api.patch(`/playlists/${id}`, data);
+  return res.data;
+}
+
+export async function followPlaylistApi(playlistId: number, userLogin: string) {
+  const res = await api.post(`/playlists/${playlistId}/seguir`, { userLogin });
+  return res.data;
+}
+
+export async function unfollowPlaylistApi(playlistId: number, userLogin: string) {
+  const res = await api.delete(`/playlists/${playlistId}/seguir`, { data: { userLogin } });
   return res.data;
 }
 

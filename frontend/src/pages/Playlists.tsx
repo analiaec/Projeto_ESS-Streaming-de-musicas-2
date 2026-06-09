@@ -1,19 +1,29 @@
-import React, { useEffect, useState }              from 'react';
-import { api, createPlaylist, updatePlaylist,
-         deletePlaylist, removeMusicFromPlaylistApi } from '../api';
-import { backendBaseUrl }                            from '../api';
-import { useAuth }                                   from '../contexts/AuthContext';
-import { useToast }                                  from '../contexts/ToastContext';
-import { Navbar }                                    from '../components/Navbar';
-import { MusicaCard }                                from '../components/MusicaCard';
-import { AddToPlaylistBtn }                          from '../components/AddToPlaylistBtn';
+import React, { useEffect, useState, useCallback }        from 'react';
+import { useLocation }                                      from 'react-router-dom';
+import {
+  api, createPlaylist, updatePlaylist,
+  deletePlaylist, removeMusicFromPlaylistApi,
+  followPlaylistApi, unfollowPlaylistApi,
+  backendBaseUrl,
+} from '../api';
+import { useAuth }              from '../contexts/AuthContext';
+import { useToast }             from '../contexts/ToastContext';
+import { Navbar }               from '../components/Navbar';
+import { MusicaCard }           from '../components/MusicaCard';
+import { AddToPlaylistBtn }     from '../components/AddToPlaylistBtn';
 import './Playlists.css';
 
 type Expanded = number | 'create' | null;
 
+const CATEGORIAS = [
+  'Pop', 'Rock', 'Sertanejo', 'MPB', 'Eletrônica',
+  'Hip-Hop / Rap', 'Clássica', 'Jazz', 'Reggae', 'Gospel',
+];
+
 export function Playlists() {
   const { login }                         = useAuth();
   const { toast }                         = useToast();
+  const location                          = useLocation();
   const [playlists,  setPlaylists]        = useState<any[]>([]);
   const [myPl,       setMyPl]             = useState<any[]>([]);
   const [loading,    setLoading]          = useState(true);
@@ -24,10 +34,12 @@ export function Playlists() {
   const [name,       setName]             = useState('');
   const [descricao,  setDescricao]        = useState('');
   const [publica,    setPublica]          = useState(true);
+  const [categoria,  setCategoria]        = useState('');
   const [erroForm,   setErroForm]         = useState('');
+  const [copiedId,   setCopiedId]         = useState<number | null>(null);
 
-  useEffect(() => {
-    api.get('/playlists')
+  const loadPlaylists = useCallback(() => {
+    return api.get('/playlists')
       .then(res => {
         const body = res.data;
         const all  = body?.value ? body.value : Array.isArray(body) ? body : [];
@@ -38,15 +50,24 @@ export function Playlists() {
       .finally(() => setLoading(false));
   }, [login]);
 
+  useEffect(() => { loadPlaylists(); }, [loadPlaylists]);
+
+  // Expand playlist from share link (?pl=ID)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const sharedId = params.get('pl');
+    if (sharedId) setExpandedId(Number(sharedId));
+  }, [location.search]);
+
   function openCreate() {
-    setName(''); setDescricao(''); setPublica(true); setErroForm('');
+    setName(''); setDescricao(''); setPublica(true); setCategoria(''); setErroForm('');
     setEditingId(null);
     setExpandedId('create');
   }
 
   function openEdit(pl: any) {
     setName(pl.nome ?? ''); setDescricao(pl.descricao ?? '');
-    setPublica(!!pl.publica); setErroForm('');
+    setPublica(!!pl.publica); setCategoria(pl.categoria ?? ''); setErroForm('');
     setEditingId(pl.id);
     setExpandedId(pl.id);
   }
@@ -63,20 +84,20 @@ export function Playlists() {
     setSaving(true);
     try {
       if (editingId !== null) {
-        const updated = await updatePlaylist(editingId, { nome: name, descricao, publica });
+        const updated = await updatePlaylist(editingId, { nome: name, descricao, publica, categoria: categoria || undefined });
         setPlaylists(prev => prev.map(pl => pl.id === editingId ? { ...pl, ...updated } : pl));
         setMyPl(prev => prev.map(pl => pl.id === editingId ? { ...pl, ...updated } : pl));
         setEditingId(null);
         toast('Playlist atualizada!', 'success');
       } else {
-        const created = await createPlaylist({ nome: name, descricao, publica, ownerLogin: login ?? '' });
-        const withMusicas = { ...created, musicas: [] };
+        const created = await createPlaylist({ nome: name, descricao, publica, ownerLogin: login ?? '', categoria: categoria || undefined });
+        const withMusicas = { ...created, musicas: [], seguidores: [] };
         setPlaylists(prev => [withMusicas, ...prev]);
         setMyPl(prev => [withMusicas, ...prev]);
         toast('Playlist criada!', 'success');
         setExpandedId(null);
       }
-      setName(''); setDescricao(''); setPublica(true);
+      setName(''); setDescricao(''); setPublica(true); setCategoria('');
     } catch (err: any) {
       const msg = err?.response?.data?.message || 'Erro ao salvar.';
       setErroForm(Array.isArray(msg) ? msg[0] : msg);
@@ -104,11 +125,40 @@ export function Playlists() {
   async function handleRemoveMusica(playlistId: number, musicaId: number) {
     try {
       const updated = await removeMusicFromPlaylistApi(playlistId, musicaId);
-      setPlaylists(prev => prev.map(pl => pl.id === playlistId ? updated : pl));
+      setPlaylists(prev => prev.map(pl => pl.id === playlistId ? { ...pl, ...updated } : pl));
       toast('Música removida.', 'info');
     } catch (err: any) {
       toast(err?.response?.data?.message || 'Erro ao remover.', 'error');
     }
+  }
+
+  async function handleFollow(pl: any) {
+    if (!login) return;
+    const seguindo = (pl.seguidores ?? []).includes(login);
+    try {
+      let result: any;
+      if (seguindo) {
+        result = await unfollowPlaylistApi(pl.id, login);
+        toast('Você deixou de seguir a playlist.', 'info');
+      } else {
+        result = await followPlaylistApi(pl.id, login);
+        toast('Você está seguindo a playlist!', 'success');
+      }
+      setPlaylists(prev => prev.map(p =>
+        p.id === pl.id ? { ...p, seguidores: result.seguidores } : p
+      ));
+    } catch {
+      toast('Erro ao atualizar seguir.', 'error');
+    }
+  }
+
+  function handleShare(pl: any) {
+    const url = `${window.location.origin}/playlists?pl=${pl.id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedId(pl.id);
+      toast('Link copiado!', 'success');
+      setTimeout(() => setCopiedId(null), 2000);
+    }).catch(() => toast('Não foi possível copiar o link.', 'error'));
   }
 
   function coverSrc(pl: any): string | null {
@@ -159,6 +209,13 @@ export function Playlists() {
                             <input placeholder="Descrição (opcional)" value={descricao} onChange={e => setDescricao(e.target.value)} />
                           </div>
                           <div className="form-group">
+                            <label className="form-label">Categoria</label>
+                            <select value={categoria} onChange={e => setCategoria(e.target.value)}>
+                              <option value="">Sem categoria</option>
+                              {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                          </div>
+                          <div className="form-group">
                             <label className="form-label">Visibilidade</label>
                             <select value={publica ? 'publica' : 'privada'} onChange={e => setPublica(e.target.value === 'publica')}>
                               <option value="publica">Pública</option>
@@ -178,11 +235,13 @@ export function Playlists() {
 
               {/* ── Playlist cards ── */}
               {playlists.map(pl => {
-                const isExpanded = expandedId === pl.id;
-                const isOwner    = login === pl.ownerLogin;
-                const isEditing  = editingId === pl.id;
-                const musicas    = pl.musicas ?? [];
-                const cover      = coverSrc(pl);
+                const isExpanded  = expandedId === pl.id;
+                const isOwner     = login === pl.ownerLogin;
+                const isEditing   = editingId === pl.id;
+                const musicas     = pl.musicas ?? [];
+                const cover       = coverSrc(pl);
+                const seguidores  = pl.seguidores ?? [];
+                const seguindo    = login ? seguidores.includes(login) : false;
 
                 return (
                   <div key={pl.id} className={`pl-card card ${isExpanded ? 'pl-card-expanded' : ''}`}>
@@ -208,6 +267,13 @@ export function Playlists() {
                           <span className={`badge ${pl.publica ? 'badge-green' : 'badge-orange'}`}>
                             {pl.publica ? 'Pública' : 'Privada'}
                           </span>
+                          {pl.categoria && (
+                            <span className="badge badge-blue pl-cat-badge">{pl.categoria}</span>
+                          )}
+                        </div>
+                        <div className="pl-owner-row">
+                          <span className="pl-owner">por @{pl.ownerLogin}</span>
+                          <span className="pl-followers">{seguidores.length} seguidor{seguidores.length !== 1 ? 'es' : ''}</span>
                         </div>
                       </div>
                     </div>
@@ -227,6 +293,13 @@ export function Playlists() {
                                 <input value={descricao} onChange={e => setDescricao(e.target.value)} />
                               </div>
                               <div className="form-group">
+                                <label className="form-label">Categoria</label>
+                                <select value={categoria} onChange={e => setCategoria(e.target.value)}>
+                                  <option value="">Sem categoria</option>
+                                  {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                              </div>
+                              <div className="form-group">
                                 <label className="form-label">Visibilidade</label>
                                 <select value={publica ? 'publica' : 'privada'} onChange={e => setPublica(e.target.value === 'publica')}>
                                   <option value="publica">Pública</option>
@@ -241,14 +314,30 @@ export function Playlists() {
                             </div>
                           </form>
                         ) : (
-                          isOwner && (
-                            <div className="pl-owner-actions">
-                              <button className="btn btn-ghost btn-sm" onClick={e => { e.stopPropagation(); openEdit(pl); }}>Editar</button>
-                              <button className="btn btn-danger btn-sm" onClick={e => { e.stopPropagation(); handleDelete(pl.id); }} disabled={deletingId === pl.id}>
-                                {deletingId === pl.id ? 'Excluindo…' : 'Excluir'}
+                          <div className="pl-owner-actions">
+                            {isOwner ? (
+                              <>
+                                <button className="btn btn-ghost btn-sm" onClick={e => { e.stopPropagation(); openEdit(pl); }}>Editar</button>
+                                <button className="btn btn-danger btn-sm" onClick={e => { e.stopPropagation(); handleDelete(pl.id); }} disabled={deletingId === pl.id}>
+                                  {deletingId === pl.id ? 'Excluindo…' : 'Excluir'}
+                                </button>
+                              </>
+                            ) : login ? (
+                              <button
+                                className={`btn btn-sm ${seguindo ? 'btn-ghost' : 'btn-primary'}`}
+                                onClick={e => { e.stopPropagation(); handleFollow(pl); }}
+                              >
+                                {seguindo ? '✓ Seguindo' : '+ Seguir'}
                               </button>
-                            </div>
-                          )
+                            ) : null}
+                            <button
+                              className="btn btn-ghost btn-sm pl-share-btn"
+                              onClick={e => { e.stopPropagation(); handleShare(pl); }}
+                              title="Copiar link de compartilhamento"
+                            >
+                              {copiedId === pl.id ? '✓ Copiado!' : '🔗 Compartilhar'}
+                            </button>
+                          </div>
                         )}
 
                         {/* Músicas */}

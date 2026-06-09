@@ -28,7 +28,10 @@ export class PlaylistsService {
 
   async create(createPlaylistDto: CreatePlaylistDto) {
     await this.ensureNomeDisponivel(createPlaylistDto.nome, createPlaylistDto.ownerLogin);
-    const newPlaylist = this.playlistRepository.create(createPlaylistDto);
+    const newPlaylist = this.playlistRepository.create({
+      ...createPlaylistDto,
+      seguidores: [],
+    });
     return this.playlistRepository.save(newPlaylist);
   }
 
@@ -37,7 +40,10 @@ export class PlaylistsService {
   }
 
   async findOne(id: number) {
-    const playlist = await this.playlistRepository.findOneBy({ id });
+    const playlist = await this.playlistRepository.findOne({
+      where: { id },
+      relations: ['musicas', 'musicas.album', 'musicas.artistas'],
+    });
     if (!playlist) {
       throw new NotFoundException('Playlist not found');
     }
@@ -87,5 +93,26 @@ export class PlaylistsService {
     playlist.musicas = playlist.musicas.filter(m => m.id !== musicaId);
     await this.playlistRepository.save(playlist);
     return playlist;
+  }
+
+  async seguir(playlistId: number, userLogin: string) {
+    const playlist = await this.playlistRepository.findOneBy({ id: playlistId });
+    if (!playlist) throw new NotFoundException('Playlist não encontrada.');
+
+    const seguidores = playlist.seguidores ?? [];
+    if (!seguidores.includes(userLogin)) {
+      playlist.seguidores = [...seguidores, userLogin];
+      await this.playlistRepository.save(playlist);
+    }
+    return { seguidores: playlist.seguidores };
+  }
+
+  async desseguir(playlistId: number, userLogin: string) {
+    const playlist = await this.playlistRepository.findOneBy({ id: playlistId });
+    if (!playlist) throw new NotFoundException('Playlist não encontrada.');
+
+    playlist.seguidores = (playlist.seguidores ?? []).filter(l => l !== userLogin);
+    await this.playlistRepository.save(playlist);
+    return { seguidores: playlist.seguidores };
   }
 }
