@@ -45,6 +45,8 @@ function App() {
             <Route path="/conta"           element={<AccountSettings />} />
             <Route path="/update-account"  element={<UpdateAccount />}   />
             <Route path="/remove-account"  element={<RemoveAccount />}   />
+            <Route path="/albuns/novo" element={<NovoAlbum />} />
+            <Route path="/albuns/editar/:id" element={<EditarAlbum />} />
           </Routes>
         </BrowserRouter>
       </ToastProvider>
