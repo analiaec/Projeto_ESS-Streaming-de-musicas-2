@@ -1,67 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { api, musicasUrl, addMusicToPlaylistApi } from '../api';
-import { Musica }          from '../types';
-import { MusicaCard }      from '../components/MusicaCard';
-import { Navbar }          from '../components/Navbar';
-import { useAuth }         from '../contexts/AuthContext';
-import { useToast }        from '../contexts/ToastContext';
+import React, { useEffect, useState }  from 'react';
+import { api, musicasUrl }             from '../api';
+import { Musica }                      from '../types';
+import { MusicaCard }                  from '../components/MusicaCard';
+import { AddToPlaylistBtn }            from '../components/AddToPlaylistBtn';
+import { Navbar }                      from '../components/Navbar';
+import { useAuth }                     from '../contexts/AuthContext';
 import './Busca.css';
-
-function AddToPlaylistBtn({ musicaId, playlists }: { musicaId: number; playlists: any[] }) {
-  const [open,    setOpen]    = useState(false);
-  const [loading, setLoading] = useState<number | null>(null);
-  const { toast }             = useToast();
-  const ref                   = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function handler(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [open]);
-
-  async function add(playlistId: number) {
-    setLoading(playlistId);
-    try {
-      await addMusicToPlaylistApi(playlistId, musicaId);
-      toast('Música adicionada à playlist!', 'success');
-      setOpen(false);
-    } catch (err: any) {
-      toast(err?.response?.data?.message || 'Erro ao adicionar.', 'error');
-    } finally {
-      setLoading(null);
-    }
-  }
-
-  if (!playlists.length) return null;
-
-  return (
-    <div className="add-pl-wrap" ref={ref}>
-      <button
-        className="btn btn-ghost btn-sm add-pl-btn"
-        title="Adicionar a uma playlist"
-        onClick={() => setOpen(o => !o)}
-      >＋</button>
-      {open && (
-        <ul className="add-pl-dropdown">
-          {playlists.map(pl => (
-            <li key={pl.id}>
-              <button
-                className="add-pl-option"
-                disabled={loading === pl.id}
-                onClick={() => add(pl.id)}
-              >
-                {loading === pl.id ? '…' : pl.nome}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
 
 export function Busca() {
   const { login }                                  = useAuth();
@@ -74,7 +18,7 @@ export function Busca() {
   const [playlists,  setPlaylists]                 = useState<any[]>([]);
 
   useEffect(() => {
-    if (!login) return;
+    if (!login) { setPlaylists([]); return; }
     api.get('/playlists')
       .then(res => {
         const body = res.data;

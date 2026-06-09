@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { getAlbunsApi }               from '../api';
+import { getAlbunsApi, api }          from '../api';
 import { backendBaseUrl }             from '../api';
 import { Navbar }                     from '../components/Navbar';
 import { MusicaCard }                 from '../components/MusicaCard';
+import { AddToPlaylistBtn }           from '../components/AddToPlaylistBtn';
+import { useAuth }                    from '../contexts/AuthContext';
 import './Albuns.css';
 
 export function Albuns() {
-  const [albuns,     setAlbuns]     = useState<any[]>([]);
-  const [loading,    setLoading]    = useState(true);
-  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const { login }                           = useAuth();
+  const [albuns,     setAlbuns]             = useState<any[]>([]);
+  const [loading,    setLoading]            = useState(true);
+  const [expandedId, setExpandedId]         = useState<number | null>(null);
+  const [playlists,  setPlaylists]          = useState<any[]>([]);
 
   useEffect(() => {
     getAlbunsApi()
@@ -16,6 +20,17 @@ export function Albuns() {
       .catch(() => setAlbuns([]))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!login) { setPlaylists([]); return; }
+    api.get('/playlists')
+      .then(res => {
+        const body = res.data;
+        const all  = body?.value ? body.value : Array.isArray(body) ? body : [];
+        setPlaylists(all.filter((pl: any) => pl.ownerLogin === login));
+      })
+      .catch(() => {});
+  }, [login]);
 
   return (
     <>
@@ -78,7 +93,16 @@ export function Albuns() {
                       <div className="album-musicas">
                         <ul className="musica-list">
                           {(album.musicas ?? []).map((m: any, i: number) => (
-                            <MusicaCard key={m.id} musica={m} posicao={i + 1} />
+                            <MusicaCard
+                              key={m.id}
+                              musica={m}
+                              posicao={i + 1}
+                              extraAction={
+                                login
+                                  ? <AddToPlaylistBtn musicaId={m.id} playlists={playlists} />
+                                  : undefined
+                              }
+                            />
                           ))}
                         </ul>
                       </div>
