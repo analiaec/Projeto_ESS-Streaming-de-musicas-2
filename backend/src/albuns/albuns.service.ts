@@ -50,5 +50,13 @@ export class AlbunsService {
     // devolve atualizado
     return this.albumRepository.findOneBy({ id });
   }
-  
+
+  async setImageUrl(id: number, imageUrl: string) {
+    const album = await this.albumRepository.findOneBy({ id });
+    if (!album) {
+      throw new NotFoundException('Álbum não encontrado.');
+    }
+    await this.albumRepository.update(id, { imageUrl } as any);
+    return this.albumRepository.findOneBy({ id });
+  }
 }
