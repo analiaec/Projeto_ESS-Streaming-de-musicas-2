@@ -46,13 +46,19 @@ export function Playlists() {
 
   useEffect(() => { loadPlaylists(); }, [loadPlaylists]);
 
-  // Expand playlist from share link (?pl=ID)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const sharedId = params.get('pl');
     if (sharedId) setExpandedId(Number(sharedId));
   }, [location.search]);
 
+  // ── Derived lists ──────────────────────────────────────────────────────────
+  const ownPlaylists   = login ? playlists.filter(pl => pl.ownerLogin === login) : [];
+  const otherPlaylists = login
+    ? playlists.filter(pl => pl.ownerLogin !== login && pl.publica)
+    : playlists.filter(pl => pl.publica);
+
+  // ── Handlers ───────────────────────────────────────────────────────────────
   function openCreate() {
     setName(''); setDescricao(''); setPublica(true); setErroForm('');
     setEditingId(null);
@@ -162,119 +168,178 @@ export function Playlists() {
     return c.startsWith('http') ? c : `${backendBaseUrl}${c}`;
   }
 
+  // ── Card renderer ──────────────────────────────────────────────────────────
+  function renderCard(pl: any) {
+    const isExpanded  = expandedId === pl.id;
+    const isOwner     = login === pl.ownerLogin;
+    const isEditing   = editingId === pl.id;
+    const musicas     = pl.musicas ?? [];
+    const cover       = coverSrc(pl);
+    const seguidores  = pl.seguidores ?? [];
+    const seguindo    = login ? seguidores.includes(login) : false;
+
+    return (
+      <div key={pl.id} className={`pl-card card ${isExpanded ? 'pl-card-expanded' : ''}`}>
+        <div
+          className="pl-clickable"
+          onClick={() => toggle(pl.id)}
+          title={isExpanded ? 'Fechar' : 'Ver músicas'}
+        >
+          <div className="pl-cover">
+            {cover ? (
+              <img src={cover} alt={pl.nome} />
+            ) : (
+              <div className="pl-cover-placeholder">🎵</div>
+            )}
+            <div className="pl-cover-overlay">{isExpanded ? '▲' : '▶'}</div>
+          </div>
+          <div className="pl-info">
+            <div className="pl-nome">{pl.nome}</div>
+            {pl.descricao && <div className="pl-desc">{pl.descricao}</div>}
+            <div className="pl-meta">
+              {musicas.length} música{musicas.length !== 1 ? 's' : ''}
+              {' · '}
+              <span className={`badge ${pl.publica ? 'badge-green' : 'badge-orange'}`}>
+                {pl.publica ? 'Pública' : 'Privada'}
+              </span>
+            </div>
+            <div className="pl-owner-row">
+              <span className="pl-owner">por @{pl.ownerLogin}</span>
+              <span className="pl-followers">{seguidores.length} seguidor{seguidores.length !== 1 ? 'es' : ''}</span>
+            </div>
+          </div>
+        </div>
+
+        {isExpanded && (
+          <div className="pl-expanded-body">
+            {isEditing ? (
+              <form className="pl-edit-form" onSubmit={handleSubmit}>
+                <div className="pl-form-fields">
+                  <div className="form-group">
+                    <label className="form-label">Nome</label>
+                    <input value={name} onChange={e => setName(e.target.value)} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Descrição</label>
+                    <input value={descricao} onChange={e => setDescricao(e.target.value)} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Visibilidade</label>
+                    <select value={publica ? 'publica' : 'privada'} onChange={e => setPublica(e.target.value === 'publica')}>
+                      <option value="publica">Pública</option>
+                      <option value="privada">Privada</option>
+                    </select>
+                  </div>
+                </div>
+                {erroForm && <div className="alert alert-error">{erroForm}</div>}
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>{saving ? 'Salvando…' : 'Salvar'}</button>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => setEditingId(null)}>Cancelar</button>
+                </div>
+              </form>
+            ) : (
+              <div className="pl-owner-actions">
+                {isOwner ? (
+                  <>
+                    <button className="btn btn-ghost btn-sm" onClick={e => { e.stopPropagation(); openEdit(pl); }}>Editar</button>
+                    <button className="btn btn-danger btn-sm" onClick={e => { e.stopPropagation(); handleDelete(pl.id); }} disabled={deletingId === pl.id}>
+                      {deletingId === pl.id ? 'Excluindo…' : 'Excluir'}
+                    </button>
+                  </>
+                ) : login ? (
+                  <button
+                    className={`btn btn-sm ${seguindo ? 'btn-ghost' : 'btn-primary'}`}
+                    onClick={e => { e.stopPropagation(); handleFollow(pl); }}
+                  >
+                    {seguindo ? '✓ Seguindo' : '+ Seguir'}
+                  </button>
+                ) : null}
+                <button
+                  className="btn btn-ghost btn-sm pl-share-btn"
+                  onClick={e => { e.stopPropagation(); handleShare(pl); }}
+                  title="Copiar link de compartilhamento"
+                >
+                  {copiedId === pl.id ? '✓ Copiado!' : '🔗 Compartilhar'}
+                </button>
+              </div>
+            )}
+
+            {musicas.length === 0 ? (
+              <p className="pl-empty-hint">
+                Nenhuma música ainda. Vá em <strong>Buscar</strong> e adicione músicas usando o botão ＋.
+              </p>
+            ) : (
+              <ul className="musica-list">
+                {musicas.map((m: any, i: number) => (
+                  <MusicaCard
+                    key={m.id}
+                    musica={m}
+                    posicao={i + 1}
+                    extraAction={
+                      <>
+                        {login && <AddToPlaylistBtn musicaId={m.id} playlists={myPl} />}
+                        {isOwner && (
+                          <button
+                            className="btn btn-ghost btn-sm pl-remove-btn"
+                            title="Remover da playlist"
+                            onClick={() => handleRemoveMusica(pl.id, m.id)}
+                          >✕</button>
+                        )}
+                      </>
+                    }
+                  />
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <>
       <Navbar />
       <div className="page-wrapper">
         <div className="page-inner">
-          <h1 className="section-title" style={{ marginBottom: '1.25rem' }}>📋 Playlists</h1>
+          <h1 className="section-title" style={{ marginBottom: '1.5rem' }}>📋 Playlists</h1>
 
           {loading && <div className="loader-wrap"><span className="loader" /></div>}
 
           {!loading && (
-            <div className="pl-grid">
-
-              {/* ── Criar playlist card ── */}
+            <>
+              {/* ── Seção: Suas Playlists ── */}
               {login && (
-                <div className={`pl-card card ${expandedId === 'create' ? 'pl-card-expanded' : ''}`}>
-                  {expandedId !== 'create' ? (
-                    <div className="pl-clickable" onClick={openCreate}>
-                      <div className="pl-cover pl-cover-new">
-                        <span className="pl-cover-plus">＋</span>
-                      </div>
-                      <div className="pl-info">
-                        <div className="pl-nome">Nova Playlist</div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="pl-form-wrap">
-                      <div className="pl-form-header">
-                        <span className="pl-form-title">Nova Playlist</span>
-                        <button className="btn btn-ghost btn-sm" onClick={() => setExpandedId(null)}>✕ Fechar</button>
-                      </div>
-                      <form className="pl-form" onSubmit={handleSubmit}>
-                        <div className="pl-form-fields">
-                          <div className="form-group">
-                            <label className="form-label">Nome *</label>
-                            <input placeholder="Nome da playlist" value={name} onChange={e => setName(e.target.value)} />
+                <section className="pl-section">
+                  <h2 className="pl-section-title">Suas Playlists</h2>
+                  <div className="pl-grid">
+                    {/* Card criar nova playlist */}
+                    <div className={`pl-card card ${expandedId === 'create' ? 'pl-card-expanded' : ''}`}>
+                      {expandedId !== 'create' ? (
+                        <div className="pl-clickable" onClick={openCreate}>
+                          <div className="pl-cover pl-cover-new">
+                            <span className="pl-cover-plus">＋</span>
                           </div>
-                          <div className="form-group">
-                            <label className="form-label">Descrição</label>
-                            <input placeholder="Descrição (opcional)" value={descricao} onChange={e => setDescricao(e.target.value)} />
-                          </div>
-                          <div className="form-group">
-                            <label className="form-label">Visibilidade</label>
-                            <select value={publica ? 'publica' : 'privada'} onChange={e => setPublica(e.target.value === 'publica')}>
-                              <option value="publica">Pública</option>
-                              <option value="privada">Privada</option>
-                            </select>
+                          <div className="pl-info">
+                            <div className="pl-nome">Nova Playlist</div>
                           </div>
                         </div>
-                        {erroForm && <div className="alert alert-error">{erroForm}</div>}
-                        <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>
-                          {saving ? 'Criando…' : 'Criar Playlist'}
-                        </button>
-                      </form>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* ── Playlist cards ── */}
-              {playlists.map(pl => {
-                const isExpanded  = expandedId === pl.id;
-                const isOwner     = login === pl.ownerLogin;
-                const isEditing   = editingId === pl.id;
-                const musicas     = pl.musicas ?? [];
-                const cover       = coverSrc(pl);
-                const seguidores  = pl.seguidores ?? [];
-                const seguindo    = login ? seguidores.includes(login) : false;
-
-                return (
-                  <div key={pl.id} className={`pl-card card ${isExpanded ? 'pl-card-expanded' : ''}`}>
-                    <div
-                      className="pl-clickable"
-                      onClick={() => toggle(pl.id)}
-                      title={isExpanded ? 'Fechar' : 'Ver músicas'}
-                    >
-                      <div className="pl-cover">
-                        {cover ? (
-                          <img src={cover} alt={pl.nome} />
-                        ) : (
-                          <div className="pl-cover-placeholder">🎵</div>
-                        )}
-                        <div className="pl-cover-overlay">{isExpanded ? '▲' : '▶'}</div>
-                      </div>
-                      <div className="pl-info">
-                        <div className="pl-nome">{pl.nome}</div>
-                        {pl.descricao && <div className="pl-desc">{pl.descricao}</div>}
-                        <div className="pl-meta">
-                          {musicas.length} música{musicas.length !== 1 ? 's' : ''}
-                          {' · '}
-                          <span className={`badge ${pl.publica ? 'badge-green' : 'badge-orange'}`}>
-                            {pl.publica ? 'Pública' : 'Privada'}
-                          </span>
-                        </div>
-                        <div className="pl-owner-row">
-                          <span className="pl-owner">por @{pl.ownerLogin}</span>
-                          <span className="pl-followers">{seguidores.length} seguidor{seguidores.length !== 1 ? 'es' : ''}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {isExpanded && (
-                      <div className="pl-expanded-body">
-                        {/* Editar form inline */}
-                        {isEditing ? (
-                          <form className="pl-edit-form" onSubmit={handleSubmit}>
+                      ) : (
+                        <div className="pl-form-wrap">
+                          <div className="pl-form-header">
+                            <span className="pl-form-title">Nova Playlist</span>
+                            <button className="btn btn-ghost btn-sm" onClick={() => setExpandedId(null)}>✕ Fechar</button>
+                          </div>
+                          <form className="pl-form" onSubmit={handleSubmit}>
                             <div className="pl-form-fields">
                               <div className="form-group">
-                                <label className="form-label">Nome</label>
-                                <input value={name} onChange={e => setName(e.target.value)} />
+                                <label className="form-label">Nome *</label>
+                                <input placeholder="Nome da playlist" value={name} onChange={e => setName(e.target.value)} />
                               </div>
                               <div className="form-group">
                                 <label className="form-label">Descrição</label>
-                                <input value={descricao} onChange={e => setDescricao(e.target.value)} />
+                                <input placeholder="Descrição (opcional)" value={descricao} onChange={e => setDescricao(e.target.value)} />
                               </div>
                               <div className="form-group">
                                 <label className="form-label">Visibilidade</label>
@@ -285,76 +350,44 @@ export function Playlists() {
                               </div>
                             </div>
                             {erroForm && <div className="alert alert-error">{erroForm}</div>}
-                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                              <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>{saving ? 'Salvando…' : 'Salvar'}</button>
-                              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setEditingId(null)}>Cancelar</button>
-                            </div>
-                          </form>
-                        ) : (
-                          <div className="pl-owner-actions">
-                            {isOwner ? (
-                              <>
-                                <button className="btn btn-ghost btn-sm" onClick={e => { e.stopPropagation(); openEdit(pl); }}>Editar</button>
-                                <button className="btn btn-danger btn-sm" onClick={e => { e.stopPropagation(); handleDelete(pl.id); }} disabled={deletingId === pl.id}>
-                                  {deletingId === pl.id ? 'Excluindo…' : 'Excluir'}
-                                </button>
-                              </>
-                            ) : login ? (
-                              <button
-                                className={`btn btn-sm ${seguindo ? 'btn-ghost' : 'btn-primary'}`}
-                                onClick={e => { e.stopPropagation(); handleFollow(pl); }}
-                              >
-                                {seguindo ? '✓ Seguindo' : '+ Seguir'}
-                              </button>
-                            ) : null}
-                            <button
-                              className="btn btn-ghost btn-sm pl-share-btn"
-                              onClick={e => { e.stopPropagation(); handleShare(pl); }}
-                              title="Copiar link de compartilhamento"
-                            >
-                              {copiedId === pl.id ? '✓ Copiado!' : '🔗 Compartilhar'}
+                            <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>
+                              {saving ? 'Criando…' : 'Criar Playlist'}
                             </button>
-                          </div>
-                        )}
+                          </form>
+                        </div>
+                      )}
+                    </div>
 
-                        {/* Músicas */}
-                        {musicas.length === 0 ? (
-                          <p className="pl-empty-hint">
-                            Nenhuma música ainda. Vá em <strong>Buscar</strong> e adicione músicas usando o botão ＋.
-                          </p>
-                        ) : (
-                          <ul className="musica-list">
-                            {musicas.map((m: any, i: number) => (
-                              <MusicaCard
-                                key={m.id}
-                                musica={m}
-                                posicao={i + 1}
-                                extraAction={
-                                  <>
-                                    {login && <AddToPlaylistBtn musicaId={m.id} playlists={myPl} />}
-                                    {isOwner && (
-                                      <button
-                                        className="btn btn-ghost btn-sm pl-remove-btn"
-                                        title="Remover da playlist"
-                                        onClick={() => handleRemoveMusica(pl.id, m.id)}
-                                      >✕</button>
-                                    )}
-                                  </>
-                                }
-                              />
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    )}
+                    {ownPlaylists.map(renderCard)}
                   </div>
-                );
-              })}
 
-              {playlists.length === 0 && !login && (
-                <div className="empty-state" style={{ gridColumn: '1 / -1' }}>Nenhuma playlist pública ainda.</div>
+                  {ownPlaylists.length === 0 && (
+                    <p className="pl-section-empty">Você ainda não criou nenhuma playlist.</p>
+                  )}
+                </section>
               )}
-            </div>
+
+              {/* ── Seção: Outras Playlists ── */}
+              {(otherPlaylists.length > 0 || !login) && (
+                <section className="pl-section">
+                  <h2 className="pl-section-title">
+                    {login ? 'Outras Playlists' : 'Playlists Públicas'}
+                  </h2>
+                  {otherPlaylists.length > 0 ? (
+                    <div className="pl-grid">
+                      {otherPlaylists.map(renderCard)}
+                    </div>
+                  ) : (
+                    <p className="pl-section-empty">Nenhuma playlist pública de outros usuários ainda.</p>
+                  )}
+                </section>
+              )}
+
+              {/* Não logado sem nenhuma pública */}
+              {!login && otherPlaylists.length === 0 && (
+                <div className="empty-state">Nenhuma playlist pública ainda.</div>
+              )}
+            </>
           )}
         </div>
       </div>
