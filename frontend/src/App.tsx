@@ -19,6 +19,8 @@ import { MeuPodcast }      from './pages/MeuPodcast';
 import { AccountSettings } from './pages/AccountSettings';
 import { UpdateAccount }   from './pages/UpdateAccount';
 import { RemoveAccount }   from './pages/RemoveAccount';
+import NovoAlbum from './pages/NovoAlbum';
+import EditarAlbum from './pages/EditarAlbum';
 
 function App() {
   return (
