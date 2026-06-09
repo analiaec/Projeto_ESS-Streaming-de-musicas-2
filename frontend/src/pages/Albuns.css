@@ -38,9 +38,22 @@
   color: var(--text);
 }
 
+.album-artista {
+  font-size: 0.82rem;
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .album-data {
   font-size: 0.78rem;
   color: var(--text-sub);
+}
+
+.album-faixas {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 .album-upload-btn {

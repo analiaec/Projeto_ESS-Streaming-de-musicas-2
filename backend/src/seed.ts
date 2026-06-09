@@ -39,10 +39,11 @@ async function seed() {
   // ── Usuários ──────────────────────────────────────────────────────────────
   const usuarioRepo = AppDataSource.getRepository(User);
   await usuarioRepo.save([
-    { login: 'LuisCardoso012', name: 'Luis Cardoso',  password: '1234', email: 'luis@streaming.com',    tipodeconta: UserRole.OUVINTE },
-    { login: 'Usuario',        name: 'Usuario Teste', password: '1234', email: 'usuario@streaming.com', tipodeconta: UserRole.OUVINTE },
+    { login: 'LuisCardoso012', name: 'Luis Cardoso',   password: '1234',     email: 'luis@streaming.com',    tipodeconta: UserRole.OUVINTE },
+    { login: 'Usuario',        name: 'Usuario Teste',  password: '1234',     email: 'usuario@streaming.com', tipodeconta: UserRole.OUVINTE },
+    { login: 'admin',          name: 'Administrador',  password: 'admin123', email: 'admin@wave.com',        tipodeconta: UserRole.ADMIN   },
   ]);
-  console.log('2 usuários criados...');
+  console.log('3 usuários criados...');
 
   // ── Artistas ──────────────────────────────────────────────────────────────
   const artistaRepo = AppDataSource.getRepository(Artista);

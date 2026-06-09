@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { AlbunsModule }  from './albuns/albuns.module';
 import { MusicasModule } from './musicas/musicas.module';
 import { PlaylistsModule } from './playlists/playlists.module';
 import { PodcastModule } from './podcast/podcast.module';
@@ -25,6 +26,7 @@ import { ScoresModule } from './scores/score.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+    AlbunsModule,
     MusicasModule,
     PlaylistsModule,
     PodcastModule,

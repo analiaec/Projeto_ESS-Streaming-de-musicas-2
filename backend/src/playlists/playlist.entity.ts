@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
+import { Musica } from '../musicas/musica.entity';
 
 @Entity('playlists')
 export class Playlist {
@@ -16,4 +17,8 @@ export class Playlist {
 
   @Column()
   ownerLogin: string;
+
+  @ManyToMany(() => Musica)
+  @JoinTable({ name: 'playlist_musicas' })
+  musicas: Musica[];
 }

@@ -15,6 +15,9 @@ import { Albuns }          from './pages/Albuns';
 import { Podcasts }        from './pages/Podcasts';
 import { PodcastPerfil }   from './pages/PodcastPerfil';
 import { MeuPodcast }      from './pages/MeuPodcast';
+import { AccountSettings } from './pages/AccountSettings';
+import { UpdateAccount }   from './pages/UpdateAccount';
+import { RemoveAccount }   from './pages/RemoveAccount';
 
 function App() {
   return (
@@ -37,6 +40,9 @@ function App() {
             <Route path="/podcasts"        element={<Podcasts />}      />
             <Route path="/podcast/:login"  element={<PodcastPerfil />} />
             <Route path="/meu-podcast"     element={<MeuPodcast />}    />
+            <Route path="/conta"           element={<AccountSettings />} />
+            <Route path="/update-account"  element={<UpdateAccount />}   />
+            <Route path="/remove-account"  element={<RemoveAccount />}   />
           </Routes>
         </BrowserRouter>
       </ToastProvider>

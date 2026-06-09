@@ -80,8 +80,38 @@ export async function createPlaylist(data: { nome: string; descricao?: string; p
   return res.data;
 }
 
+export async function updatePlaylist(id: number, data: { nome?: string; descricao?: string; publica?: boolean }) {
+  const res = await api.patch(`/playlists/${id}`, data);
+  return res.data;
+}
+
+export async function addMusicToPlaylistApi(playlistId: number, musicaId: number) {
+  const res = await api.post(`/playlists/${playlistId}/musicas/${musicaId}`);
+  return res.data;
+}
+
+export async function removeMusicFromPlaylistApi(playlistId: number, musicaId: number) {
+  const res = await api.delete(`/playlists/${playlistId}/musicas/${musicaId}`);
+  return res.data;
+}
+
 export async function deletePlaylist(id: number) {
   const res = await api.delete(`/playlists/${id}`);
+  return res.data;
+}
+
+export async function getUserApi(login: string, token: string) {
+  const res = await api.get(`/users/${login}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+}
+
+export async function removeUserApi(login: string, password: string, token: string) {
+  const res = await api.delete(`/users/${login}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    data: { password },
+  });
   return res.data;
 }
 

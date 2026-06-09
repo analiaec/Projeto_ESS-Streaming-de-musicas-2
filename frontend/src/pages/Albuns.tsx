@@ -1,14 +1,12 @@
-import React, { useEffect, useState }         from 'react';
-import { getAlbunsApi, uploadAlbumImage }      from '../api';
-import { backendBaseUrl }                      from '../api';
-import { Navbar }                              from '../components/Navbar';
-import { useToast }                            from '../contexts/ToastContext';
+import React, { useEffect, useState }  from 'react';
+import { getAlbunsApi }                from '../api';
+import { backendBaseUrl }              from '../api';
+import { Navbar }                      from '../components/Navbar';
 import './Albuns.css';
 
 export function Albuns() {
   const [albuns,  setAlbuns]  = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const { toast }             = useToast();
 
   useEffect(() => {
     getAlbunsApi()
@@ -16,18 +14,6 @@ export function Albuns() {
       .catch(() => setAlbuns([]))
       .finally(() => setLoading(false));
   }, []);
-
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>, albumId: number) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const updated = await uploadAlbumImage(albumId, file);
-      setAlbuns(prev => prev.map(a => a.id === albumId ? updated : a));
-      toast('Capa atualizada!', 'success');
-    } catch {
-      toast('Erro ao enviar imagem.', 'error');
-    }
-  }
 
   return (
     <>
@@ -44,26 +30,35 @@ export function Albuns() {
 
           {!loading && albuns.length > 0 && (
             <div className="album-grid">
-              {albuns.map(album => (
-                <div key={album.id} className="album-card card">
-                  <div className="album-cover">
-                    {album.imageUrl ? (
-                      <img src={`${backendBaseUrl}${album.imageUrl}`} alt={album.nome} />
-                    ) : (
-                      <div className="album-cover-placeholder">💿</div>
-                    )}
+              {albuns.map(album => {
+                const capa = album.capaUrl || album.imageUrl;
+                const artistaNomes: string[] = Array.from(new Set(
+                  (album.artistas?.length ? album.artistas : (album.musicas ?? []).flatMap((m: any) => m.artistas ?? []))
+                    .map((a: any) => a.nomeArtistico)
+                    .filter(Boolean)
+                ));
+                return (
+                  <div key={album.id} className="album-card card">
+                    <div className="album-cover">
+                      {capa ? (
+                        <img src={capa.startsWith('http') ? capa : `${backendBaseUrl}${capa}`} alt={album.nome} />
+                      ) : (
+                        <div className="album-cover-placeholder">💿</div>
+                      )}
+                    </div>
+                    <div className="album-info">
+                      <div className="album-nome">{album.nome}</div>
+                      {artistaNomes.length > 0 && (
+                        <div className="album-artista">{artistaNomes.join(', ')}</div>
+                      )}
+                      {album.data && <div className="album-data">{album.data}</div>}
+                      {album.musicas?.length > 0 && (
+                        <div className="album-faixas">{album.musicas.length} faixa{album.musicas.length !== 1 ? 's' : ''}</div>
+                      )}
+                    </div>
                   </div>
-                  <div className="album-info">
-                    <div className="album-nome">{album.nome}</div>
-                    {album.data && <div className="album-data">{album.data}</div>}
-                  </div>
-                  <label className="btn btn-ghost btn-sm album-upload-btn">
-                    Enviar capa
-                    <input type="file" accept="image/*"
-                      onChange={e => handleFileChange(e, album.id)} />
-                  </label>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

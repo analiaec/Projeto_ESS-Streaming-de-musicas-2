@@ -10,9 +10,10 @@ const CARDS_PUBLIC = [
 ];
 
 const CARDS_LOGADO = [
-  { to: '/recomendacoes', icon: '✨', label: 'Para Você',  desc: 'Recomendações personalizadas' },
-  { to: '/playlists',     icon: '📋', label: 'Playlists',  desc: 'Organize suas músicas' },
-  { to: '/historico',     icon: '🕗', label: 'Histórico',  desc: 'Músicas que você ouviu' },
+  { to: '/recomendacoes', icon: '✨', label: 'Para Você',   desc: 'Recomendações personalizadas' },
+  { to: '/playlists',     icon: '📋', label: 'Playlists',   desc: 'Organize suas músicas' },
+  { to: '/historico',     icon: '🕗', label: 'Histórico',   desc: 'Músicas que você ouviu' },
+  { to: '/conta',         icon: '👤', label: 'Minha Conta', desc: 'Perfil e configurações' },
 ];
 
 export function Home() {
