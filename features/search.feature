@@ -40,12 +40,12 @@ Feature: Streaming System
   Scenario: Busca por nome que retorna resultado
     Given estou logado como "Usuário" com login "LuisCardoso012" e senha "1234"
     And estou na página "Busca"
-    And existe um item com título "MusicaBonita123"
-    When realizo uma busca pelo termo "MusicaBonita123"
-    Then o sistema deve exibir a música "MusicaBonita123" nos resultados
+    And existe um item com título "Catherine"
+    When realizo uma busca pelo termo "Catherine"
+    Then o sistema deve exibir a música "Catherine" nos resultados
     And os resultados devem estar ordenados de forma decrescente priorizando correlações exatas e depois parciais
     And músicas com mesma correlação devem ser ordenadas pelo total de reproduções
-    And nenhuma música sem correlação com "MusicaBonita123" deve ser exibida
+    And nenhuma música sem correlação com "Catherine" deve ser exibida
 
   Scenario: Busca por musicas utilizando filtro de ano de lancamento com resultados
     Given estou logado como "Usuário" com login "LuisCardoso012" e senha "1234"
@@ -55,7 +55,7 @@ Feature: Streaming System
     And aplico o filtro de ano de lançamento "1994"
     Then o sistema deve exibir as 10 músicas com maior número de reproduções do ano "1994"
     And os resultados devem estar ordenados de forma decrescente pelo total de reproduções
-    And nenhuma música com ano de lançamento diferente de "1994" deve ser exibidaZ
+    And nenhuma música com ano de lançamento diferente de "1994" deve ser exibida
 
   Scenario: Exibicao do historico de filtros ao abrir a busca
     Given estou logado como "Usuário" com login "LuisCardoso012" e senha "1234"

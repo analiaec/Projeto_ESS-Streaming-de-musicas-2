@@ -21,7 +21,7 @@ export class ScoresService {
 
   async calcularScores(login: string): Promise<void> {
 
-    // 1. busca o histórico do usuário
+    //  busca o histórico do usuário
     let historico: any[] = [];
     try {
       historico = await this.playbackService.findByUser(login);
@@ -41,17 +41,21 @@ export class ScoresService {
       return;
     }
 
-    // 2. conta reproduções por gênero do usuário
+    //  conta reproduções por gênero do usuário
+    // normaliza pelo número de gêneros para evitar dupla contagem
     const reproducoesPorGenero: Record<string, number> = {};
     historico
-      .filter(p => p.musica)
+      .filter(p => p.musica && p.musica.album?.generos?.length > 0)
       .forEach(p => {
-        const genero = p.musica.genero;
-        reproducoesPorGenero[genero] =
-          (reproducoesPorGenero[genero] ?? 0) + 1;
+        const generos: string[] = p.musica.album.generos;
+        const peso = 1 / generos.length; // ← peso dividido entre os gêneros
+        generos.forEach(genero => {
+          reproducoesPorGenero[genero] =
+            (reproducoesPorGenero[genero] ?? 0) + peso;
+        });
       });
 
-    // 3. conta reproduções por artista do usuário
+    //  conta reproduções por artista do usuário
     const reproducoesPorArtista: Record<string, number> = {};
     historico
       .filter(p => p.musica && p.musica.artistas)
@@ -63,47 +67,52 @@ export class ScoresService {
         });
       });
 
-    // 4. busca músicas com afinidade — mesmo gênero OU mesmo artista
+    //  busca músicas com afinidade — mesmo gênero OU mesmo artista
     const generosOuvidos  = Object.keys(reproducoesPorGenero);
     const artistasOuvidos = Object.keys(reproducoesPorArtista);
 
     let musicasDisponiveis: Musica[] = [];
 
     if (generosOuvidos.length === 0 && artistasOuvidos.length === 0) {
-    // sem afinidade — não recomenda nada
-    musicasDisponiveis = [];
+      musicasDisponiveis = [];
     } else {
-    const query = this.musicaRepository
+      const query = this.musicaRepository
         .createQueryBuilder('musica')
-        .leftJoinAndSelect('musica.artistas', 'artista');
+        .leftJoinAndSelect('musica.artistas', 'artista')
+        .leftJoinAndSelect('musica.album', 'album');
 
-    // exclui músicas já ouvidas
-    if (musicasOuvidas.length > 0) {
+      // exclui músicas já ouvidas
+      if (musicasOuvidas.length > 0) {
         query.where('musica.id NOT IN (:...musicasOuvidas)', { musicasOuvidas });
-    }
+      }
 
-    // filtra por gênero OU artista — só adiciona condições se os arrays não estão vazios
-    query.andWhere(
+      // filtra por gênero OU artista
+      query.andWhere(
         new Brackets(qb => {
-        if (generosOuvidos.length > 0 && artistasOuvidos.length > 0) {
-            qb.where('musica.genero IN (:...generosOuvidos)', { generosOuvidos })
-            .orWhere('artista.nomeArtistico IN (:...artistasOuvidos)', { artistasOuvidos });
-        } else if (generosOuvidos.length > 0) {
-            qb.where('musica.genero IN (:...generosOuvidos)', { generosOuvidos });
-        } else {
+          if (generosOuvidos.length > 0 && artistasOuvidos.length > 0) {
+            qb.where('album.generos && ARRAY[:...generosOuvidos]', { generosOuvidos })
+              .orWhere('artista.nomeArtistico IN (:...artistasOuvidos)', { artistasOuvidos });
+          } else if (generosOuvidos.length > 0) {
+            qb.where('album.generos && ARRAY[:...generosOuvidos]', { generosOuvidos });
+          } else {
             qb.where('artista.nomeArtistico IN (:...artistasOuvidos)', { artistasOuvidos });
-        }
+          }
         })
-    );
+      );
 
-    musicasDisponiveis = await query.getMany();
+      musicasDisponiveis = await query.getMany();
     }
 
-    // 5. calcula score para cada música disponível
+    // calcula score para cada música disponível
     const scores = musicasDisponiveis.map(musica => {
 
       // fator 1 — afinidade de gênero
-      const repGenero = reproducoesPorGenero[musica.genero] ?? 0;
+      // normaliza pelo número de gêneros da música para evitar dupla contagem
+      const generosMusica = musica.album?.generos ?? [];
+      const pesoGenero = generosMusica.length > 0 ? 1 / generosMusica.length : 0;
+      const repGenero = generosMusica.reduce((acc: number, g: string) => {
+        return acc + (reproducoesPorGenero[g] ?? 0) * pesoGenero;
+      }, 0);
       const fator1 = repGenero / totalUsuario;
 
       // fator 2 — afinidade com o artista
@@ -113,15 +122,15 @@ export class ScoresService {
       const fator2 = repArtistas / totalUsuario;
 
       // score normalizado entre 0 e 1
-      const scoreValor = (fator1 + fator2) / 2;
+      const scoreValor = Math.round(((fator1 + fator2) / 2) * 100) / 100;
 
       return { musica, scoreValor };
     });
 
-    // 6. remove scores antigos do usuário
+    // remove scores antigos do usuário
     await this.scoreRepository.delete({ user: { login } as User });
 
-    // 7. salva os novos scores
+    // salva os novos scores
     const user = { login } as User;
     await this.scoreRepository.save(
       scores.map(({ musica, scoreValor }) => ({

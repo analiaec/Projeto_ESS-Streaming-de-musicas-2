@@ -25,16 +25,20 @@ async function seed() {
   console.log('Conectado ao banco de dados...');
 
   // limpa tudo em ordem segura
-  await AppDataSource.query('DELETE FROM episodes').catch(() => {});
-  await AppDataSource.query('DELETE FROM podcast').catch(() => {});
-  await AppDataSource.query('DELETE FROM "musica_artistas"').catch(() => {});
-  await AppDataSource.query('DELETE FROM musicas').catch(() => {});
-  await AppDataSource.query('DELETE FROM albuns').catch(() => {});
-  await AppDataSource.query('DELETE FROM artistas').catch(() => {});
-  await AppDataSource.query('DELETE FROM scores').catch(() => {});
-  await AppDataSource.query('DELETE FROM "Playback"').catch(() => {});
-  await AppDataSource.query('DELETE FROM users').catch(() => {});
-  console.log('Tabelas limpas...');
+  await AppDataSource.query(`
+  TRUNCATE TABLE 
+    episodes,
+    podcast,
+    "musica_artistas",
+    musicas,
+    scores,
+    "Playback",
+    albuns,
+    artistas,
+    users
+  RESTART IDENTITY CASCADE
+`);
+console.log('Tabelas limpas...');
 
   // ── Usuários ──────────────────────────────────────────────────────────────
   const usuarioRepo = AppDataSource.getRepository(User);
