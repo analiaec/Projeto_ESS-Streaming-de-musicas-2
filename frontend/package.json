@@ -23,7 +23,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:run:playlists": "cypress run --spec cypress/e2e/playlists.feature"
+  },
+  "cypress-cucumber-preprocessor": {
+    "stepDefinitions": "cypress/e2e/step_definitions/**/*.{js,ts}"
   },
   "eslintConfig": {
     "extends": [
@@ -44,6 +50,10 @@
     ]
   },
   "devDependencies": {
-    "@types/react-router-dom": "^5.3.3"
+    "@badeball/cypress-cucumber-preprocessor": "^20.1.2",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
+    "@types/react-router-dom": "^5.3.3",
+    "cypress": "^13.17.0",
+    "esbuild": "^0.24.2"
   }
 }
