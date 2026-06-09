@@ -19,7 +19,7 @@ async function bootstrap() {
   if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
   app.use('/uploads', express.static(uploadDir));
 
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 3001;
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
   await app.listen(port);
   console.log(`Backend rodando em http://localhost:${port}/api`);
 }
