@@ -2,7 +2,7 @@
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--nav-height);
-  background: rgba(10, 10, 10, 0.92);
+  background: var(--navbar-bg);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
   z-index: 1000;
@@ -118,4 +118,20 @@
   background: var(--red-dim);
   color: var(--red);
   border-color: var(--red);
+}
+
+.navbar-theme-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-sub);
+  padding: 0.32rem 0.55rem;
+  font-size: 1rem;
+  line-height: 1;
+  transition: background var(--transition), color var(--transition);
+}
+
+.navbar-theme-btn:hover {
+  background: var(--surface2);
+  color: var(--text);
 }

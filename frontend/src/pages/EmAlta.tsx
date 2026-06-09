@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
-import { api, musicasUrl }     from '../api';
-import { Musica }              from '../types';
-import { MusicaCard }          from '../components/MusicaCard';
-import { Navbar }              from '../components/Navbar';
+import { api, musicasUrl }      from '../api';
+import { Musica }               from '../types';
+import { MusicaCard }           from '../components/MusicaCard';
+import { AddToPlaylistBtn }     from '../components/AddToPlaylistBtn';
+import { Navbar }               from '../components/Navbar';
+import { useAuth }              from '../contexts/AuthContext';
 import './EmAlta.css';
 
 export function EmAlta() {
-  const [emAlta,     setEmAlta]     = useState<Musica[]>([]);
-  const [carregando, setCarregando] = useState(true);
-  const [erro,       setErro]       = useState<string | null>(null);
+  const { login }                        = useAuth();
+  const [emAlta,     setEmAlta]          = useState<Musica[]>([]);
+  const [carregando, setCarregando]      = useState(true);
+  const [erro,       setErro]            = useState<string | null>(null);
+  const [playlists,  setPlaylists]       = useState<any[]>([]);
 
   useEffect(() => {
     api.get(musicasUrl('/em-alta'))
@@ -16,6 +20,17 @@ export function EmAlta() {
       .catch(() => setErro('Não foi possível carregar as músicas em alta.'))
       .finally(() => setCarregando(false));
   }, []);
+
+  useEffect(() => {
+    if (!login) { setPlaylists([]); return; }
+    api.get('/playlists')
+      .then(res => {
+        const body = res.data;
+        const all  = body?.value ? body.value : Array.isArray(body) ? body : [];
+        setPlaylists(all.filter((pl: any) => pl.ownerLogin === login));
+      })
+      .catch(() => {});
+  }, [login]);
 
   function handleReproduzir(id: number) {
     setEmAlta(prev =>
@@ -54,6 +69,11 @@ export function EmAlta() {
                   exibirReproducoes
                   onReproduzir={handleReproduzir}
                   posicao={index + 1}
+                  extraAction={
+                    login
+                      ? <AddToPlaylistBtn musicaId={musica.id} playlists={playlists} />
+                      : undefined
+                  }
                 />
               ))}
             </ul>

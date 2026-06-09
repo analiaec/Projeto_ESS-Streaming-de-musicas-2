@@ -51,4 +51,21 @@ export class PlaylistsController {
   ) {
     return this.playlistsService.removerMusica(id, musicaId);
   }
+
+  @Post(':id/seguir')
+  seguir(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('userLogin') userLogin: string,
+  ) {
+    return this.playlistsService.seguir(id, userLogin);
+  }
+
+  @Delete(':id/seguir')
+  @HttpCode(200)
+  desseguir(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('userLogin') userLogin: string,
+  ) {
+    return this.playlistsService.desseguir(id, userLogin);
+  }
 }

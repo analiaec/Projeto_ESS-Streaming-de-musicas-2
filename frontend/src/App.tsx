@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider }    from './contexts/AuthContext';
 import { ToastProvider }   from './contexts/ToastContext';
+import { ThemeProvider }   from './contexts/ThemeContext';
 import { ToastContainer }  from './components/Toast';
 import { Home }            from './pages/Home';
 import { EmAlta }          from './pages/EmAlta';
@@ -21,6 +22,7 @@ import { RemoveAccount }   from './pages/RemoveAccount';
 
 function App() {
   return (
+    <ThemeProvider>
     <AuthProvider>
       <ToastProvider>
         <BrowserRouter>
@@ -47,6 +49,7 @@ function App() {
         </BrowserRouter>
       </ToastProvider>
     </AuthProvider>
+    </ThemeProvider>
   );
 }
 

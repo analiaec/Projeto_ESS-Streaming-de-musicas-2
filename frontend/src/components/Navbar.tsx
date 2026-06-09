@@ -1,9 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth }            from '../contexts/AuthContext';
+import { useTheme }           from '../contexts/ThemeContext';
 import './Navbar.css';
 
 export function Navbar() {
   const { login, logado, role, sair } = useAuth();
+  const { theme, toggleTheme }        = useTheme();
   const { pathname }                  = useLocation();
 
   function active(path: string) {
@@ -31,6 +33,14 @@ export function Navbar() {
         </nav>
 
         <div className="navbar-auth">
+          <button
+            className="navbar-theme-btn"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+
           {logado ? (
             <>
               <span className="navbar-user">
