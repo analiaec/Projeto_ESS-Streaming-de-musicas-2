@@ -1,4 +1,4 @@
-import { useState }       from 'react';
+import React, { useState } from 'react';
 import { api }             from '../api';
 import { backendBaseUrl }  from '../api';
 import { useAuth }         from '../contexts/AuthContext';
@@ -10,9 +10,10 @@ interface Props {
   exibirReproducoes?: boolean;
   onReproduzir?:      (id: number) => void;
   posicao?:           number;
+  extraAction?:       React.ReactNode;
 }
 
-export function MusicaCard({ musica, exibirReproducoes = false, onReproduzir, posicao }: Props) {
+export function MusicaCard({ musica, exibirReproducoes = false, onReproduzir, posicao, extraAction }: Props) {
   const { login }               = useAuth();
   const [reproduzindo, setRep]  = useState(false);
   const [playing,      setPlay] = useState(false);
@@ -80,6 +81,7 @@ export function MusicaCard({ musica, exibirReproducoes = false, onReproduzir, po
         >
           {reproduzindo ? <span className="spinner" /> : <span className="play-icon">{playing ? '⏹' : '▶'}</span>}
         </button>
+        {extraAction}
       </div>
 
       {playing && musica.arquivoUrl && (

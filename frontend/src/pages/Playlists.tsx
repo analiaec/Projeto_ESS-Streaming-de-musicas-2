@@ -1,27 +1,25 @@
-import React, { useEffect, useState }                                        from 'react';
-import { api, createPlaylist, updatePlaylist, deletePlaylist,
-         addMusicToPlaylistApi, removeMusicFromPlaylistApi }                  from '../api';
-import { useAuth }                                                             from '../contexts/AuthContext';
-import { useToast }                                                            from '../contexts/ToastContext';
-import { Navbar }                                                              from '../components/Navbar';
+import React, { useEffect, useState }              from 'react';
+import { api, createPlaylist, updatePlaylist,
+         deletePlaylist, removeMusicFromPlaylistApi } from '../api';
+import { useAuth }                                    from '../contexts/AuthContext';
+import { useToast }                                   from '../contexts/ToastContext';
+import { Navbar }                                     from '../components/Navbar';
+import { MusicaCard }                                 from '../components/MusicaCard';
 import './Playlists.css';
 
 export function Playlists() {
-  const { login }                                = useAuth();
-  const { toast }                                = useToast();
-  const [playlists,   setPlaylists]              = useState<any[]>([]);
-  const [todasMusicas, setTodasMusicas]          = useState<any[]>([]);
-  const [loading,     setLoading]                = useState(true);
-  const [creating,    setCreating]               = useState(false);
-  const [deletingId,  setDeletingId]             = useState<number | null>(null);
-  const [editingId,   setEditingId]              = useState<number | null>(null);
-  const [expandedId,  setExpandedId]             = useState<number | null>(null);
-  const [name,        setName]                   = useState('');
-  const [descricao,   setDescricao]              = useState('');
-  const [publica,     setPublica]                = useState(true);
-  const [erroForm,    setErroForm]               = useState('');
-  const [busca,       setBusca]                  = useState('');
-  const [buscando,    setBuscando]               = useState(false);
+  const { login }                             = useAuth();
+  const { toast }                             = useToast();
+  const [playlists,  setPlaylists]            = useState<any[]>([]);
+  const [loading,    setLoading]              = useState(true);
+  const [creating,   setCreating]             = useState(false);
+  const [deletingId, setDeletingId]           = useState<number | null>(null);
+  const [editingId,  setEditingId]            = useState<number | null>(null);
+  const [expandedId, setExpandedId]           = useState<number | null>(null);
+  const [name,       setName]                 = useState('');
+  const [descricao,  setDescricao]            = useState('');
+  const [publica,    setPublica]              = useState(true);
+  const [erroForm,   setErroForm]             = useState('');
 
   useEffect(() => {
     api.get('/playlists')
@@ -32,18 +30,6 @@ export function Playlists() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
-
-  useEffect(() => {
-    if (!busca.trim()) { setTodasMusicas([]); return; }
-    const timer = setTimeout(() => {
-      setBuscando(true);
-      api.get(`/users/_/musicas`, { params: { termo: busca } })
-        .then(res => setTodasMusicas(Array.isArray(res.data) ? res.data : []))
-        .catch(() => setTodasMusicas([]))
-        .finally(() => setBuscando(false));
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [busca]);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -85,21 +71,12 @@ export function Playlists() {
     try {
       await deletePlaylist(id);
       setPlaylists(prev => prev.filter(pl => pl.id !== id));
+      if (expandedId === id) setExpandedId(null);
       toast('Playlist excluída.', 'info');
     } catch (err: any) {
       toast(err?.response?.data?.message || 'Erro ao excluir.', 'error');
     } finally {
       setDeletingId(null);
-    }
-  }
-
-  async function handleAddMusica(playlistId: number, musicaId: number) {
-    try {
-      const updated = await addMusicToPlaylistApi(playlistId, musicaId);
-      setPlaylists(prev => prev.map(pl => pl.id === playlistId ? updated : pl));
-      toast('Música adicionada!', 'success');
-    } catch (err: any) {
-      toast(err?.response?.data?.message || 'Erro ao adicionar música.', 'error');
     }
   }
 
@@ -161,11 +138,9 @@ export function Playlists() {
           {!loading && playlists.length > 0 && (
             <ul className="pl-list">
               {playlists.map(pl => {
-                const isOwner   = login === pl.ownerLogin;
+                const isOwner    = login === pl.ownerLogin;
                 const isExpanded = expandedId === pl.id;
-                const musicasNaPl = pl.musicas ?? [];
-                const musicasIds  = new Set(musicasNaPl.map((m: any) => m.id));
-                const sugestoes   = todasMusicas.filter((m: any) => !musicasIds.has(m.id));
+                const musicas    = pl.musicas ?? [];
 
                 return (
                   <li key={pl.id} className="pl-card card">
@@ -177,7 +152,7 @@ export function Playlists() {
                     </div>
                     {pl.descricao && <p className="pl-card-desc">{pl.descricao}</p>}
                     <div className="pl-card-meta">
-                      por {pl.ownerLogin} · {musicasNaPl.length} música{musicasNaPl.length !== 1 ? 's' : ''}
+                      por {pl.ownerLogin} · {musicas.length} música{musicas.length !== 1 ? 's' : ''}
                     </div>
 
                     <div className="pl-card-actions">
@@ -196,49 +171,28 @@ export function Playlists() {
 
                     {isExpanded && (
                       <div className="pl-expanded">
-                        {musicasNaPl.length === 0 ? (
-                          <p className="pl-empty-hint">Nenhuma música nesta playlist.</p>
+                        {musicas.length === 0 ? (
+                          <p className="pl-empty-hint">
+                            Nenhuma música ainda. Vá em <strong>Buscar</strong> e adicione músicas usando o botão ＋.
+                          </p>
                         ) : (
-                          <ul className="pl-musicas-list">
-                            {musicasNaPl.map((m: any) => (
-                              <li key={m.id} className="pl-musica-item">
-                                <span className="pl-musica-titulo">{m.titulo}</span>
-                                <span className="pl-musica-artista">
-                                  {m.artistas?.map((a: any) => a.nomeArtistico).join(', ')}
-                                </span>
-                                {isOwner && (
-                                  <button className="btn btn-ghost btn-sm pl-remove-btn"
-                                    onClick={() => handleRemoveMusica(pl.id, m.id)}>✕</button>
-                                )}
-                              </li>
+                          <ul className="musica-list">
+                            {musicas.map((m: any) => (
+                              <MusicaCard
+                                key={m.id}
+                                musica={m}
+                                extraAction={
+                                  isOwner
+                                    ? <button
+                                        className="btn btn-ghost btn-sm pl-remove-btn"
+                                        title="Remover da playlist"
+                                        onClick={() => handleRemoveMusica(pl.id, m.id)}
+                                      >✕</button>
+                                    : undefined
+                                }
+                              />
                             ))}
                           </ul>
-                        )}
-
-                        {isOwner && (
-                          <div className="pl-add-musica">
-                            <input
-                              className="pl-busca-musica"
-                              placeholder="Buscar música para adicionar…"
-                              value={busca}
-                              onChange={e => setBusca(e.target.value)}
-                            />
-                            {busca && (
-                              <ul className="pl-sugestoes">
-                                {buscando && <li className="pl-sem-resultado">Buscando…</li>}
-                                {!buscando && sugestoes.slice(0, 8).map((m: any) => (
-                                  <li key={m.id} className="pl-sugestao-item">
-                                    <span>{m.titulo} — {m.artistas?.map((a: any) => a.nomeArtistico).join(', ')}</span>
-                                    <button className="btn btn-primary btn-sm"
-                                      onClick={() => { handleAddMusica(pl.id, m.id); setBusca(''); }}>
-                                      + Adicionar
-                                    </button>
-                                  </li>
-                                ))}
-                                {!buscando && sugestoes.length === 0 && <li className="pl-sem-resultado">Nenhum resultado.</li>}
-                              </ul>
-                            )}
-                          </div>
                         )}
                       </div>
                     )}

@@ -1,17 +1,88 @@
-import { useState }        from 'react';
-import { api, musicasUrl } from '../api';
+import React, { useEffect, useRef, useState } from 'react';
+import { api, musicasUrl, addMusicToPlaylistApi } from '../api';
 import { Musica }          from '../types';
 import { MusicaCard }      from '../components/MusicaCard';
 import { Navbar }          from '../components/Navbar';
+import { useAuth }         from '../contexts/AuthContext';
+import { useToast }        from '../contexts/ToastContext';
 import './Busca.css';
 
+function AddToPlaylistBtn({ musicaId, playlists }: { musicaId: number; playlists: any[] }) {
+  const [open,    setOpen]    = useState(false);
+  const [loading, setLoading] = useState<number | null>(null);
+  const { toast }             = useToast();
+  const ref                   = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  async function add(playlistId: number) {
+    setLoading(playlistId);
+    try {
+      await addMusicToPlaylistApi(playlistId, musicaId);
+      toast('Música adicionada à playlist!', 'success');
+      setOpen(false);
+    } catch (err: any) {
+      toast(err?.response?.data?.message || 'Erro ao adicionar.', 'error');
+    } finally {
+      setLoading(null);
+    }
+  }
+
+  if (!playlists.length) return null;
+
+  return (
+    <div className="add-pl-wrap" ref={ref}>
+      <button
+        className="btn btn-ghost btn-sm add-pl-btn"
+        title="Adicionar a uma playlist"
+        onClick={() => setOpen(o => !o)}
+      >＋</button>
+      {open && (
+        <ul className="add-pl-dropdown">
+          {playlists.map(pl => (
+            <li key={pl.id}>
+              <button
+                className="add-pl-option"
+                disabled={loading === pl.id}
+                onClick={() => add(pl.id)}
+              >
+                {loading === pl.id ? '…' : pl.nome}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export function Busca() {
-  const [termo,      setTermo]      = useState('');
-  const [genero,     setGenero]     = useState('');
-  const [artista,    setArtista]    = useState('');
-  const [resultados, setResultados] = useState<Musica[]>([]);
-  const [buscou,     setBuscou]     = useState(false);
-  const [carregando, setCarregando] = useState(false);
+  const { login }                                  = useAuth();
+  const [termo,      setTermo]                     = useState('');
+  const [genero,     setGenero]                    = useState('');
+  const [artista,    setArtista]                   = useState('');
+  const [resultados, setResultados]                = useState<Musica[]>([]);
+  const [buscou,     setBuscou]                    = useState(false);
+  const [carregando, setCarregando]                = useState(false);
+  const [playlists,  setPlaylists]                 = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!login) return;
+    api.get('/playlists')
+      .then(res => {
+        const body = res.data;
+        const all  = body?.value ? body.value : Array.isArray(body) ? body : [];
+        setPlaylists(all.filter((pl: any) => pl.ownerLogin === login));
+      })
+      .catch(() => {});
+  }, [login]);
 
   async function buscar() {
     const params = new URLSearchParams();
@@ -85,11 +156,7 @@ export function Busca() {
             </div>
           </div>
 
-          {carregando && (
-            <div className="loader-wrap">
-              <span className="loader" />
-            </div>
-          )}
+          {carregando && <div className="loader-wrap"><span className="loader" /></div>}
 
           {buscou && !carregando && resultados.length === 0 && (
             <div className="empty-state">Nenhum resultado para essa busca.</div>
@@ -98,7 +165,15 @@ export function Busca() {
           {resultados.length > 0 && (
             <ul className="musica-list">
               {resultados.map(musica => (
-                <MusicaCard key={musica.id} musica={musica} />
+                <MusicaCard
+                  key={musica.id}
+                  musica={musica}
+                  extraAction={
+                    login
+                      ? <AddToPlaylistBtn musicaId={musica.id} playlists={playlists} />
+                      : undefined
+                  }
+                />
               ))}
             </ul>
           )}
