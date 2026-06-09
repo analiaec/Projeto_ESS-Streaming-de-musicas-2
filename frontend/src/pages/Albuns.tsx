@@ -1,62 +1,120 @@
 import React, { useEffect, useState } from 'react';
-import { getAlbunsApi, uploadAlbumImage } from '../api';
+import { getAlbunsApi, api }          from '../api';
+import { backendBaseUrl }             from '../api';
+import { Navbar }                     from '../components/Navbar';
+import { MusicaCard }                 from '../components/MusicaCard';
+import { AddToPlaylistBtn }           from '../components/AddToPlaylistBtn';
+import { useAuth }                    from '../contexts/AuthContext';
 import './Albuns.css';
 
 export function Albuns() {
-  const [albuns, setAlbuns] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { login }                           = useAuth();
+  const [albuns,     setAlbuns]             = useState<any[]>([]);
+  const [loading,    setLoading]            = useState(true);
+  const [expandedId, setExpandedId]         = useState<number | null>(null);
+  const [playlists,  setPlaylists]          = useState<any[]>([]);
 
   useEffect(() => {
-    let mounted = true;
     getAlbunsApi()
-      .then((data) => { if (mounted) setAlbuns(data || []); })
-      .catch(() => { if (mounted) setAlbuns([]); })
-      .finally(() => { if (mounted) setLoading(false); });
-    return () => { mounted = false };
+      .then(data => setAlbuns(data || []))
+      .catch(() => setAlbuns([]))
+      .finally(() => setLoading(false));
   }, []);
 
-  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>, albumId: number) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const updated = await uploadAlbumImage(albumId, file);
-      setAlbuns((prev) => prev.map(a => a.id === albumId ? updated : a));
-    } catch (err) {
-      // simple error handling
-      console.error('Upload error', err);
-      alert('Erro ao enviar imagem');
-    }
-  }
-
-  if (loading) return <div className="albuns-root">Carregando álbuns...</div>;
+  useEffect(() => {
+    if (!login) { setPlaylists([]); return; }
+    api.get('/playlists')
+      .then(res => {
+        const body = res.data;
+        const all  = body?.value ? body.value : Array.isArray(body) ? body : [];
+        setPlaylists(all.filter((pl: any) => pl.ownerLogin === login));
+      })
+      .catch(() => {});
+  }, [login]);
 
   return (
-    <div className="albuns-root">
-      <h2>Álbuns</h2>
-      <div className="albuns-grid">
-        {albuns.map(album => (
-          <div key={album.id} className="album-card">
-            <div className="cover">
-              {album.imageUrl ? (
-                <img src={`http://localhost:3000${album.imageUrl}`} alt={album.nome} />
-              ) : (
-                <div className="placeholder">Sem capa</div>
-              )}
+    <>
+      <Navbar />
+      <div className="page-wrapper">
+        <div className="page-inner">
+          <h1 className="section-title" style={{ marginBottom: '1.25rem' }}>💿 Álbuns</h1>
+
+          {loading && <div className="loader-wrap"><span className="loader" /></div>}
+
+          {!loading && albuns.length === 0 && (
+            <div className="empty-state">Nenhum álbum cadastrado ainda.</div>
+          )}
+
+          {!loading && albuns.length > 0 && (
+            <div className="album-grid">
+              {albuns.map(album => {
+                const capa = album.capaUrl || album.imageUrl;
+                const isExpanded = expandedId === album.id;
+                const artistaNomes: string[] = Array.from(new Set(
+                  (album.musicas ?? [])
+                    .flatMap((m: any) => m.artistas ?? [])
+                    .map((a: any) => a.nomeArtistico)
+                    .filter(Boolean)
+                ));
+
+                return (
+                  <div key={album.id} className={`album-card card ${isExpanded ? 'album-card-expanded' : ''}`}>
+                    <div
+                      className="album-clickable"
+                      onClick={() => setExpandedId(isExpanded ? null : album.id)}
+                      title={isExpanded ? 'Fechar' : 'Ver músicas'}
+                    >
+                      <div className="album-cover">
+                        {capa ? (
+                          <img
+                            src={capa.startsWith('http') ? capa : `${backendBaseUrl}${capa}`}
+                            alt={album.nome}
+                          />
+                        ) : (
+                          <div className="album-cover-placeholder">💿</div>
+                        )}
+                        <div className="album-cover-overlay">
+                          {isExpanded ? '▲' : '▶'}
+                        </div>
+                      </div>
+                      <div className="album-info">
+                        <div className="album-nome">{album.nome}</div>
+                        {artistaNomes.length > 0 && (
+                          <div className="album-artista">{artistaNomes.join(', ')}</div>
+                        )}
+                        {album.data && <div className="album-data">{album.data}</div>}
+                        {album.musicas?.length > 0 && (
+                          <div className="album-faixas">{album.musicas.length} faixa{album.musicas.length !== 1 ? 's' : ''}</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {isExpanded && (
+                      <div className="album-musicas">
+                        <ul className="musica-list">
+                          {(album.musicas ?? []).map((m: any, i: number) => (
+                            <MusicaCard
+                              key={m.id}
+                              musica={m}
+                              posicao={i + 1}
+                              extraAction={
+                                login
+                                  ? <AddToPlaylistBtn musicaId={m.id} playlists={playlists} />
+                                  : undefined
+                              }
+                            />
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-            <div className="meta">
-              <div className="title">{album.nome}</div>
-              <div className="date">{album.data}</div>
-            </div>
-            <div className="actions">
-              <label className="upload-btn">
-                Enviar capa
-                <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, album.id)} />
-              </label>
-            </div>
-          </div>
-        ))}
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

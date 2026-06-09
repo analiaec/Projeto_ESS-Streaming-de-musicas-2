@@ -15,6 +15,9 @@ export class Musica {
   @Column({ default: 0 })
   reproducoes: number;
 
+  @Column({ nullable: true })
+  arquivoUrl: string | null;
+
   @ManyToOne(() => Album, album => album.musicas, {nullable:false} )
   album: Album;
 

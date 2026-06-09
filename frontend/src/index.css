@@ -1,14 +1,238 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&display=swap');
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg:           #0a0a0a;
+  --surface:      #141414;
+  --surface2:     #1c1c1c;
+  --surface3:     #252525;
+  --border:       #2a2a2a;
+  --border-light: #333;
+  --accent:       #a855f7;
+  --accent-hover: #9333ea;
+  --accent-dim:   rgba(168, 85, 247, 0.12);
+  --green:        #22c55e;
+  --green-dim:    rgba(34, 197, 94, 0.12);
+  --red:          #ef4444;
+  --red-dim:      rgba(239, 68, 68, 0.12);
+  --orange:       #f97316;
+  --orange-dim:   rgba(249, 115, 22, 0.12);
+  --blue:         #3b82f6;
+  --text:         #f0f0f0;
+  --text-sub:     #999;
+  --text-muted:   #555;
+  --radius-sm:    5px;
+  --radius:       8px;
+  --radius-lg:    14px;
+  --transition:   0.18s ease;
+  --shadow:       0 2px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg:    0 8px 40px rgba(0, 0, 0, 0.6);
+  --nav-height:   60px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+img { max-width: 100%; display: block; }
+
+button { cursor: pointer; font-family: inherit; }
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+  width: 100%;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+input::placeholder, textarea::placeholder { color: var(--text-muted); }
+
+select option { background: var(--surface2); }
+
+/* ── Page wrapper (used by all pages) ── */
+.page-wrapper {
+  padding-top: var(--nav-height);
+  min-height: 100vh;
+}
+
+.page-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* ── Section title ── */
+.section-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+  transition: background var(--transition);
+}
+
+.card:hover { background: var(--surface2); }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.52rem 1.1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  transition: opacity var(--transition), background var(--transition), transform 0.1s;
+}
+
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary  { background: var(--accent); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-sub);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover:not(:disabled) { background: var(--surface2); color: var(--text); }
+
+.btn-danger  { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
+.btn-danger:hover:not(:disabled) { background: var(--red); color: #fff; }
+
+.btn-green  { background: var(--green); color: #fff; }
+.btn-green:hover:not(:disabled) { opacity: 0.85; }
+
+.btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+
+/* ── Badge ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18rem 0.55rem;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-green  { background: var(--green-dim);  color: var(--green);  }
+.badge-orange { background: var(--orange-dim); color: var(--orange); }
+.badge-purple { background: var(--accent-dim); color: var(--accent); }
+.badge-red    { background: var(--red-dim);    color: var(--red);    }
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-sub);
+}
+
+.empty-state .empty-icon {
+  font-size: 2.8rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.4;
+}
+
+.empty-state p { font-size: 0.95rem; }
+
+/* ── Form group ── */
+.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.form-label { font-size: 0.82rem; font-weight: 500; color: var(--text-sub); }
+.form-error { font-size: 0.82rem; color: var(--red); margin-top: 0.25rem; }
+
+/* ── Inline error/success banners ── */
+.alert {
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.alert-error   { background: var(--red-dim);   color: var(--red);   border: 1px solid var(--red);   }
+.alert-success { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
+
+/* ── Page back link ── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  color: var(--text-sub);
+  margin-bottom: 1.5rem;
+  transition: color var(--transition);
+}
+
+.back-link:hover { color: var(--accent); text-decoration: none; }
+
+/* ── Loader ── */
+.loader {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loader-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+/* ── Divider ── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5rem 0;
+}
+
+/* ── Music list (shared across EmAlta, Historico, Recomendacoes, Busca) ── */
+.musica-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }

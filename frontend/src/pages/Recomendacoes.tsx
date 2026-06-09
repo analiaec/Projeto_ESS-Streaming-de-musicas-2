@@ -1,49 +1,50 @@
 import { useEffect, useState } from 'react';
-import { Link }                from 'react-router-dom';
 import { api, musicasUrl }     from '../api';
 import { useAuth }             from '../contexts/AuthContext';
 import { MusicaCard }          from '../components/MusicaCard';
+import { Navbar }              from '../components/Navbar';
 import './Recomendacoes.css';
-import './Home.css';
 
 export function Recomendacoes() {
-  const { login, sair}               = useAuth();
-  const [recomendacoes, setRec] = useState<any[]>([]);
-  const [carregando, setCarr]   = useState(true);
-  const [erro, setErro]         = useState<string | null>(null);
+  const { login }                       = useAuth();
+  const [recomendacoes, setRec]         = useState<any[]>([]);
+  const [carregando, setCarr]           = useState(true);
+  const [erro, setErro]                 = useState<string | null>(null);
 
   useEffect(() => {
     if (!login) return;
 
     api.get(musicasUrl('/recomendadas'))
       .then(res => setRec(res.data))
-      .catch(() => setErro('Erro ao carregar recomendacoes'))
+      .catch(() => setErro('Erro ao carregar recomendações.'))
       .finally(() => setCarr(false));
   }, [login]);
 
-  if (carregando) return <p>Carregando...</p>;
-  if (erro)       return <p>{erro}</p>;
-
   return (
-    <div className="rec-container">
-      <div className="home-header">
-        <h1>Olá, {login}!</h1>
-        <button className="home-btn-outline" onClick={sair}>Sair</button>
-      </div>
-      <div className="rec-header">
-        <Link to="/" className="rec-voltar">Voltar</Link>
-        <h1 className="rec-titulo">Para você</h1>
-      </div>
+    <>
+      <Navbar />
+      <div className="page-wrapper">
+        <div className="page-inner">
+          <h1 className="section-title" style={{ marginBottom: '1.25rem' }}>✨ Para Você</h1>
 
-      {recomendacoes.length === 0 ? (
-        <p>Nenhuma recomendação disponível ainda. Comece a ouvir músicas!</p>
-      ) : (
-        <ul className="rec-lista">
-          {recomendacoes.map(score => (
-            <MusicaCard key={score.id} musica={score.musica} />
-          ))}
-        </ul>
-      )}
-    </div>
+          {carregando && <div className="loader-wrap"><span className="loader" /></div>}
+          {erro && <div className="alert alert-error">{erro}</div>}
+
+          {!carregando && !erro && recomendacoes.length === 0 && (
+            <div className="empty-state">
+              Nenhuma recomendação disponível ainda. Comece a ouvir músicas!
+            </div>
+          )}
+
+          {recomendacoes.length > 0 && (
+            <ul className="musica-list">
+              {recomendacoes.map(score => (
+                <MusicaCard key={score.id} musica={score.musica} />
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </>
   );
 }

@@ -11,6 +11,24 @@ export class AlbunsService {
     private readonly albumRepository: Repository<Album>,
   ) {}
 
+  async findAll() {
+    const ids = await this.albumRepository
+      .createQueryBuilder('album')
+      .select('album.id')
+      .orderBy('album.id', 'DESC')
+      .getMany();
+
+    const result = await Promise.all(
+      ids.map(({ id }) =>
+        this.albumRepository.findOne({
+          where: { id },
+          relations: ['musicas', 'musicas.artistas'],
+        }),
+      ),
+    );
+    return result.filter(Boolean);
+  }
+
   // criar um Álbum Completo ou um Single (album de 1 musica, pela regra do stakeholder)
   async criarLançamento(dadosAlbum: Partial<Album>, musicas: Partial<Musica>[]) {
     

@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Request, ForbiddenEx
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RemoveUserDto } from './dto/remove-user.dto';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserRole } from './entities/user.entity';
@@ -44,8 +45,12 @@ export class UsersController {
 
   @Delete(':login')
   @UseGuards(JwtAuthGuard)
-  remove(@Param('login') login: string, @Request() req, ) {
+  remove(@Param('login') login: string, @Request() req, @Body() body: RemoveUserDto) {
     if (req.user.login !== login && req.user.role !== UserRole.ADMIN) {throw new ForbiddenException('Você não possui permissão para realizar esta ação.',);}
-    return this.usersService.remove(login);
+    // admin deletando conta de outro: sem verificação de senha
+    const password = req.user.role === UserRole.ADMIN && req.user.login !== login
+      ? undefined
+      : body?.password;
+    return this.usersService.remove(login, password);
   }
 }

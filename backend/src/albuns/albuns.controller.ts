@@ -1,13 +1,18 @@
-import { Controller, Post, Body, Put, Param, ParseIntPipe, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, ParseIntPipe, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AlbunsService } from './albuns.service';
 
-@Controller('api/albuns')
+@Controller('albuns')
 export class AlbunsController {
 
   constructor(private readonly albunsService: AlbunsService) {}
+
+  @Get()
+  listarTodos() {
+    return this.albunsService.findAll();
+  }
 
   @Post()
   criar(@Body() body: any) {

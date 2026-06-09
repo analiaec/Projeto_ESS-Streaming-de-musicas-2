@@ -22,6 +22,7 @@ export class Album {
   generos: string[];
 
   @ManyToMany(() => Artista, artista => artista.albuns)
+  @JoinTable({ name: 'album_artistas' })
   artistas: Artista[];
 
   @OneToMany(() => Musica, musica => musica.album, {cascade: true})

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpCode } from '@nestjs/common';
 import { PlaylistsService } from './playlists.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
@@ -33,5 +33,22 @@ export class PlaylistsController {
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.playlistsService.remove(id);
+  }
+
+  @Post(':id/musicas/:musicaId')
+  adicionarMusica(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('musicaId', ParseIntPipe) musicaId: number,
+  ) {
+    return this.playlistsService.adicionarMusica(id, musicaId);
+  }
+
+  @Delete(':id/musicas/:musicaId')
+  @HttpCode(200)
+  removerMusica(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('musicaId', ParseIntPipe) musicaId: number,
+  ) {
+    return this.playlistsService.removerMusica(id, musicaId);
   }
 }

@@ -1,0 +1,147 @@
+.perfil-hero {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin: 1.25rem 0 1.5rem;
+  flex-wrap: wrap;
+}
+
+.perfil-avatar {
+  width: 80px;
+  height: 80px;
+  background: var(--accent-dim);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  flex-shrink: 0;
+}
+
+.perfil-hero-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.perfil-nome {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+  line-height: 1.2;
+}
+
+.perfil-handle {
+  font-size: 0.875rem;
+  color: var(--accent);
+}
+
+.perfil-desc {
+  margin-top: 0.6rem;
+  font-size: 0.875rem;
+  color: var(--text-sub);
+  line-height: 1.5;
+}
+
+.perfil-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.85rem 1.25rem;
+  flex-shrink: 0;
+}
+
+.perfil-stat-num {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.perfil-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-sub);
+  margin-top: 0.1rem;
+}
+
+.ep-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ep-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ep-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.ep-titulo {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ep-rep {
+  font-size: 0.78rem;
+  color: var(--text-sub);
+}
+
+.ep-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.ep-play-btn {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.ep-play-btn-active {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.ep-playing {
+  border-color: var(--accent);
+  background: var(--surface2);
+}
+
+.ep-main-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ep-player {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+.ep-audio {
+  width: 100%;
+  height: 40px;
+  accent-color: var(--accent);
+  border-radius: var(--radius-sm);
+}
