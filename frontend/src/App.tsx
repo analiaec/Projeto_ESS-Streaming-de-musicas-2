@@ -18,11 +18,13 @@ import { MeuPodcast }      from './pages/MeuPodcast';
 import { AccountSettings } from './pages/AccountSettings';
 import { UpdateAccount }   from './pages/UpdateAccount';
 import { RemoveAccount }   from './pages/RemoveAccount';
+import { SearchProvider } from './contexts/SearchContext';
 
 function App() {
   return (
     <AuthProvider>
-      <ToastProvider>
+      <SearchProvider>  
+       <ToastProvider>
         <BrowserRouter>
           <ToastContainer />
           <Routes>
@@ -44,8 +46,9 @@ function App() {
             <Route path="/update-account"  element={<UpdateAccount />}   />
             <Route path="/remove-account"  element={<RemoveAccount />}   />
           </Routes>
-        </BrowserRouter>
-      </ToastProvider>
+         </BrowserRouter>
+       </ToastProvider>
+      </SearchProvider>  
     </AuthProvider>
   );
 }

@@ -5,17 +5,20 @@ import { MusicaCard }                  from '../components/MusicaCard';
 import { AddToPlaylistBtn }            from '../components/AddToPlaylistBtn';
 import { Navbar }                      from '../components/Navbar';
 import { useAuth }                     from '../contexts/AuthContext';
+import { useSearch }                   from '../contexts/SearchContext';
 import './Busca.css';
 
 export function Busca() {
-  const { login }                                  = useAuth();
-  const [termo,      setTermo]                     = useState('');
-  const [genero,     setGenero]                    = useState('');
-  const [artista,    setArtista]                   = useState('');
-  const [resultados, setResultados]                = useState<Musica[]>([]);
-  const [buscou,     setBuscou]                    = useState(false);
-  const [carregando, setCarregando]                = useState(false);
-  const [playlists,  setPlaylists]                 = useState<any[]>([]);
+  const { login }                              = useAuth();
+  const { ultimosFiltros, salvarFiltros }      = useSearch();
+
+  const [termo,      setTermo]      = useState(ultimosFiltros.termo);
+  const [genero,     setGenero]     = useState(ultimosFiltros.genero);
+  const [artista,    setArtista]    = useState(ultimosFiltros.artista);
+  const [resultados, setResultados] = useState<Musica[]>([]);
+  const [buscou,     setBuscou]     = useState(false);
+  const [carregando, setCarregando] = useState(false);
+  const [playlists,  setPlaylists]  = useState<any[]>([]);
 
   useEffect(() => {
     if (!login) { setPlaylists([]); return; }
@@ -34,6 +37,9 @@ export function Busca() {
     if (genero)  params.append('genero',  genero);
     if (artista) params.append('artista', artista);
 
+    // salva os filtros usados antes de buscar
+    salvarFiltros({ termo, genero, artista });
+
     setCarregando(true);
     setBuscou(false);
     try {
@@ -51,12 +57,33 @@ export function Busca() {
     if (e.key === 'Enter') buscar();
   }
 
+  const temUltimosFiltros = !!(
+    ultimosFiltros.termo   ||
+    ultimosFiltros.genero  ||
+    ultimosFiltros.artista
+  );
+
   return (
     <>
       <Navbar />
       <div className="page-wrapper">
         <div className="page-inner">
           <h1 className="section-title" style={{ marginBottom: '1.25rem' }}>🔍 Buscar Músicas</h1>
+
+          {login && temUltimosFiltros && (
+            <div className="busca-ultimos-filtros">
+              <span className="busca-ultimos-label">Última busca:</span>
+              {ultimosFiltros.termo && (
+                <span className="busca-filtro-tag">"{ultimosFiltros.termo}"</span>
+              )}
+              {ultimosFiltros.genero && (
+                <span className="busca-filtro-tag">{ultimosFiltros.genero}</span>
+              )}
+              {ultimosFiltros.artista && (
+                <span className="busca-filtro-tag">{ultimosFiltros.artista}</span>
+              )}
+            </div>
+          )}
 
           <div className="busca-form">
             <div className="busca-main-row">
