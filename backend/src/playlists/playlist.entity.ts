@@ -18,6 +18,9 @@ export class Playlist {
   @Column()
   ownerLogin: string;
 
+  @Column({ type: 'text', array: true, default: () => "ARRAY[]::text[]" })
+  seguidores: string[];
+
   @ManyToMany(() => Musica)
   @JoinTable({ name: 'playlist_musicas' })
   musicas: Musica[];

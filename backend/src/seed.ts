@@ -154,9 +154,9 @@ console.log('Tabelas limpas...');
           ]
         : podcast.login === 'historiasbr'
         ? [
-            { titulo: 'Ep. 1 — O Descobrimento do Brasil não foi acaso',      arquivoUrl: 'https://res.cloudinary.com/drzffqhto/video/upload/v1780955408/O_descobrimento_do_Brasil_n%C3%A3o_foi_acaso_m978rw.mp4', publicado: true,  publicadoEm: new Date('2026-02-05') },
-            { titulo: 'Ep. 2 — Lendas do Folclore Brasileiro',                arquivoUrl: null, publicado: true,  publicadoEm: new Date('2026-02-12') },
-            { titulo: 'Ep. 3 — A Semana de Arte Moderna de 1922',             arquivoUrl: null, publicado: true,  publicadoEm: new Date('2026-02-19') },
+            { titulo: 'Ep. 1 — O Descobrimento do Brasil não foi acaso',              arquivoUrl: 'https://res.cloudinary.com/drzffqhto/video/upload/v1780955408/O_descobrimento_do_Brasil_n%C3%A3o_foi_acaso_m978rw.mp4',                    publicado: true,  publicadoEm: new Date('2026-02-05') },
+            { titulo: 'Ep. 2 — Guerra econômica nas invasões francesas e holandesas', arquivoUrl: 'https://res.cloudinary.com/drzffqhto/video/upload/v1781012262/Guerra_econ%C3%B4mica_nas_invas%C3%B5es_francesas_e_holandesas_ntrlrk.mp4',  publicado: true,  publicadoEm: new Date('2026-02-12') },
+            { titulo: 'Ep. 3 — A Unificação Armada do Brasil Colonial',               arquivoUrl: 'https://res.cloudinary.com/drzffqhto/video/upload/v1781012285/A_unifica%C3%A7%C3%A3o_armada_do_Brasil_colonial_tsizzi.mp4',                publicado: true,  publicadoEm: new Date('2026-02-19') },
           ]
         : [
             { titulo: 'Ep. 1 — Episódio de teste',  arquivoUrl: null, publicado: true,  publicadoEm: new Date('2026-03-01') },

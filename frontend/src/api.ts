@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const LOGIN_PADRAO = 'LuisCardoso012';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
 
 export const api = axios.create({ baseURL: API_BASE });
 
@@ -85,6 +85,16 @@ export async function updatePlaylist(id: number, data: { nome?: string; descrica
   return res.data;
 }
 
+export async function followPlaylistApi(playlistId: number, userLogin: string) {
+  const res = await api.post(`/playlists/${playlistId}/seguir`, { userLogin });
+  return res.data;
+}
+
+export async function unfollowPlaylistApi(playlistId: number, userLogin: string) {
+  const res = await api.delete(`/playlists/${playlistId}/seguir`, { data: { userLogin } });
+  return res.data;
+}
+
 export async function addMusicToPlaylistApi(playlistId: number, musicaId: number) {
   const res = await api.post(`/playlists/${playlistId}/musicas/${musicaId}`);
   return res.data;
@@ -107,10 +117,10 @@ export async function getUserApi(login: string, token: string) {
   return res.data;
 }
 
-export async function removeUserApi(login: string, password: string, token: string) {
+export async function removeUserApi(login: string, password: string | undefined, token: string) {
   const res = await api.delete(`/users/${login}`, {
     headers: { Authorization: `Bearer ${token}` },
-    data: { password },
+    data: password ? { password } : {},
   });
   return res.data;
 }

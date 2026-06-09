@@ -1,8 +1,7 @@
 {
   "default": {
-    "require": ["step_definitions/**/*.ts"],
+    "require": ["step_definitions/**/*.ts", "features/**/*.js"],
     "requireModule": ["ts-node/register"],
-    "paths": ["features/**/*.feature"],
     "format": ["progress-bar", "html:reports/cucumber-report.html"],
     "tags": "not @ignore",
     "publishQuiet": true

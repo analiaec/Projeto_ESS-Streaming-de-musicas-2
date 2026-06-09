@@ -1,4 +1,4 @@
-import { useState }        from 'react';
+import React, { useState } from 'react';
 import { useNavigate }     from 'react-router-dom';
 import { updateUserApi }   from '../api';
 import { useAuth }         from '../contexts/AuthContext';
@@ -10,21 +10,23 @@ export function UpdateAccount() {
   const { toast }   = useToast();
   const navigate    = useNavigate();
 
-  const [name,     setName]     = useState('');
-  const [password, setPassword] = useState('');
-  const [saving,   setSaving]   = useState(false);
+  const [name,        setName]        = useState('');
+  const [password,    setPassword]    = useState('');
+  const [tipodeconta, setTipodeconta] = useState('');
+  const [saving,      setSaving]      = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!logado || !login || !token) { navigate('/login'); return; }
-    if (!name.trim() && !password.trim()) {
+    if (!name.trim() && !password.trim() && !tipodeconta) {
       toast('Preencha pelo menos um campo para atualizar.', 'error');
       return;
     }
 
     const dados: any = {};
-    if (name.trim())     dados.name     = name.trim();
-    if (password.trim()) dados.password = password.trim();
+    if (name.trim())     dados.name        = name.trim();
+    if (password.trim()) dados.password    = password.trim();
+    if (tipodeconta)     dados.tipodeconta = tipodeconta;
 
     setSaving(true);
     try {
@@ -64,6 +66,15 @@ export function UpdateAccount() {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                 />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Tipo de conta</label>
+                <select value={tipodeconta} onChange={e => setTipodeconta(e.target.value)}>
+                  <option value="">Não alterar</option>
+                  <option value="OUVINTE">OUVINTE</option>
+                  <option value="ARTISTA">ARTISTA</option>
+                  <option value="PODCASTER">PODCASTER</option>
+                </select>
               </div>
               <div style={{ display: 'flex', gap: '0.75rem' }}>
                 <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>

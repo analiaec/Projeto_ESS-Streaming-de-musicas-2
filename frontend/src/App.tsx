@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider }    from './contexts/AuthContext';
 import { ToastProvider }   from './contexts/ToastContext';
+import { ThemeProvider }   from './contexts/ThemeContext';
 import { ToastContainer }  from './components/Toast';
 import { Home }            from './pages/Home';
 import { EmAlta }          from './pages/EmAlta';
@@ -20,8 +21,12 @@ import { UpdateAccount }   from './pages/UpdateAccount';
 import { RemoveAccount }   from './pages/RemoveAccount';
 import { SearchProvider } from './contexts/SearchContext';
 
+import NovoAlbum from './pages/NovoAlbum';
+import EditarAlbum from './pages/EditarAlbum';
+
 function App() {
   return (
+    <ThemeProvider>
     <AuthProvider>
       <SearchProvider>  
        <ToastProvider>
@@ -45,11 +50,14 @@ function App() {
             <Route path="/conta"           element={<AccountSettings />} />
             <Route path="/update-account"  element={<UpdateAccount />}   />
             <Route path="/remove-account"  element={<RemoveAccount />}   />
+            <Route path="/albuns/novo" element={<NovoAlbum />} />
+            <Route path="/albuns/editar/:id" element={<EditarAlbum />} />
           </Routes>
          </BrowserRouter>
        </ToastProvider>
       </SearchProvider>  
     </AuthProvider>
+    </ThemeProvider>
   );
 }
 

@@ -9,7 +9,7 @@
     "seed": "ts-node src/seed.ts"
   },
   "devDependencies": {
-    "@cucumber/cucumber": "^10.3.2",
+    "@cucumber/cucumber": "^10.9.0",
     "@types/node": "^22.0.0",
     "tsx": "^4.21.0",
     "typescript": "^5.3.3"
