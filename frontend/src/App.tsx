@@ -19,6 +19,8 @@ import { MeuPodcast }      from './pages/MeuPodcast';
 import { AccountSettings } from './pages/AccountSettings';
 import { UpdateAccount }   from './pages/UpdateAccount';
 import { RemoveAccount }   from './pages/RemoveAccount';
+import NovoAlbum from './pages/NovoAlbum';
+import EditarAlbum from './pages/EditarAlbum';
 
 function App() {
   return (
@@ -45,6 +47,8 @@ function App() {
             <Route path="/conta"           element={<AccountSettings />} />
             <Route path="/update-account"  element={<UpdateAccount />}   />
             <Route path="/remove-account"  element={<RemoveAccount />}   />
+            <Route path="/albuns/novo" element={<NovoAlbum />} />
+            <Route path="/albuns/editar/:id" element={<EditarAlbum />} />
           </Routes>
         </BrowserRouter>
       </ToastProvider>
