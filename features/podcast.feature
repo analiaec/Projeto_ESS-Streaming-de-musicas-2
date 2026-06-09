@@ -1,105 +1,69 @@
-# language: pt
+Feature: Gerenciamento de Podcasts e Episódios
 
-Funcionalidade: Gerenciamento de Podcasts e Episódios
-  Como um podcaster cadastrado na plataforma
-  Quero gerenciar meus episódios de podcast
-  Para que os ouvintes possam acessar e baixar meu conteúdo
+  Scenario: Criar um episódio publicado imediatamente
+    Given estou logado como "podcaster" com login "techcast"
+    When o usuário cria um episódio com título "Novo Episódio Tech" e arquivo "https://exemplo.com/novo.mp3"
+    Then o episódio "Novo Episódio Tech" deve aparecer na lista de episódios
+    And o episódio "Novo Episódio Tech" deve estar publicado
 
-  Contexto:
-    Dado que existe um podcaster com login "podcaster01" e senha "senha123"
-    E que existe um ouvinte com login "ouvinte01"
+  Scenario: Criar um episódio com publicação agendada para o futuro
+    Given estou logado como "podcaster" com login "techcast"
+    When o usuário cria um episódio com título "Episódio Futuro" e arquivo "https://exemplo.com/futuro.mp3" agendado para "2099-12-31"
+    Then o episódio "Episódio Futuro" não deve aparecer na listagem pública
 
-  # -----------------------------------------------------------------------
-  # CRUD de Episódios
-  # -----------------------------------------------------------------------
+  Scenario: Episódio agendado não aparece na listagem pública antes da data
+    Given estou logado como "podcaster" com login "techcast"
+    And existe o episódio "Ep. 4 — Ecossistema Ruby e programação em par" agendado para "2026-12-31" no podcast "techcast"
+    When o usuário acessa a lista de episódios do podcast "techcast"
+    Then o episódio "Ep. 4 — Ecossistema Ruby e programação em par" não deve aparecer na listagem pública
 
-  Cenário: Criar um episódio publicado imediatamente
-    Dado que estou autenticado como podcaster "podcaster01"
-    Quando eu envio uma requisição POST para "/api/podcast/podcaster01/episodes" com:
-      | campo      | valor                            |
-      | titulo     | Episódio Piloto                  |
-      | arquivoUrl | https://exemplo.com/ep1.mp3      |
-    Então a resposta deve ter status 201
-    E o episódio deve estar com "publicado" igual a true
+  Scenario: Atualizar o título de um episódio
+    Given estou logado como "podcaster" com login "techcast"
+    And existe o episódio "Ep. 1 — Saas e Cloud potencializam o Agile" no podcast "techcast"
+    When o usuário edita o título do episódio "Ep. 1 — Saas e Cloud potencializam o Agile" para "Ep. 1 — SaaS e Cloud (Revisado)"
+    Then o episódio deve aparecer com o título "Ep. 1 — SaaS e Cloud (Revisado)"
 
-  Cenário: Criar um episódio com publicação agendada para o futuro
-    Dado que estou autenticado como podcaster "podcaster01"
-    Quando eu envio uma requisição POST para "/api/podcast/podcaster01/episodes" com:
-      | campo                    | valor                       |
-      | titulo                   | Episódio Agendado           |
-      | arquivoUrl               | https://exemplo.com/ep2.mp3 |
-      | dataPublicacaoAgendada   | 2099-12-31T00:00:00.000Z    |
-    Então a resposta deve ter status 201
-    E o episódio deve estar com "publicado" igual a false
+  Scenario: Deletar um episódio
+    Given estou logado como "podcaster" com login "techcast"
+    And existe o episódio "Ep. 3 — De Monólitos a Microsserviços com APIs REST" no podcast "techcast"
+    When o usuário exclui o episódio "Ep. 3 — De Monólitos a Microsserviços com APIs REST"
+    Then o episódio "Ep. 3 — De Monólitos a Microsserviços com APIs REST" não deve aparecer na lista de episódios
 
-  Cenário: Episódio agendado não aparece na listagem pública antes da data
-    Dado que existe um episódio agendado para "2099-12-31T00:00:00.000Z" no podcast "podcaster01"
-    Quando eu faço GET em "/api/podcast/podcaster01/episodes"
-    Então o episódio agendado não deve aparecer na lista
+  Scenario: Tentativa de editar episódio de outro podcaster é rejeitada
+    Given estou logado como "podcaster" com login "techcast"
+    And existe o episódio "Ep. 1 — O Descobrimento do Brasil não foi acaso" no podcast "historiasbr"
+    When o usuário tenta editar o episódio "Ep. 1 — O Descobrimento do Brasil não foi acaso" com o título "Invasão"
+    Then o usuário recebe uma mensagem de erro de permissão
 
-  Cenário: Atualizar o título de um episódio
-    Dado que existe um episódio de id 1 no podcast "podcaster01"
-    E que estou autenticado como podcaster "podcaster01"
-    Quando eu envio uma requisição PATCH para "/api/podcast/podcaster01/episodes/1" com:
-      | campo  | valor            |
-      | titulo | Título Revisado  |
-    Então a resposta deve ter status 200
-    E o campo "titulo" da resposta deve ser "Título Revisado"
+  Scenario: Registrar acesso ao reproduzir um episódio
+    Given existe o episódio publicado "Ep. 2 — Como o Rails estrutura aplicativos web" no podcast "techcast"
+    When o usuário reproduz o episódio "Ep. 2 — Como o Rails estrutura aplicativos web"
+    Then o número de reproduções do episódio deve ser maior que zero
 
-  Cenário: Deletar um episódio
-    Dado que existe um episódio de id 2 no podcast "podcaster01"
-    E que estou autenticado como podcaster "podcaster01"
-    Quando eu envio uma requisição DELETE para "/api/podcast/podcaster01/episodes/2"
-    Então a resposta deve ter status 200
-    E o episódio de id 2 não deve mais existir no podcast "podcaster01"
+  Scenario: Exibir total de acessos do canal
+    Given existe o episódio publicado "Ep. 2 — Como o Rails estrutura aplicativos web" no podcast "techcast"
+    And o episódio "Ep. 2 — Como o Rails estrutura aplicativos web" foi reproduzido ao menos uma vez
+    When o usuário acessa o total de acessos do podcast "techcast"
+    Then o total de acessos deve ser um número inteiro não negativo
 
-  Cenário: Tentativa de editar episódio de outro podcaster é rejeitada
-    Dado que existe um episódio de id 3 no podcast "outro_podcast"
-    E que estou autenticado como podcaster "podcaster01"
-    Quando eu envio uma requisição PATCH para "/api/podcast/podcaster01/episodes/3" com:
-      | campo  | valor    |
-      | titulo | Invasão  |
-    Então a resposta deve ter status 403
+  Scenario: Total de acessos de canal sem episódios é zero
+    Given o podcast "podteste1" não tem episódios publicados
+    When o usuário acessa o total de acessos do podcast "podteste1"
+    Then o total de acessos deve ser 0
 
-  # -----------------------------------------------------------------------
-  # Exibir total de acessos
-  # -----------------------------------------------------------------------
+  Scenario: Ouvinte logado pode baixar um episódio
+    Given estou logado como "ouvinte" com login "LuisCardoso012"
+    And existe o episódio publicado "Ep. 1 — Saas e Cloud potencializam o Agile" com arquivo no podcast "techcast"
+    When o usuário faz o download do episódio "Ep. 1 — Saas e Cloud potencializam o Agile"
+    Then o download deve ser autorizado
+    And o link do arquivo deve estar disponível
 
-  Cenário: Registrar acesso ao reproduzir um episódio
-    Dado que existe um episódio publicado de id 4 no podcast "podcaster01"
-    Quando eu envio uma requisição POST para "/api/podcast/episodes/4/play"
-    Então a resposta deve ter status 201
-    E o campo "reproducoes" da resposta deve ser maior que 0
+  Scenario: Usuário não autenticado não pode baixar episódio
+    Given existe o episódio publicado "Ep. 1 — Saas e Cloud potencializam o Agile" com arquivo no podcast "techcast"
+    When um usuário não autenticado tenta fazer o download do episódio "Ep. 1 — Saas e Cloud potencializam o Agile"
+    Then o usuário recebe uma mensagem de erro de autenticação
 
-  Cenário: Exibir total de acessos do canal
-    Dado que o podcast "podcaster01" tem episódios com acessos registrados
-    Quando eu faço GET em "/api/podcast/podcaster01/acessos-total"
-    Então a resposta deve ter status 200
-    E o campo "totalAcessos" deve ser um número inteiro não negativo
-
-  Cenário: Total de acessos de canal sem episódios é zero
-    Dado que o podcast "podcaster01" não tem episódios publicados
-    Quando eu faço GET em "/api/podcast/podcaster01/acessos-total"
-    Então a resposta deve ter status 200
-    E o campo "totalAcessos" deve ser 0
-
-  # -----------------------------------------------------------------------
-  # Download de episódio
-  # -----------------------------------------------------------------------
-
-  Cenário: Ouvinte logado pode baixar um episódio
-    Dado que existe um episódio publicado de id 5 com arquivo no podcast "podcaster01"
-    Quando eu faço GET em "/api/podcast/episodes/5/download" com header "x-user-login: ouvinte01"
-    Então a resposta deve ter status 200
-    E o campo "autorizadoParaDownload" deve ser true
-    E o campo "arquivoUrl" deve estar presente
-
-  Cenário: Usuário não autenticado não pode baixar episódio
-    Dado que existe um episódio publicado de id 5 com arquivo no podcast "podcaster01"
-    Quando eu faço GET em "/api/podcast/episodes/5/download" sem header de login
-    Então a resposta deve ter status 401
-
-  Cenário: Download com login inexistente é rejeitado
-    Dado que existe um episódio publicado de id 5 com arquivo no podcast "podcaster01"
-    Quando eu faço GET em "/api/podcast/episodes/5/download" com header "x-user-login: login_fantasma"
-    Então a resposta deve ter status 401
+  Scenario: Download com login inexistente é rejeitado
+    Given existe o episódio publicado "Ep. 1 — Saas e Cloud potencializam o Agile" com arquivo no podcast "techcast"
+    When o usuário tenta fazer o download do episódio "Ep. 1 — Saas e Cloud potencializam o Agile" com login "usuario_fantasma"
+    Then o usuário recebe uma mensagem de erro de autenticação
