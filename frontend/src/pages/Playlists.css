@@ -216,13 +216,3 @@
   color: var(--orange);
   border: 1px solid rgba(249, 115, 22, 0.25);
 }
-
-.badge-blue {
-  background: rgba(99, 179, 237, 0.12);
-  color: #63b3ed;
-  border: 1px solid rgba(99, 179, 237, 0.25);
-}
-
-.pl-cat-badge {
-  font-size: 0.72rem;
-}

@@ -15,11 +15,6 @@ import './Playlists.css';
 
 type Expanded = number | 'create' | null;
 
-const CATEGORIAS = [
-  'Pop', 'Rock', 'Sertanejo', 'MPB', 'Eletrônica',
-  'Hip-Hop / Rap', 'Clássica', 'Jazz', 'Reggae', 'Gospel',
-];
-
 export function Playlists() {
   const { login }                         = useAuth();
   const { toast }                         = useToast();
@@ -34,7 +29,6 @@ export function Playlists() {
   const [name,       setName]             = useState('');
   const [descricao,  setDescricao]        = useState('');
   const [publica,    setPublica]          = useState(true);
-  const [categoria,  setCategoria]        = useState('');
   const [erroForm,   setErroForm]         = useState('');
   const [copiedId,   setCopiedId]         = useState<number | null>(null);
 
@@ -60,14 +54,14 @@ export function Playlists() {
   }, [location.search]);
 
   function openCreate() {
-    setName(''); setDescricao(''); setPublica(true); setCategoria(''); setErroForm('');
+    setName(''); setDescricao(''); setPublica(true); setErroForm('');
     setEditingId(null);
     setExpandedId('create');
   }
 
   function openEdit(pl: any) {
     setName(pl.nome ?? ''); setDescricao(pl.descricao ?? '');
-    setPublica(!!pl.publica); setCategoria(pl.categoria ?? ''); setErroForm('');
+    setPublica(!!pl.publica); setErroForm('');
     setEditingId(pl.id);
     setExpandedId(pl.id);
   }
@@ -84,20 +78,20 @@ export function Playlists() {
     setSaving(true);
     try {
       if (editingId !== null) {
-        const updated = await updatePlaylist(editingId, { nome: name, descricao, publica, categoria: categoria || undefined });
+        const updated = await updatePlaylist(editingId, { nome: name, descricao, publica });
         setPlaylists(prev => prev.map(pl => pl.id === editingId ? { ...pl, ...updated } : pl));
         setMyPl(prev => prev.map(pl => pl.id === editingId ? { ...pl, ...updated } : pl));
         setEditingId(null);
         toast('Playlist atualizada!', 'success');
       } else {
-        const created = await createPlaylist({ nome: name, descricao, publica, ownerLogin: login ?? '', categoria: categoria || undefined });
+        const created = await createPlaylist({ nome: name, descricao, publica, ownerLogin: login ?? '' });
         const withMusicas = { ...created, musicas: [], seguidores: [] };
         setPlaylists(prev => [withMusicas, ...prev]);
         setMyPl(prev => [withMusicas, ...prev]);
         toast('Playlist criada!', 'success');
         setExpandedId(null);
       }
-      setName(''); setDescricao(''); setPublica(true); setCategoria('');
+      setName(''); setDescricao(''); setPublica(true);
     } catch (err: any) {
       const msg = err?.response?.data?.message || 'Erro ao salvar.';
       setErroForm(Array.isArray(msg) ? msg[0] : msg);
@@ -209,13 +203,6 @@ export function Playlists() {
                             <input placeholder="Descrição (opcional)" value={descricao} onChange={e => setDescricao(e.target.value)} />
                           </div>
                           <div className="form-group">
-                            <label className="form-label">Categoria</label>
-                            <select value={categoria} onChange={e => setCategoria(e.target.value)}>
-                              <option value="">Sem categoria</option>
-                              {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
-                          </div>
-                          <div className="form-group">
                             <label className="form-label">Visibilidade</label>
                             <select value={publica ? 'publica' : 'privada'} onChange={e => setPublica(e.target.value === 'publica')}>
                               <option value="publica">Pública</option>
@@ -267,9 +254,6 @@ export function Playlists() {
                           <span className={`badge ${pl.publica ? 'badge-green' : 'badge-orange'}`}>
                             {pl.publica ? 'Pública' : 'Privada'}
                           </span>
-                          {pl.categoria && (
-                            <span className="badge badge-blue pl-cat-badge">{pl.categoria}</span>
-                          )}
                         </div>
                         <div className="pl-owner-row">
                           <span className="pl-owner">por @{pl.ownerLogin}</span>
@@ -291,13 +275,6 @@ export function Playlists() {
                               <div className="form-group">
                                 <label className="form-label">Descrição</label>
                                 <input value={descricao} onChange={e => setDescricao(e.target.value)} />
-                              </div>
-                              <div className="form-group">
-                                <label className="form-label">Categoria</label>
-                                <select value={categoria} onChange={e => setCategoria(e.target.value)}>
-                                  <option value="">Sem categoria</option>
-                                  {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
                               </div>
                               <div className="form-group">
                                 <label className="form-label">Visibilidade</label>

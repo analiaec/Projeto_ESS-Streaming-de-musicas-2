@@ -14,8 +14,4 @@ export class UpdatePlaylistDto {
   @IsOptional()
   @IsBoolean()
   publica?: boolean;
-
-  @IsOptional()
-  @IsString()
-  categoria?: string;
 }

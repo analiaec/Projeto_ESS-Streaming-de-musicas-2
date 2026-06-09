@@ -17,8 +17,4 @@ export class CreatePlaylistDto {
   @IsString()
   @Length(3, 20)
   ownerLogin: string;
-
-  @IsOptional()
-  @IsString()
-  categoria?: string;
 }

@@ -18,9 +18,6 @@ export class Playlist {
   @Column()
   ownerLogin: string;
 
-  @Column({ nullable: true })
-  categoria?: string;
-
   @Column({ type: 'text', array: true, default: () => "ARRAY[]::text[]" })
   seguidores: string[];
 
