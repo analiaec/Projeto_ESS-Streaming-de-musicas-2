@@ -1,9 +1,6 @@
 import { Before, Given, Then, When } from '@badeball/cypress-cucumber-preprocessor';
 
 const seedLogin = 'LuisCardoso012';
-const seedPassword = '1234'; // senha do seed (src/seed.ts)
-
-let currentLogin = seedLogin;
 
 function apiUrl() {
   return 'http://localhost:3000/api';
@@ -18,26 +15,6 @@ function normalizePlaylists(body: unknown): any[] {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
-
-// Usa a API diretamente e seta localStorage — mais rápido e confiável que UI
-function loginWithUi(login: string) {
-  cy.visit('/');
-  cy.request({
-    method: 'POST',
-    url: `${apiUrl()}/auth/login`,
-    body: { login, password: seedPassword },
-    failOnStatusCode: true,
-  }).then((response) => {
-    const { access_token, role } = response.body;
-    cy.window().then((win) => {
-      win.localStorage.setItem('wv_login', login);
-      win.localStorage.setItem('wv_token', access_token);
-      win.localStorage.setItem('wv_role', role);
-    });
-  });
-  cy.reload();
-  cy.contains('h1', `Olá, ${login}!`).should('be.visible');
-}
 
 function fillCreateForm(nome: string, descricao: string, visibilidade: string) {
   // Escopo no formulário de criação para não colidir com o de edição
@@ -107,7 +84,6 @@ function ensurePlaylistExistsForOwner(nome: string, ownerLogin: string, publica 
 // ── Hooks ──────────────────────────────────────────────────────────────────
 
 Before(() => {
-  currentLogin = seedLogin;
   return removePlaylistsByName([
     'Músicas de rock 2026',
     'Músicas de rock 2026 Atualizada',
@@ -119,20 +95,6 @@ Before(() => {
 });
 
 // ── Given ──────────────────────────────────────────────────────────────────
-
-Given('estou logado como {string} com login {string}', function (_perfil: string, login: string) {
-  currentLogin = login;
-  loginWithUi(login);
-});
-
-Given('o usuário está na página {string}', function (pagina: string) {
-  if (pagina.toLowerCase() === 'playlists') {
-    cy.visit('/playlists');
-    cy.contains('h1', 'Playlists').should('be.visible'); // h1, não h2
-    return;
-  }
-  throw new Error(`Página não suportada: ${pagina}`);
-});
 
 Given('a playlist {string} já existe', function (nome: string) {
   return ensurePlaylistExists(nome);

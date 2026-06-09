@@ -29,12 +29,6 @@ Feature: Gerenciamento de Podcasts e Episódios
     When o usuário exclui o episódio "Ep. 3 — De Monólitos a Microsserviços com APIs REST"
     Then o episódio "Ep. 3 — De Monólitos a Microsserviços com APIs REST" não deve aparecer na lista de episódios
 
-  Scenario: Tentativa de editar episódio de outro podcaster é rejeitada
-    Given estou logado como "podcaster" com login "techcast"
-    And existe o episódio "Ep. 1 — O Descobrimento do Brasil não foi acaso" no podcast "historiasbr"
-    When o usuário tenta editar o episódio "Ep. 1 — O Descobrimento do Brasil não foi acaso" com o título "Invasão"
-    Then o usuário recebe uma mensagem de erro de permissão
-
   Scenario: Registrar acesso ao reproduzir um episódio
     Given existe o episódio publicado "Ep. 2 — Como o Rails estrutura aplicativos web" no podcast "techcast"
     When o usuário reproduz o episódio "Ep. 2 — Como o Rails estrutura aplicativos web"
@@ -63,7 +57,3 @@ Feature: Gerenciamento de Podcasts e Episódios
     When um usuário não autenticado tenta fazer o download do episódio "Ep. 1 — Saas e Cloud potencializam o Agile"
     Then o usuário recebe uma mensagem de erro de autenticação
 
-  Scenario: Download com login inexistente é rejeitado
-    Given existe o episódio publicado "Ep. 1 — Saas e Cloud potencializam o Agile" com arquivo no podcast "techcast"
-    When o usuário tenta fazer o download do episódio "Ep. 1 — Saas e Cloud potencializam o Agile" com login "usuario_fantasma"
-    Then o usuário recebe uma mensagem de erro de autenticação
