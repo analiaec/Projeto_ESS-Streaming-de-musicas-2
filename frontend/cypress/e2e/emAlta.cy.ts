@@ -10,9 +10,11 @@ describe('Integração — Em Alta', () => {
 
     // espera a chamada à API ser concluída
     cy.wait('@emAlta').then((interception) => {
-      // verifica que a API retornou músicas
-      expect(interception.response.statusCode).to.eq(200);
-      expect(interception.response.body).to.have.length.greaterThan(0);
+      expect(interception.response.statusCode).to.be.oneOf([200, 304]);
+      // 304 não tem body; quando 200, confirma que retornou dados
+      if (interception.response.statusCode === 200) {
+        expect(interception.response.body).to.have.length.greaterThan(0);
+      }
     });
 
     // verifica que os dados aparecem na tela
