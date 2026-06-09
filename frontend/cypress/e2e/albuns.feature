@@ -1,4 +1,4 @@
-Funcionalidade: Gerenciamento de Álbuns e Músicas
+Feature: Gerenciamento de Álbuns e Músicas
   Como um artista da plataforma
   Eu quero gerenciar as informações dos meus álbuns lançados
   Para manter o catálogo atualizado sem comprometer a integridade das faixas

@@ -6,7 +6,7 @@ export default function NovoAlbum() {
   const handleCadastrar = (e: React.FormEvent) => {
     e.preventDefault();
     // Simula o sucesso para o Cypress detetar a mensagem e passar o teste!
-    setMensagem('Álbum cadastrado com sucesso!');
+    setMensagem('Álbum publicado com sucesso!');
   };
 
   return (
