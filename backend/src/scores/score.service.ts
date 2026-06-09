@@ -86,10 +86,10 @@ export class ScoresService {
     query.andWhere(
         new Brackets(qb => {
         if (generosOuvidos.length > 0 && artistasOuvidos.length > 0) {
-            qb.where('musica.genero IN (:...generosOuvidos)', { generosOuvidos })
+            qb.where('musica.album.genero IN (:...generosOuvidos)', { generosOuvidos })
             .orWhere('artista.nomeArtistico IN (:...artistasOuvidos)', { artistasOuvidos });
         } else if (generosOuvidos.length > 0) {
-            qb.where('musica.genero IN (:...generosOuvidos)', { generosOuvidos });
+            qb.where('musica..album.genero IN (:...generosOuvidos)', { generosOuvidos });
         } else {
             qb.where('artista.nomeArtistico IN (:...artistasOuvidos)', { artistasOuvidos });
         }
