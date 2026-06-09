@@ -55,25 +55,9 @@ And o usuário "admin" está autenticado no sistema
 And o sistema possui uma conta cadastrada com os dados:
     |  login   |  name  |     password        |      email       |  tipodeconta  |
     |  Carlos1 | Carlos | Senhasupersecreta1! | carlos@gmail.com |   OUVINTE     |
-When o sistema recebe uma solicitação para remover o usuário "Carlos1" com os dados:
-    |     password        |
-    | Senhasupersecreta1! |
+When o sistema recebe uma solicitação para remover o usuário "Carlos1"
 Then o sistema retorna a mensagem "A conta foi removida do sistema com sucesso."
 And o usuário de login "Carlos1" não deve mais existir no sistema
-
-Scenario: Erro ao não inserir a senha correta para remover conta
-Given o sistema possui uma conta cadastrada com os dados:
-    |  login   |  name  |     password        |      email       |  tipodeconta  |
-    |  admin   | Danilo |     admin123        | danilo@gmail.com |     ADMIN     |
-And o usuário "admin" está autenticado no sistema
-And o sistema possui uma conta cadastrada com os dados:
-    |  login   |  name  |     password        |      email       |  tipodeconta  |
-    |  Carlos1 | Carlos | Senhasupersecreta1! | carlos@gmail.com |   OUVINTE     |
-When o sistema recebe uma solicitação para remover o usuário "Carlos1" com os dados:
-    |     password        |
-    |      Senhas         |
-Then o sistema retorna a mensagem "Senha incorreta. Insira a senha correta para realizar a remoção da conta."
-And o sistema não altera os dados do usuário "Carlos1"
 
 Scenario: Não permitir que um usuário comum atualize os dados de outro usuário
 Given o sistema possui uma conta cadastrada com os dados:
@@ -97,8 +81,6 @@ And o sistema possui uma conta cadastrada com os dados:
     | login   | name   | password             | email                | tipodeconta |
     | Maria1  | Maria  | Senhasupersecreta2!  | maria@gmail.com      | OUVINTE     |
 And o usuário "Carlos1" está autenticado no sistema
-When o sistema recebe uma solicitação para remover o usuário "Maria1" com os dados:
-    | password             |
-    | Senhasupersecreta2!  |
+When o sistema recebe uma solicitação para remover o usuário "Maria1"
 Then o sistema retorna a mensagem "Você não possui permissão para realizar esta ação."
 And o sistema não altera os dados do usuário "Maria1"

@@ -83,6 +83,14 @@ let originalUser;
             .send(requestbody);
         },);
 
+        When('o sistema recebe uma solicitação para remover o usuário {string}',
+        async function (login) {
+            this.response = await request(app.getHttpServer())
+            .delete(`/api/users/${login}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({});
+        },);
+
         Then('o sistema não altera os dados do usuário {string}',
         async function (login) {
             const user = await userRepository.findOneBy({ login });
