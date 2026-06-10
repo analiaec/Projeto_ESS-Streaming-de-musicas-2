@@ -65,7 +65,7 @@ Then('o álbum {string} contendo as músicas {string} e {string} deve ser indexa
   }
 );
 
-Then('existe um álbum chamado {string} publicado por {string} com ID {string} e gênero {string}',
+Then('o álbum {string} publicado por {string} deve estar visível com ID {string} e gênero {string}',
   (nome: string, artista: string, id: string, genero: string) => {
     // 1. Valida se o álbum aparece na interface
     cy.visit('/albuns');
