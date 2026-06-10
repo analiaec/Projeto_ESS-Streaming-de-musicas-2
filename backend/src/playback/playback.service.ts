@@ -41,7 +41,7 @@ export class PlaybackService {
     }
 
     const userPlaybacks = await this.playbackRepository.find({where: {user: {login: login}}, order: {horario: 'ASC'},});
-    if(userPlaybacks.length >= 20){await this.playbackRepository.remove(userPlaybacks[0]);}
+    if(userPlaybacks.length >= 40){await this.playbackRepository.remove(userPlaybacks[0]);}
 
     return this.playbackRepository.save(playback);
   }
