@@ -17,13 +17,6 @@ Before(() => {
 
 // ─── Given ───────────────────────────────────────────────────────────────────
 
-Given('estou logado como {string} com login {string}', (tipo: string, login: string) => {
-  cy.visit('/login');
-  cy.get('input[name="login"]').type(login);
-  cy.get('input[name="password"]').type('1234'); 
-  cy.get('button[type="submit"]').click();
-});
-
 Given('existe um álbum chamado {string} publicado por {string} com ID {string} e gênero {string}',
   (nome: string, artista: string, _id: string, genero: string) => {
     cy.request({
