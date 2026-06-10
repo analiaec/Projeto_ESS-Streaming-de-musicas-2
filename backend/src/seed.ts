@@ -81,6 +81,15 @@ console.log('Tabelas limpas...');
     tipodeconta: UserRole.ARTISTA,
     nomeArtistico: 'Antonio Vivaldi'
   });
+  
+    // álbum "Four Seasons" criado p teste de album
+  await albumRepo.save({
+    id: 4, 
+    nome: 'Four Seasons',
+    data: '1725-01-01',
+    generos: ['Clássico'],
+  });
+  
   console.log('Vivaldi criado como usuário e artista...');
   
   // ── Álbuns ────────────────────────────────────────────────────────────────
