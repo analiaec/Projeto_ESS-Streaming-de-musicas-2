@@ -63,7 +63,7 @@ console.log('Tabelas limpas...');
       { login: 'pj.harvey',       name: 'PJ Harvey',          password: '1234', email: 'pj@streaming.com',          tipodeconta: UserRole.ARTISTA, nomeArtistico: 'PJ Harvey'          },
     ]);
   console.log('8 artistas criados...');
-
+  
   // ── Álbuns ────────────────────────────────────────────────────────────────
   const albumRepo = AppDataSource.getRepository(Album);
   const [isThisDesire, getzGilberto, chegaDeSaudade, djavan1992, djavan1989, luz, milagreiro, noelClassicos, templeOfDog, facelift, musicaderua] =
@@ -82,6 +82,36 @@ console.log('Tabelas limpas...');
     ]);
   console.log('11 álbuns criados...');
 
+
+  
+  // ── Artista para teste de albuns ────────────────────────────────────────────────────────────────
+  const vivaldi = await usuarioRepo.save({
+    login: 'vivaldi',
+    name: 'Antonio Vivaldi',
+    password: '1234', 
+    email: 'vivaldi@streaming.com',
+    tipodeconta: UserRole.ARTISTA 
+  });
+
+  await artistaRepo.save({
+    login: 'vivaldi',
+    name: 'Antonio Vivaldi',
+    password: '1234',
+    email: 'vivaldi@streaming.com',
+    tipodeconta: UserRole.ARTISTA,
+    nomeArtistico: 'Antonio Vivaldi'
+  });
+  
+    // álbum "Four Seasons" criado p teste de album
+  await albumRepo.save({
+    id: 4, 
+    nome: 'Four Seasons',
+    data: '1725-01-01',
+    generos: ['Clássico'],
+  });
+  
+  console.log('Vivaldi criado como usuário e artista...');
+  
   // ── Músicas ───────────────────────────────────────────────────────────────
   // arquivoUrl: substituir pelas URLs reais dos arquivos de áudio
   const musicaRepo = AppDataSource.getRepository(Musica);

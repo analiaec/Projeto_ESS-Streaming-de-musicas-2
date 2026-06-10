@@ -65,11 +65,13 @@ Then('o álbum {string} contendo as músicas {string} e {string} deve ser indexa
   }
 );
 
-Then('o álbum {string} publicado por {string} deve estar visível na plataforma com gênero {string} e ID {string}',
-  (nome: string, artista: string, genero: string, id: string) => {
+Then('o álbum {string} publicado por {string} deve estar visível com ID {string} e gênero {string}',
+  (nome: string, artista: string, id: string, genero: string) => {
+    // 1. Valida se o álbum aparece na interface
     cy.visit('/albuns');
     cy.contains(nome).should('be.visible');
 
+    // 2. Valida se os dados foram realmente salvos no backend
     cy.request(`${API}/albuns/${id}`)
       .then((response) => {
         expect(response.status).to.equal(200);
