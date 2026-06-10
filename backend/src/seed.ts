@@ -63,7 +63,27 @@ console.log('Tabelas limpas...');
       { login: 'pj.harvey',       name: 'PJ Harvey',          password: '1234', email: 'pj@streaming.com',          tipodeconta: UserRole.ARTISTA, nomeArtistico: 'PJ Harvey'          },
     ]);
   console.log('8 artistas criados...');
+  
+  // ── Álbuns ────────────────────────────────────────────────────────────────
+  const albumRepo = AppDataSource.getRepository(Album);
+  const [isThisDesire, getzGilberto, chegaDeSaudade, djavan1992, djavan1989, luz, milagreiro, noelClassicos, templeOfDog, facelift, musicaderua] =
+    await albumRepo.save([
+      { nome: 'Is This Desire?',         data: '1998-01-01', generos: ['AltRock'],    capaUrl: '/uploads/capas/is_this_desire.jpg'    },
+      { nome: 'Getz/Gilberto',           data: '1964-01-01', generos: ['Bossa Nova'], capaUrl: '/uploads/capas/getz_gilberto.jpg'     },
+      { nome: 'Chega de Saudade',        data: '1959-01-01', generos: ['Bossa Nova'], capaUrl: '/uploads/capas/chega_de_saudade.jpg'  },
+      { nome: 'Coisa de acender',        data: '1992-01-01', generos: ['MPB'],        capaUrl: '/uploads/capas/djavan1992.jpg'        },
+      { nome: 'Djavan(1989)',            data: '1989-01-01', generos: ['MPB'],        capaUrl: '/uploads/capas/djavan1989.jpg'        },
+      { nome: 'Luz',                     data: '1982-01-01', generos: ['MPB'],        capaUrl: '/uploads/capas/luz.jpg'               },
+      { nome: 'Milagreiro',              data: '2001-01-01', generos: ['MPB'],        capaUrl: '/uploads/capas/milagreiro.jpg'        },
+      { nome: 'Noel Classicos',          data: '1931-01-01', generos: ['Samba'],      capaUrl: '/uploads/capas/noel_rosa.jpg'         },
+      { nome: 'Temple of the Dog(1991)', data: '1991-01-01', generos: ['Rock'],       capaUrl: '/uploads/capas/TempleOfTheDog.jpg'    },
+      { nome: 'Facelift',                data: '1990-01-01', generos: ['Rock'],       capaUrl: '/uploads/capas/facelift.jpg'          },
+      { nome: 'Música de rua',           data: '1994-01-01', generos: ['Axé'],        capaUrl: '/uploads/capas/musica_de_rua.jpg'     },
+    ]);
+  console.log('11 álbuns criados...');
 
+
+  
   // ── Artista para teste de albuns ────────────────────────────────────────────────────────────────
   const vivaldi = await usuarioRepo.save({
     login: 'vivaldi',
@@ -92,24 +112,6 @@ console.log('Tabelas limpas...');
   
   console.log('Vivaldi criado como usuário e artista...');
   
-  // ── Álbuns ────────────────────────────────────────────────────────────────
-  const albumRepo = AppDataSource.getRepository(Album);
-  const [isThisDesire, getzGilberto, chegaDeSaudade, djavan1992, djavan1989, luz, milagreiro, noelClassicos, templeOfDog, facelift, musicaderua] =
-    await albumRepo.save([
-      { nome: 'Is This Desire?',         data: '1998-01-01', generos: ['AltRock'],    capaUrl: '/uploads/capas/is_this_desire.jpg'    },
-      { nome: 'Getz/Gilberto',           data: '1964-01-01', generos: ['Bossa Nova'], capaUrl: '/uploads/capas/getz_gilberto.jpg'     },
-      { nome: 'Chega de Saudade',        data: '1959-01-01', generos: ['Bossa Nova'], capaUrl: '/uploads/capas/chega_de_saudade.jpg'  },
-      { nome: 'Coisa de acender',        data: '1992-01-01', generos: ['MPB'],        capaUrl: '/uploads/capas/djavan1992.jpg'        },
-      { nome: 'Djavan(1989)',            data: '1989-01-01', generos: ['MPB'],        capaUrl: '/uploads/capas/djavan1989.jpg'        },
-      { nome: 'Luz',                     data: '1982-01-01', generos: ['MPB'],        capaUrl: '/uploads/capas/luz.jpg'               },
-      { nome: 'Milagreiro',              data: '2001-01-01', generos: ['MPB'],        capaUrl: '/uploads/capas/milagreiro.jpg'        },
-      { nome: 'Noel Classicos',          data: '1931-01-01', generos: ['Samba'],      capaUrl: '/uploads/capas/noel_rosa.jpg'         },
-      { nome: 'Temple of the Dog(1991)', data: '1991-01-01', generos: ['Rock'],       capaUrl: '/uploads/capas/TempleOfTheDog.jpg'    },
-      { nome: 'Facelift',                data: '1990-01-01', generos: ['Rock'],       capaUrl: '/uploads/capas/facelift.jpg'          },
-      { nome: 'Música de rua',           data: '1994-01-01', generos: ['Axé'],        capaUrl: '/uploads/capas/musica_de_rua.jpg'     },
-    ]);
-  console.log('11 álbuns criados...');
-
   // ── Músicas ───────────────────────────────────────────────────────────────
   // arquivoUrl: substituir pelas URLs reais dos arquivos de áudio
   const musicaRepo = AppDataSource.getRepository(Musica);
