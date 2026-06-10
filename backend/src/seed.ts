@@ -64,6 +64,26 @@ console.log('Tabelas limpas...');
     ]);
   console.log('8 artistas criados...');
 
+  // ── Artista para teste de albuns ────────────────────────────────────────────────────────────────
+  const vivaldi = await usuarioRepo.save({
+    login: 'vivaldi',
+    name: 'Antonio Vivaldi',
+    password: '1234', // A senha que você usar no teste
+    email: 'vivaldi@streaming.com',
+    tipodeconta: UserRole.ARTISTA // Define que ele é um artista
+  });
+
+  // Adicionamos ele no repositório de Artistas para aparecer na listagem de artistas
+  await artistaRepo.save({
+    login: 'vivaldi',
+    name: 'Antonio Vivaldi',
+    password: '1234',
+    email: 'vivaldi@streaming.com',
+    tipodeconta: UserRole.ARTISTA,
+    nomeArtistico: 'Antonio Vivaldi'
+  });
+  console.log('Vivaldi criado como usuário e artista...');
+  
   // ── Álbuns ────────────────────────────────────────────────────────────────
   const albumRepo = AppDataSource.getRepository(Album);
   const [isThisDesire, getzGilberto, chegaDeSaudade, djavan1992, djavan1989, luz, milagreiro, noelClassicos, templeOfDog, facelift, musicaderua] =
