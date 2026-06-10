@@ -68,12 +68,11 @@ console.log('Tabelas limpas...');
   const vivaldi = await usuarioRepo.save({
     login: 'vivaldi',
     name: 'Antonio Vivaldi',
-    password: '1234', // A senha que você usar no teste
+    password: '1234', 
     email: 'vivaldi@streaming.com',
-    tipodeconta: UserRole.ARTISTA // Define que ele é um artista
+    tipodeconta: UserRole.ARTISTA 
   });
 
-  // Adicionamos ele no repositório de Artistas para aparecer na listagem de artistas
   await artistaRepo.save({
     login: 'vivaldi',
     name: 'Antonio Vivaldi',
